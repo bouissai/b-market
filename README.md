@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏪 B-Market
 
-## Getting Started
+B-Market est une application Next.js utilisant PostgreSQL via Prisma et Docker. Ce projet est conçu pour gérer les commandes d'une boucherie en click and collect.
 
-First, run the development server:
+## 📌 Prérequis
+- **Node.js** (Recommandé: `>=18`)
+- **Docker & Docker Compose** (pour la base de données PostgreSQL)
+- **npm** (ou `yarn`/`pnpm`, mais `npm` est utilisé par défaut ici)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## ⚙️ Installation
+
+### 1. Cloner le projet
+```sh
+git clone https://github.com/votre-repo/b-market.git
+cd b-market
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Installer les dépendances
+```sh
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Lancer la base de données avec Docker
+```sh
+docker-compose up -d
+```
+*(Assurez-vous que Docker est bien installé et lancé.)*
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Configurer Prisma
+1. **Créer le fichier .env avec les variables suivantes en changeant les champs nécessaires** :
+   ```sh
+   DATABASE_URL="postgresql://user:password@localhost:5432/BDD_name"
+   ```
+2. **Générer le client Prisma** :
+   ```sh
+   npx prisma generate
+   ```
+3. **Appliquer la migration** :
+   ```sh
+   npx prisma migrate dev --name init
+   ```
 
-## Learn More
+### 5. Lancer le projet en mode développement
+```sh
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Le site est maintenant accessible sur [http://localhost:3000](http://localhost:3000) 🎉
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🔄 Commandes utiles
+| Commande | Description |
+|----------|------------|
+| `npm run dev` | Lance le serveur Next.js en mode développement |
+| `npm run build` | Compile le projet pour la production |
+| `npm run start` | Démarre le serveur Next.js en mode production |
+| `npm run lint` | Vérifie le code avec ESLint |
+| `docker-compose up -d` | Démarre PostgreSQL via Docker |
+| `docker-compose down` | Arrête PostgreSQL |
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📚 Technologies utilisées
+- **Next.js** (Framework React moderne)
+- **Prisma** (ORM pour la base de données PostgreSQL)
+- **TailwindCSS** (Framework CSS)
+- **Shadcn UI** (Composants UI)
+- **Docker** (Conteneurisation de la base de données)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## ✅ Tout est prêt ? 🎉
+Vous pouvez maintenant commencer à coder ! 🚀
+
