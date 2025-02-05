@@ -13,7 +13,7 @@ B-Market est une application Next.js utilisant PostgreSQL via Prisma et Docker. 
 
 ### 1. Cloner le projet
 ```sh
-git clone https://github.com/votre-repo/b-market.git
+git clone https://github.com/bouissai/b-market.git
 cd b-market
 ```
 
