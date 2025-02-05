@@ -9,7 +9,7 @@ import {Button} from "@/components/ui/button"
 import {Input} from "@/components/ui/input"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog"
-import {toast} from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast"
 
 
 const formSchema = z.object({
@@ -26,6 +26,7 @@ interface ArticleFormProps {
 }
 
 export function ArticleForm({article, onClose, onSave}: ArticleFormProps) {
+    const { toast } = useToast()
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const form = useForm<z.infer<typeof formSchema>>({

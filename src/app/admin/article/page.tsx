@@ -17,10 +17,11 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import {toast} from "@/hooks/use-toast";
+import {useToast} from "@/hooks/use-toast"
 import {Article} from "@/types/article";
 
 export default function ArticlePage() {
+    const {toast} = useToast()
     const {articles, isLoading, error, addArticle, updateArticle, deleteArticle} = useArticles()
     const [selectedArticle, setSelectedArticle] = useState<Article | null>(null)
     const [isFormOpen, setIsFormOpen] = useState<boolean>(false)

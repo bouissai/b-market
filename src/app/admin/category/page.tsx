@@ -16,11 +16,12 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import {toast} from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast"
 import {CategoryForm} from "@/components/categoryForm";
 import {Category} from "@/types/article";
 
 export default function CategoryPage() {
+    const { toast } = useToast()
     const {categories, isLoading, error, addCategory, updateCategory, deleteCategory} = useCategories()
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
     const [isFormOpen, setIsFormOpen] = useState<boolean>(false)

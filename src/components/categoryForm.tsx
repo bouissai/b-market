@@ -8,7 +8,7 @@ import {Button} from "@/components/ui/button"
 import {Input} from "@/components/ui/input"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog"
-import {toast} from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast"
 import {Category} from "@/types/article";
 
 const formSchema = z.object({
@@ -22,6 +22,8 @@ interface CategoryFormProps {
 }
 
 export function CategoryForm({category, onClose, onSave}: CategoryFormProps) {
+    const { toast } = useToast()
+
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const form = useForm<z.infer<typeof formSchema>>({
