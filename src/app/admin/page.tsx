@@ -10,8 +10,8 @@ export default function AdminHome() {
                 </CardHeader>
                 <CardContent>
                     <ul>
-                        <li><Link href="article">Gérer les articles</Link></li>
-                        <li><Link href="category">Gérer les catégories</Link></li>
+                        <li><Link href="admin/article">Gérer les articles</Link></li>
+                        <li><Link href="admin/category">Gérer les catégories</Link></li>
                     </ul>
                 </CardContent>
             </Card>
