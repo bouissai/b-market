@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react"
-import type { Article } from "@/types/article"
+import {useEffect, useState} from "react"
+import type {Article} from "@/types/article"
 
 export function useArticles() {
     const [articles, setArticles] = useState<Article[]>([])
@@ -34,7 +34,7 @@ export function useArticles() {
 
     const deleteArticle = async (id: string) => {
         try {
-            const response = await fetch(`/api/article/${id}`, { method: "DELETE" })
+            const response = await fetch(`/api/article/${id}`, {method: "DELETE"})
             if (!response.ok) throw new Error("Erreur lors de la suppression de l'article")
             setArticles(articles.filter((a) => a.id !== id))
         } catch (err) {
@@ -42,6 +42,6 @@ export function useArticles() {
         }
     }
 
-    return { articles, isLoading, error, addArticle, updateArticle, deleteArticle, fetchArticles }
+    return {articles, isLoading, error, addArticle, updateArticle, deleteArticle, fetchArticles}
 }
 

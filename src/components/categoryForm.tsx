@@ -8,7 +8,7 @@ import {Button} from "@/components/ui/button"
 import {Input} from "@/components/ui/input"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog"
-import { useToast } from "@/hooks/use-toast"
+import {useToast} from "@/hooks/use-toast"
 import {Category} from "@/types/article";
 
 const formSchema = z.object({
@@ -17,12 +17,12 @@ const formSchema = z.object({
 
 interface CategoryFormProps {
     category?: Category | null
-    onClose: () => void
-    onSave: (data: Category) => void
+    onCloseAction: () => void
+    onSaveAction: (data: Category) => void
 }
 
-export function CategoryForm({category, onClose, onSave}: CategoryFormProps) {
-    const { toast } = useToast()
+export function CategoryForm({category, onCloseAction, onSaveAction}: CategoryFormProps) {
+    const {toast} = useToast()
 
     const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -43,16 +43,16 @@ export function CategoryForm({category, onClose, onSave}: CategoryFormProps) {
             })
             if (!response.ok) throw new Error("Erreur lors de la sauvegarde")
             const data = await response.json()
-            onSave(data)
+            onSaveAction(data)
             toast({
                 title: "Succès",
                 description: category ? "Catégorie modifiée avec succès" : "Catégorie ajoutée avec succès",
             })
-            onClose()
+            onCloseAction()
         } catch (error) {
             toast({
                 title: "Erreur",
-                description: "Une erreur est survenue lors de la sauvegarde",
+                description: "Erreur: " + error,
                 variant: "destructive",
             })
         } finally {
@@ -61,7 +61,7 @@ export function CategoryForm({category, onClose, onSave}: CategoryFormProps) {
     }
 
     return (
-        <Dialog open onOpenChange={onClose}>
+        <Dialog open onOpenChange={onCloseAction}>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>{category ? "Modifier la catégorie" : "Ajouter une catégorie"}</DialogTitle>

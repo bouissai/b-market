@@ -9,7 +9,7 @@ import {Button} from "@/components/ui/button"
 import {Input} from "@/components/ui/input"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog"
-import { useToast } from "@/hooks/use-toast"
+import {useToast} from "@/hooks/use-toast"
 
 
 const formSchema = z.object({
@@ -21,12 +21,12 @@ const formSchema = z.object({
 
 interface ArticleFormProps {
     article?: Article | null
-    onClose: () => void
-    onSave: (data: Article) => void
+    onCloseAction: () => void
+    onSaveAction: (data: Article) => void
 }
 
-export function ArticleForm({article, onClose, onSave}: ArticleFormProps) {
-    const { toast } = useToast()
+export function ArticleForm({article, onCloseAction, onSaveAction}: ArticleFormProps) {
+    const {toast} = useToast()
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -46,16 +46,16 @@ export function ArticleForm({article, onClose, onSave}: ArticleFormProps) {
             })
             if (!response.ok) throw new Error("Erreur lors de la sauvegarde")
             const data = await response.json()
-            onSave(data)
+            onSaveAction(data)
             toast({
                 title: "Succès",
                 description: article ? "Article modifié avec succès" : "Article ajouté avec succès",
             })
-            onClose()
+            onCloseAction()
         } catch (error) {
             toast({
                 title: "Erreur",
-                description: "Une erreur est survenue lors de la sauvegarde",
+                description: "Une erreur est survenue lors de la sauvegarde " + error,
                 variant: "destructive",
             })
         } finally {
@@ -64,7 +64,7 @@ export function ArticleForm({article, onClose, onSave}: ArticleFormProps) {
     }
 
     return (
-        <Dialog open onOpenChange={onClose}>
+        <Dialog open onOpenChange={onCloseAction}>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>{article ? "Modifier l'article" : "Ajouter un article"}</DialogTitle>

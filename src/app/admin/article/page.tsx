@@ -110,8 +110,8 @@ export default function ArticlePage() {
             {isFormOpen && (
                 <ArticleForm
                     article={selectedArticle}
-                    onClose={() => setIsFormOpen(false)}
-                    onSave={(newArticle) => {
+                    onCloseAction={() => setIsFormOpen(false)}
+                    onSaveAction={(newArticle) => {
                         if (selectedArticle) {
                             updateArticle(newArticle)
                         } else {
