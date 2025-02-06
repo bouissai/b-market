@@ -33,13 +33,11 @@ export function useCategories() {
     }
 
     const deleteCategory = async (id: string) => {
-        try {
-            const response = await fetch(`/api/category/${id}`, {method: "DELETE"})
-            if (!response.ok) throw new Error("Erreur lors de la suppression de la catégorie")
-            setCategories(categories.filter((c) => c.id !== id))
-        } catch (err) {
-            setError(err instanceof Error ? err.message : "Une erreur est survenue lors de la suppression")
-        }
+        await fetch(`/api/category/${id}`, {method: "DELETE"})
+            .then((response) => {
+                if (!response.ok) throw {message: response.json(), status: response.status};
+                setCategories(categories.filter((c) => c.id !== id));
+            })
     }
 
     return {categories, isLoading, error, addCategory, updateCategory, deleteCategory, fetchCategories}

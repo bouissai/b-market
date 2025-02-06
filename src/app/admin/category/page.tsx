@@ -35,24 +35,34 @@ export default function CategoryPage() {
         )
     }
 
-    if (error) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <p className="text-red-500">{error}</p>
-            </div>
-        )
-    }
-
     const handleDelete = async () => {
-        if (categoryToDelete) {
-            await deleteCategory(categoryToDelete.id)
-            setCategoryToDelete(null)
-            toast({
-                title: "Succès",
-                description: "Catégorie supprimée avec succès",
-            })
-        }
-    }
+        if (!categoryToDelete) return;
+
+        await deleteCategory(categoryToDelete.id).then(() => {
+            toast({title: "Succès", description: "Catégorie supprimée avec succès"});
+        }).catch((error) => {
+                let errorMessage = "Une erreur est survenue lors de la suppression.";
+                console.log(errorMessage);
+                if (error.status === 400) {
+                    errorMessage = "ID de catégorie manquant.";
+                } else if (error.status === 404) {
+                    errorMessage = "Erreur : La catégorie n'existe pas.";
+                } else if (error.status === 409) {
+                    errorMessage = "Cette catégorie contient des articles.";
+                } else if (error.status === 500) {
+                    errorMessage = "Erreur serveur. Réessayez plus tard.";
+                }
+
+                toast({
+                    title: "Aïe caramba ! 🤠",
+                    description: errorMessage,
+                    variant: "destructive",
+                });
+
+            }
+        ).finally(() => setCategoryToDelete(null))
+    };
+
 
     return (
         <div className="p-6">
