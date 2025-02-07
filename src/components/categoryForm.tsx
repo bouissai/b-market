@@ -1,15 +1,15 @@
 "use client"
 
-import {useState} from "react"
-import {useForm} from "react-hook-form"
-import {zodResolver} from "@hookform/resolvers/zod"
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { useToast } from "@/hooks/use-toast"
+import { Category } from "@/types/article"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
 import * as z from "zod"
-import {Button} from "@/components/ui/button"
-import {Input} from "@/components/ui/input"
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"
-import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog"
-import {useToast} from "@/hooks/use-toast"
-import {Category} from "@/types/article";
 
 const formSchema = z.object({
     name: z.string().min(1, "Le nom est requis"),
@@ -33,31 +33,41 @@ export function CategoryForm({category, onCloseAction, onSaveAction}: CategoryFo
 
     const handleSubmit = async (values: z.infer<typeof formSchema>) => {
         setIsSubmitting(true)
-        try {
-            const method = category ? "PUT" : "POST"
-            const url = category ? `/api/category/${category.id}` : "/api/category"
-            const response = await fetch(url, {
-                method,
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(values),
-            })
-            if (!response.ok) throw new Error("Erreur lors de la sauvegarde")
-            const data = await response.json()
+        const method = category ? "PUT" : "POST"
+        const url = category ? `/api/category/${category.id}` : "/api/category"
+        fetch(url, {
+            method,
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(values),
+        })
+        .then(response => {
+            if (!response.ok) throw {status: response.status, message: response.json()}
+            return response.json()
+        })
+        .then(data => {
             onSaveAction(data)
             toast({
-                title: "Succès",
-                description: category ? "Catégorie modifiée avec succès" : "Catégorie ajoutée avec succès",
+            title: "Succès",
+            description: category ? "Catégorie modifiée avec succès" : "Catégorie ajoutée avec succès",
             })
             onCloseAction()
-        } catch (error) {
+        })
+        .catch(error => {
+            let descriptionError = "Une erreur est survenue lors de l'enregistrement."
+            switch (error.status) {
+                case 409:
+                    descriptionError = "Cette catégorie existe déjà."
+                    break
+            }
             toast({
-                title: "Erreur",
-                description: "Erreur: " + error,
-                variant: "destructive",
+            title: "Erreur",
+            description: descriptionError,
+            variant: "destructive",
             })
-        } finally {
+        })
+        .finally(() => {
             setIsSubmitting(false)
-        }
+        })
     }
 
     return (

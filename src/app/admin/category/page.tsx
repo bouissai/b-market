@@ -1,11 +1,6 @@
 "use client"
 
-import {useState} from "react"
-import {Loader2, Pencil, Trash} from "lucide-react"
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table"
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
-import {Button} from "@/components/ui/button"
-import {useCategories} from "@/hooks/useCategories"
+import { CategoryForm } from "@/components/categoryForm"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -16,13 +11,18 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import {useToast} from "@/hooks/use-toast"
-import {CategoryForm} from "@/components/categoryForm";
-import {Category} from "@/types/article";
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useToast } from "@/hooks/use-toast"
+import { useCategories } from "@/hooks/useCategories"
+import { Category } from "@/types/article"
+import { Loader2, Pencil, Trash } from "lucide-react"
+import { useState } from "react"
 
 export default function CategoryPage() {
     const {toast} = useToast()
-    const {categories, isLoading, error, addCategory, updateCategory, deleteCategory} = useCategories()
+    const {categories, isLoading, addCategory, updateCategory, deleteCategory} = useCategories()
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
     const [isFormOpen, setIsFormOpen] = useState<boolean>(false)
     const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null)
