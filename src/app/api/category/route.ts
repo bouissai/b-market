@@ -1,5 +1,5 @@
-import { db } from "@/app/lib/db";
-import { NextRequest, NextResponse } from "next/server";
+import {db} from "@/app/lib/db";
+import {NextRequest, NextResponse} from "next/server";
 
 // 1. Récupérer tous les categories
 export async function GET() {
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
             where: {name},
         });
 
-        if (existingCategory !== undefined) {
+        if (existingCategory) {
             console.error("❌ La catégorie existe déjà en base !");
             return NextResponse.json({message: "Catégorie existe déjà "}, {status: 409});
         }
