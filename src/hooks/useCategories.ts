@@ -4,6 +4,7 @@ import {Category} from "@/types/article";
 export function useCategories() {
     const [categories, setCategories] = useState<Category[]>([])
     const [isLoading, setIsLoading] = useState(true)
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
@@ -32,6 +33,29 @@ export function useCategories() {
         setCategories(categories.map((c) => (c.id === updatedCategory.id ? updatedCategory : c)))
     }
 
+    const saveCategory = async (category: Category, method: "POST" | "PUT", url: string) => {
+        setIsSubmitting(true);
+        try {
+            const response = await fetch(url, {
+                method,
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(category),
+            });
+
+            if (!response.ok) {
+                const errorResponse = await response.json(); // Récupérer l'objet d'erreur
+                throw {status: response.status, message: errorResponse.message || "Erreur inconnue"};
+            }
+
+            return await response.json();
+        } catch (error) {
+            throw error; // Relance l'erreur pour une gestion ultérieure
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+
     const deleteCategory = async (id: string) => {
         await fetch(`/api/category/${id}`, {method: "DELETE"})
             .then((response) => {
@@ -40,6 +64,16 @@ export function useCategories() {
             })
     }
 
-    return {categories, isLoading, error, addCategory, updateCategory, deleteCategory, fetchCategories}
+    return {
+        categories,
+        isLoading,
+        error,
+        addCategory,
+        updateCategory,
+        isSubmitting,
+        saveCategory,
+        deleteCategory,
+        fetchCategories
+    }
 }
 

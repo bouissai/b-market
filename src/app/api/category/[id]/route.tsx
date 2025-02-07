@@ -56,7 +56,7 @@ export async function PUT(req: Request, context: { params: { id?: string } }) {
         // Validation : vérifier si le champ "name" est fourni
         if (!name) {
             return NextResponse.json(
-                {error: "Name is required"},
+                {message: "Le nom est requis."},
                 {status: 400}
             );
         }
@@ -68,8 +68,20 @@ export async function PUT(req: Request, context: { params: { id?: string } }) {
 
         if (!existingCategory) {
             return NextResponse.json(
-                {error: "Category not found"},
+                {message: "Catégorie introuvable."},
                 {status: 404}
+            );
+        }
+
+        // Vérifier si une autre catégorie a déjà ce nom
+        const duplicateCategory = await db.category.findFirst({
+            where: {name, NOT: {id}}, // Exclure l'ID de la catégorie actuelle
+        });
+
+        if (duplicateCategory) {
+            return NextResponse.json(
+                {message: "Une catégorie avec ce nom existe déjà."},
+                {status: 409}
             );
         }
 
@@ -81,9 +93,9 @@ export async function PUT(req: Request, context: { params: { id?: string } }) {
 
         return NextResponse.json(updatedCategory, {status: 200});
     } catch (error) {
-        console.error("Failed to update category", error);
+        console.error("Erreur lors de la mise à jour de la catégorie", error);
         return NextResponse.json(
-            {error: "Failed to update category"},
+            {message: "Erreur serveur lors de la mise à jour."},
             {status: 500}
         );
     }
