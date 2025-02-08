@@ -1,16 +1,16 @@
-import {NextRequest, NextResponse} from "next/server";
-import {db} from "@/app/lib/db";
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/app/lib/db";
 
 // 1. Récupérer tous les articles
 export async function GET() {
     try {
         const articles = await db.article.findMany();
-        return NextResponse.json(articles, {status: 200});
+        return NextResponse.json(articles, { status: 200 });
     } catch (error) {
-        console.error("Error fetching articles:", error);
+        console.error("Erreur lors de la récupération des articles :", error);
         return NextResponse.json(
-            {error: "Failed to fetch articles"},
-            {status: 500},
+            { message: "Échec de la récupération des articles" },
+            { status: 500 }
         );
     }
 }
@@ -20,53 +20,54 @@ export async function POST(req: NextRequest) {
     try {
         // Récupération du JSON
         const body = await req.json();
-        const {name, image, description, price, unit, categoryName} = body;
+        const { name, image, description, price, unit, categoryName } = body;
 
         // Vérification si le corps de la requête est vide
-        if (!req.body) {
+        if (!body) {
             return NextResponse.json(
-                {error: "Request body is empty or null"},
-                {status: 400}
+                { message: "Le corps de la requête est vide ou invalide" },
+                { status: 400 }
             );
         }
 
         // Validation des champs obligatoires
         if (!name || !price || !categoryName || !unit) {
+            console.error(!name, !price, !categoryName, !unit);
             return NextResponse.json(
-                {error: "Name, price, unit, and categoryName are required"},
-                {status: 400}
+                { message: "Le nom, le prix, l'unité et la catégorie sont requis" },
+                { status: 400 }
             );
         }
 
         // Vérifier que le champ "price" est du type attendu (nombre)
         if (typeof price !== "number" || price <= 0) {
             return NextResponse.json(
-                {error: "Price must be a positive number"},
-                {status: 400}
+                { message: "Le prix doit être un nombre positif" },
+                { status: 400 }
             );
         }
 
         // Vérifier si un article avec le même nom existe déjà
         const existingArticle = await db.article.findFirst({
-            where: {name},
+            where: { name },
         });
 
         if (existingArticle) {
             return NextResponse.json(
-                {error: `Article with name '${name}' already exists`},
-                {status: 409} // 409 Conflict
+                { message: `Un article portant le nom '${name}' existe déjà` },
+                { status: 409 } // 409 Conflict
             );
         }
 
         // Vérifier si la catégorie existe
         const category = await db.category.findUnique({
-            where: {name: categoryName},
+            where: { name: categoryName },
         });
 
         if (!category) {
             return NextResponse.json(
-                {error: `Category '${categoryName}' does not exist`},
-                {status: 400}
+                { message: `La catégorie '${categoryName}' n'existe pas` },
+                { status: 400 }
             );
         }
 
@@ -79,25 +80,26 @@ export async function POST(req: NextRequest) {
                 unit: unit,
                 description: description || "", // Fournir une valeur par défaut
                 category: {
-                    connect: {name: categoryName}, // Associer à une catégorie existante
+                    connect: { name: categoryName }, // Associer à une catégorie existante
                 },
             },
         });
-        return NextResponse.json(newArticle, {status: 201});
+
+        return NextResponse.json(newArticle, { status: 201 });
     } catch (error) {
-        console.error("Failed to create article", error);
+        console.error("Échec de la création de l'article :", error);
 
         // Vérification de l'erreur pour un diagnostic plus précis
         if (error instanceof SyntaxError) {
             return NextResponse.json(
-                {error: "Invalid JSON format"},
-                {status: 400}
+                { message: "Format JSON invalide" },
+                { status: 400 }
             );
         }
 
         return NextResponse.json(
-            {error: "Failed to create article"},
-            {status: 500}
+            { message: "Échec de la création de l'article" },
+            { status: 500 }
         );
     }
 }

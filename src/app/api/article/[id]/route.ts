@@ -13,7 +13,7 @@ export async function GET(_req: NextRequest, {params}: ArticleUpdateProps) {
 
         // Vérification si l'ID est valide
         if (!id) {
-            return NextResponse.json({error: "L'ID de l'article est requis"}, {status: 400});
+            return NextResponse.json({message: "L'ID de l'article est requis"}, {status: 400});
         }
 
         // Recherche de l'article
@@ -22,25 +22,26 @@ export async function GET(_req: NextRequest, {params}: ArticleUpdateProps) {
         });
 
         if (!article) {
-            return NextResponse.json({error: "Article not found"}, {status: 404});
+            return NextResponse.json({message: "Article not found"}, {status: 404});
         }
 
         return NextResponse.json(article, {status: 200});
     } catch (error) {
         console.error("Failed to fetch article:", error);
-        return NextResponse.json({error: "Failed to fetch article"}, {status: 500});
+        return NextResponse.json({message: "Failed to fetch article"}, {status: 500});
     }
 }
 
+
 // 2. Mettre à jour un article par ID
-// 2. Mettre à jour un article par ID
-export async function PATCH(req: NextRequest, {params}: ArticleUpdateProps) {
+
+export async function PATCH(req: NextRequest, {params}: { params: { id: string } }) {
     try {
-        const {id} = params;
+        const {id} = await params; // ✅ Correction : accès direct à `params`
         const body = await req.json();
 
         if (!id) {
-            return NextResponse.json({error: "L'ID de l'article est requis"}, {status: 400});
+            return NextResponse.json({message: "L'ID de l'article est requis"}, {status: 400});
         }
 
         // Vérifier si l'article existe
@@ -49,14 +50,15 @@ export async function PATCH(req: NextRequest, {params}: ArticleUpdateProps) {
         });
 
         if (!existingArticle) {
-            return NextResponse.json({error: "Article not found"}, {status: 404});
+            return NextResponse.json({message: "Article introuvable"}, {status: 404});
         }
 
         // Validation des champs autorisés
         const {name, image, description, price, unit, categoryName} = body;
 
         if (price !== undefined && (typeof price !== "number" || price <= 0)) {
-            return NextResponse.json({error: "Le prix doit être un nombre positif"}, {status: 400});
+            console.error(`❌ Le prix doit être un nombre positif`);
+            return NextResponse.json({message: "Le prix doit être un nombre positif"}, {status: 400});
         }
 
         // Vérifier si une catégorie valide est fournie
@@ -67,7 +69,8 @@ export async function PATCH(req: NextRequest, {params}: ArticleUpdateProps) {
             });
 
             if (!category) {
-                return NextResponse.json({error: `La catégorie '${categoryName}' n'existe pas`}, {status: 400});
+                console.error(`❌ La catégorie '${categoryName}' n'existe pas`);
+                return NextResponse.json({message: `La catégorie '${categoryName}' n'existe pas`}, {status: 400});
             }
         }
 
@@ -81,8 +84,9 @@ export async function PATCH(req: NextRequest, {params}: ArticleUpdateProps) {
             });
 
             if (articleWithSameName) {
+                console.error(`❌ Le nom '${name}' existe déjà sur un autre article`);
                 return NextResponse.json(
-                    {error: `Le nom '${name}' existe déjà sur un autre article`},
+                    {message: `Le nom '${name}' existe déjà sur un autre article`},
                     {status: 409} // 409 Conflict
                 );
             }
@@ -106,9 +110,9 @@ export async function PATCH(req: NextRequest, {params}: ArticleUpdateProps) {
         console.error("Erreur lors de la mise à jour de l'article:", error);
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            return NextResponse.json({error: "Database error"}, {status: 500});
+            return NextResponse.json({message: "Erreur de base de données"}, {status: 500});
         }
 
-        return NextResponse.json({error: "Erreur serveur lors de la mise à jour."}, {status: 500});
+        return NextResponse.json({message: "Erreur serveur lors de la mise à jour."}, {status: 500});
     }
 }

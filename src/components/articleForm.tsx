@@ -37,14 +37,17 @@ export function ArticleForm({article, onCloseAction, onSaveAction}: ArticleFormP
     const handleSubmit = async (values: z.infer<typeof formSchema>) => {
         setIsSubmitting(true)
         try {
-            const method = article ? "PUT" : "POST"
+            const method = article ? "PATCH" : "POST"
             const url = article ? `/api/article/${article.id}` : "/api/article"
             const response = await fetch(url, {
                 method,
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(values),
             })
-            if (!response.ok) throw new Error("Erreur lors de la sauvegarde")
+            if (!response.ok) {
+                const errorResponse = await response.json(); // Récupérer l'objet d'erreur
+                throw {status: response.status, message: errorResponse.message || "Erreur inconnue"};
+            }
             const data = await response.json()
             onSaveAction(data)
             toast({
@@ -55,7 +58,7 @@ export function ArticleForm({article, onCloseAction, onSaveAction}: ArticleFormP
         } catch (error) {
             toast({
                 title: "Erreur",
-                description: "Une erreur est survenue lors de la sauvegarde " + error,
+                description: ""+error?.message,
                 variant: "destructive",
             })
         } finally {
