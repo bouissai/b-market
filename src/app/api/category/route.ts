@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
         // Validation champs obilgatoires
         if (!name) {
             return NextResponse.json(
-                {error: "Name are required"},
+                {error: "Le nom est requis"},
                 {status: 400},
             );
         }
