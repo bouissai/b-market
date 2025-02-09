@@ -1,10 +1,14 @@
 import {useEffect, useState} from "react"
 import type {Article} from "@/types/article"
+import {useToast} from "@/hooks/use-toast";
 
 export function useArticles() {
     const [articles, setArticles] = useState<Article[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+
+    const {toast} = useToast()
+
 
     useEffect(() => {
         fetchArticles()
@@ -35,10 +39,14 @@ export function useArticles() {
     const deleteArticle = async (id: string) => {
         try {
             const response = await fetch(`/api/article/${id}`, {method: "DELETE"})
-            if (!response.ok) throw new Error("Erreur lors de la suppression de l'article")
+            if (!response.ok) throw {message: response.json(), status: response.status};
             setArticles(articles.filter((a) => a.id !== id))
-        } catch (err) {
-            setError(err instanceof Error ? err.message : "Une erreur est survenue lors de la suppression")
+        } catch (error) {
+            toast({
+                title: "Aïe caramba ! 🤠",
+                description: error?.message || "Erreur inconnue",
+                variant: "destructive",
+            });
         }
     }
 

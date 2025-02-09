@@ -102,8 +102,19 @@ export function ArticleForm({article, onCloseAction, onSaveAction}: ArticleFormP
                                         <Input
                                             type="number"
                                             placeholder="Prix"
+                                            step="0.01"
+                                            min="0"
                                             {...field}
-                                            onChange={(e) => field.onChange(Number.parseFloat(e.target.value))}
+                                            value={field.value === 0 ? "" : field.value}
+                                            onChange={(e) => {
+                                                const value = e.target.value
+                                                const parsedValue = Number.parseFloat(value)
+                                                if (value === "" || isNaN(parsedValue)) {
+                                                    field.onChange(0)
+                                                } else {
+                                                    field.onChange(parsedValue)
+                                                }
+                                            }}
                                         />
                                     </FormControl>
                                     <FormMessage/>

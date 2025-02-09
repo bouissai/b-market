@@ -116,3 +116,74 @@ export async function PATCH(req: NextRequest, {params}: { params: { id: string }
         return NextResponse.json({message: "Erreur serveur lors de la mise à jour."}, {status: 500});
     }
 }
+
+
+export async function DELETE(req: NextRequest, {params}: { params: { id: string } }) {
+    try {
+        const {id} = await params;
+        // 1️⃣ Vérification de l'ID
+        if (!id) {
+            console.error("❌ ID manquant !");
+            return NextResponse.json({message: "L'ID de l'article est requis"}, {status: 400});
+        }
+
+        // 2️⃣ Vérifier si l'article existe
+        const existingArticle = await db.article.findUnique({
+            where: {id},
+        });
+
+
+        if (!existingArticle) {
+            console.error("❌ Article introuvable !");
+            return NextResponse.json({message: "Article introuvable"}, {status: 404});
+        }
+
+        // TODO 3️⃣ Vérifier si l'article est utilisé dans une commande
+        // 3️⃣ Vérifier si l'article est utilisé dans une commande via OrderItem
+        const linkedOrderItems = await db.orderItem.findFirst({
+            where: {
+                articleId: id, // Vérifie si cet article est utilisé dans une commande
+            },
+        });
+
+        if (linkedOrderItems) {
+            return NextResponse.json(
+                {message: "Impossible de supprimer l'article : Il est utilisé dans une commande."},
+                {status: 400}
+            );
+        }
+
+        // 4️⃣ Vérifier si l'article est dans un panier
+        const linkedCartItems = await db.cartItem.findFirst({
+            where: {
+                articleId: id, // Vérifie si l'article est présent dans un panier
+            },
+        });
+
+        if (linkedCartItems) {
+            return NextResponse.json(
+                {message: "Impossible de supprimer l'article : Il est présent dans un panier."},
+                {status: 400}
+            );
+        }
+
+        // 4️⃣ Suppression de l'article
+        await db.article.delete({
+            where: {id},
+        });
+
+        return NextResponse.json({message: "Article supprimé avec succès"}, {status: 200});
+
+    } catch (error) {
+        console.error("Erreur lors de la suppression de l'article:", error);
+
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === "P2025") {
+                return NextResponse.json({message: "Article introuvable"}, {status: 404});
+            }
+            return NextResponse.json({message: "Erreur de base de données"}, {status: 500});
+        }
+
+        return NextResponse.json({message: "Erreur serveur lors de la suppression."}, {status: 500});
+    }
+}
