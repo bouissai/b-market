@@ -36,8 +36,8 @@ export function CategoryForm({category, onCloseAction, onSaveAction}: CategoryFo
 
         // Construire un objet Category valide
         const categoryData: Partial<Category> = category
-            ? { ...category, name: values.name } // Modifier une catégorie existante
-            : { name: values.name }; // Ajouter une nouvelle catégorie
+            ? {...category, name: values.name} // Modifier une catégorie existante
+            : {name: values.name}; // Ajouter une nouvelle catégorie
 
         await saveCategory(categoryData as Category, method, url)
             .then((data) => {

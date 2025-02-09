@@ -10,6 +10,8 @@ import {Input} from "@/components/ui/input"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog"
 import {useToast} from "@/hooks/use-toast"
+import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {useCategories} from "@/hooks/useCategories";
 
 
 const formSchema = z.object({
@@ -27,6 +29,7 @@ interface ArticleFormProps {
 
 export function ArticleForm({article, onCloseAction, onSaveAction}: ArticleFormProps) {
     const {toast} = useToast()
+    const {categories} = useCategories()
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -58,7 +61,7 @@ export function ArticleForm({article, onCloseAction, onSaveAction}: ArticleFormP
         } catch (error) {
             toast({
                 title: "Erreur",
-                description: ""+error?.message,
+                description: "" + error?.message,
                 variant: "destructive",
             })
         } finally {
@@ -114,7 +117,22 @@ export function ArticleForm({article, onCloseAction, onSaveAction}: ArticleFormP
                                 <FormItem>
                                     <FormLabel>Catégorie</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Catégorie" {...field} />
+                                        {/*<Input placeholder="Catégorie" {...field} />*/}
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Sélectionnez une catégorie"/>
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    {categories.map((category) => (
+                                                        <SelectItem key={category.id} value={category.name}>
+                                                            {category.name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>
