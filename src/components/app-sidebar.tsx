@@ -1,12 +1,12 @@
 "use client";
 
 import * as React from "react";
-import {Beef, ChartBarStacked, User} from "lucide-react";
+import {Beef, ChartBarStacked, ShoppingBag} from "lucide-react";
 
 import {NavMain} from "@/components/nav-main";
 import {NavUser} from "@/components/nav-user";
-import {TeamSwitcher} from "@/components/team-switcher";
 import {Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail,} from "@/components/ui/sidebar";
+import {Button} from "@/components/ui/button";
 
 //  TODO.
 const data = {
@@ -15,16 +15,9 @@ const data = {
         email: "admin@example.com",
         avatar: "",
     },
-    teams: [
-        {
-            name: "B Market",
-            logo: User,
-            plan: "Partie admin",
-        },
-    ],
     navMain: [
         {
-            title: "Gestion articles",
+            title: "Gestion des articles",
             url: "/admin/article",
             icon: Beef,
         },
@@ -32,6 +25,11 @@ const data = {
             title: "Gestion des catégories",
             url: "/admin/category",
             icon: ChartBarStacked,
+        },
+        {
+            title: "Gestion des commandes",
+            url: "/admin/order",
+            icon: ShoppingBag,
         },
         // {
         // 	title: "Gestion des commandes",
@@ -61,13 +59,13 @@ export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
-                <TeamSwitcher teams={data.teams}/>
+                <NavUser user={data.user}/>
             </SidebarHeader>
             <SidebarContent>
                 <NavMain items={data.navMain}/>
             </SidebarContent>
             <SidebarFooter>
-                <NavUser user={data.user}/>
+                <Button>Déconnexion</Button>
             </SidebarFooter>
             <SidebarRail/>
         </Sidebar>
