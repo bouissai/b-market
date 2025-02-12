@@ -5,13 +5,20 @@ import { DialogFooter } from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useArticles } from '@/hooks/useArticles';
 import { OrderShema } from '@/types/order';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -23,6 +30,8 @@ interface OrderFormProps {
 }
 
 export default function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
+  const { articles } = useArticles();
+
   const form = useForm<z.infer<typeof OrderShema>>({
     resolver: zodResolver(OrderShema), // Apply the zodResolver
   });
@@ -39,9 +48,6 @@ export default function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
               <FormControl>
                 <Input placeholder="Hafid" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -51,13 +57,47 @@ export default function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
           name="status"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>User id</FormLabel>
+              <FormLabel>Status</FormLabel>
               <FormControl>
                 <Input placeholder="En cours" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="orderItems"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Articles</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={undefined}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select an article" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {articles.map((article) => (
+                    <SelectItem key={article.id} value={article.id}>
+                      {article.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="total"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Total</FormLabel>
+              <FormControl>
+                <Input disabled defaultValue={0} {...field} />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
