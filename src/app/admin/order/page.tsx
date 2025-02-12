@@ -1,5 +1,6 @@
 'use client';
 
+import OrderForm from '@/components/orderAdmin/OrderForm';
 import OrderList from '@/components/orderAdmin/OrderList';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -37,7 +38,13 @@ export default function OrdersManagement() {
               <DialogHeader>
                 <DialogTitle>Ajouter une commande</DialogTitle>
               </DialogHeader>
-              {/* <OrderForm onSubmit={() => {console.log('submit')}} onCancel={() => setIsDialogOpen(false)} /> */}
+              <OrderForm
+                onSubmit={async (values) => {
+                  console.log('submit', values);
+                  return Promise.resolve();
+                }}
+                onCancel={() => setIsDialogOpen(false)}
+              />
             </DialogContent>
           </Dialog>
         </CardHeader>
