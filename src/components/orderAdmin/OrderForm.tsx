@@ -12,7 +12,7 @@ interface OrderItem {
 }
 
 interface OrderFormProps {
-  onSubmit: (order: { userId: string; status: string; orderItems: OrderItem[] }) => Promise<void>
+  onSubmit: () => void
   onCancel: () => void
 }
 

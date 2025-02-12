@@ -1,5 +1,5 @@
-import {useEffect, useState} from "react"
-import {Category} from "@/types/article";
+import { Category } from "@/types/article";
+import { useEffect, useState } from "react";
 
 export function useCategories() {
     const [categories, setCategories] = useState<Category[]>([])
@@ -12,6 +12,7 @@ export function useCategories() {
     }, [])
 
     const fetchCategories = async () => {
+        console.log('fetchCategories');
         try {
             setIsLoading(true)
             const response = await fetch("/api/category")

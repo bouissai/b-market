@@ -3,53 +3,23 @@
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { useEffect, useState } from "react"
-
-interface OrderItem {
-  productId: string
-  quantity: number
-}
-
-interface Order {
-  id: string
-  userId: string
-  status: string
-  orderItems: OrderItem[]
-}
+import { Order } from "@/types/order"
 
 interface OrderListProps {
-  orders: Order[]
-  setOrders: React.Dispatch<React.SetStateAction<Order[]>>
-}
+    orders: Order[];
+  }
+  
+  export default function OrderList({ orders }: OrderListProps) {
 
-export default function OrderList({ orders, setOrders }: OrderListProps) {
-  const [orderData, setOrderData] = useState<Order[]>([])
-
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await fetch("/api/orders")
-        if (!response.ok) {
-          throw new Error("Failed to fetch orders")
-        }
-        const data = await response.json()
-        setOrderData(data)
-        setOrders(data)
-      } catch (err) {
-        console.error("Error fetching orders:", err)
-      }
-    }
-
-    fetchOrders()
-  }, [setOrders])
+    console.log('orders liste : ',orders);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Order List</CardTitle>
+        <CardTitle>Liste des commandes</CardTitle>
       </CardHeader>
       <CardContent>
-        {orderData.length === 0 ? (
+        {orders.length === 0 ? (
           <p>No orders found.</p>
         ) : (
           <Table>
@@ -62,18 +32,18 @@ export default function OrderList({ orders, setOrders }: OrderListProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {orderData.map((order) => (
+              {orders.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell>{order.id}</TableCell>
                   <TableCell>{order.userId}</TableCell>
                   <TableCell>
-                    <Badge variant={order.status === "shipped" ? "success" : "default"}>{order.status}</Badge>
+                    <Badge variant={order.status === "shipped" ? "secondary" : "default"}>{order.status}</Badge>
                   </TableCell>
                   <TableCell>
                     <ul className="list-disc list-inside">
-                      {order.orderItems.map((item, index) => (
+                      {order.orderItems?.map((item, index) => (
                         <li key={index}>
-                          {item.productId} (x{item.quantity})
+                          {item.orderId} (x{item.quantity})
                         </li>
                       ))}
                     </ul>
