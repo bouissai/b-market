@@ -12,14 +12,12 @@ export function useOrders() {
     }, []);
 
     const fetchOrders = async () => {
-        console.log('fetchOrders');
         try{
             setIsLoading(true);
             const response = await fetch("/api/order");
             if(!response.ok) throw new Error("Failed to fetch orders");
             const data = await response.json();
             setOrders(data);
-            console.log('orders : ',orders);
         }catch(err){
             setError(err instanceof Error ? err.message : "An error occurred");
         }finally{

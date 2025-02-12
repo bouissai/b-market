@@ -12,7 +12,6 @@ export function useCategories() {
     }, [])
 
     const fetchCategories = async () => {
-        console.log('fetchCategories');
         try {
             setIsLoading(true)
             const response = await fetch("/api/category")

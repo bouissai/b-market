@@ -19,8 +19,6 @@ export default function OrdersManagement() {
 
   const { orders } = useOrders();
 
-  console.log(orders);
-
   if (!Array.isArray(orders)) {
     return <div>Loading...</div>;
   }
