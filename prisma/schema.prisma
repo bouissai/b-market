@@ -63,6 +63,7 @@ model CartItem {
   articleId String
   article   Article @relation(fields: [articleId], references: [id])
   quantity  Int     @default(1)
+  @@unique([cartId, articleId])  // 🚀 Ajout de la contrainte UNIQUE
 }
 
 model Order {
@@ -84,4 +85,5 @@ model OrderItem {
   article   Article @relation(fields: [articleId], references: [id])
   quantity  Int     @default(1)
   price     Float
+  @@unique([orderId, articleId])  // 🚀 Ajout de la contrainte UNIQUE
 }
