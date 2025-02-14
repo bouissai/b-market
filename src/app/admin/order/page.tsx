@@ -19,37 +19,42 @@ export default function OrdersManagement() {
 
   const { orders } = useOrders();
 
-  if (!Array.isArray(orders)) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="p-6">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Gestion des commandes</CardTitle>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>Ajouter une commande</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Ajouter une commande</DialogTitle>
-              </DialogHeader>
-              <OrderForm
-                onSubmit={async (values) => {
-                  console.log('submit', values);
-                  return Promise.resolve();
-                }}
-                onCancel={() => setIsDialogOpen(false)}
-              />
-            </DialogContent>
-          </Dialog>
+          <div className="flex justify-between items-center">
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>Create New Order</Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Create New Order</DialogTitle>
+                </DialogHeader>
+                <OrderForm
+                  onSubmit={async (values) => {
+                    console.log('submit', values);
+                    return Promise.resolve();
+                  }}
+                  onCancel={() => setIsDialogOpen(false)}
+                />
+              </DialogContent>
+            </Dialog>
+          </div>
         </CardHeader>
         <CardContent>
           <OrderList orders={orders} />
         </CardContent>
       </Card>
+      {/* <OrderForm
+        onSubmit={async (values) => {
+          console.log('submit', values);
+          return Promise.resolve();
+        }}
+        onCancel={() => setIsDialogOpen(false)}
+      /> */}
     </div>
   );
 }

@@ -46,7 +46,7 @@ export default function OrderList({ orders }: OrderListProps) {
               <ul className="list-disc list-inside">
                 {order.orderItems?.map((item, index) => (
                   <li key={index}>
-                    {item.orderId} (x{item.quantity})
+                    {item.articleId} (x{item.quantity})
                   </li>
                 ))}
               </ul>
