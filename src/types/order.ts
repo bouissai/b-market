@@ -18,15 +18,15 @@ export interface OrderItem {
     price: number;
 }
 
-export const OrderShema = z.object({
-    userId : z.string().nonempty(),
-    total: z.number().nonnegative(),
-    status: z.string().nonempty(),
-    createdAt: z.date(),
-    updatedAt: z.date(),
-    orderItems: z.array(z.object({
-        articleId: z.string().nonempty(),
-        quantity: z.number().nonnegative(),
-        price: z.number().nonnegative(),
-    }))
-});
+export const OrderSchema = z.object({
+    userName: z.string().nonempty("Le nom d'utilisateur est requis"),
+    total: z.number().nonnegative("Le total doit être un nombre non négatif"),
+    orderItems: z
+      .array(
+        z.object({
+          articleName: z.string().nonempty("Le nom de l'article est requis"),
+          quantity: z.number().int().positive("La quantité doit être un entier positif"),
+        }),
+      )
+      .nonempty("Au moins un article est requis"),
+  })
