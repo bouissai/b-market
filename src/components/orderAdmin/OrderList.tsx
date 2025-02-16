@@ -25,16 +25,16 @@ export default function OrderList({ orders }: OrderListProps) {
       <TableHeader>
         <TableRow>
           <TableHead>Order ID</TableHead>
-          <TableHead>User ID</TableHead>
+          <TableHead>Client</TableHead>
           <TableHead>Status</TableHead>
-          <TableHead>Items</TableHead>
+          <TableHead>Articles</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {orders.map((order) => (
           <TableRow key={order.id}>
             <TableCell>{order.id}</TableCell>
-            <TableCell>{order.userId}</TableCell>
+            <TableCell>{order.user.name}</TableCell>
             <TableCell>
               <Badge
                 variant={
@@ -56,7 +56,7 @@ export default function OrderList({ orders }: OrderListProps) {
               <ul className="list-disc list-inside">
                 {order.orderItems?.map((item, index) => (
                   <li key={index}>
-                    {item.articleId} (x{item.quantity})
+                    {item.article.name} (x{item.quantity})
                   </li>
                 ))}
               </ul>

@@ -3,6 +3,10 @@ import { z } from "zod";
 export interface Order {
     id: string;
     userId: string;
+    user: {
+        id: string;
+        name: string;
+    };
     total: number;
     status: string;
     createdAt: Date;
@@ -14,6 +18,11 @@ export interface OrderItem {
     id: string;
     orderId: string;
     articleId: string;
+    article: {
+        id: string;
+        name: string;
+        // autres propriétés de l'article si nécessaire
+    };
     quantity: number;
     price: number;
 }

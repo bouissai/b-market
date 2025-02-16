@@ -3,7 +3,16 @@ import {Order} from "@prisma/client";
 
 
 export async function getAllOrders(): Promise<Order[]> {
-    return db.order.findMany({include: {orderItems: true}});
+    return db.order.findMany({
+        include: {
+            orderItems: {
+                include: {
+                    article: true // Inclure l'article pour chaque orderItem
+                }
+            },
+            user: true // Inclure l'utilisateur
+        }
+    });
 }
 
 
