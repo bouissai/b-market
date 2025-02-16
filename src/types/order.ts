@@ -21,6 +21,7 @@ export interface OrderItem {
     article: {
         id: string;
         name: string;
+        unit: string;
         // autres propriétés de l'article si nécessaire
     };
     quantity: number;

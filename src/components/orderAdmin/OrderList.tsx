@@ -53,13 +53,18 @@ export default function OrderList({ orders }: OrderListProps) {
               </Badge>
             </TableCell>
             <TableCell>
-              <ul className="list-disc list-inside">
+              <div className="flex flex-col gap-1">
                 {order.orderItems?.map((item, index) => (
-                  <li key={index}>
-                    {item.article.name} (x{item.quantity})
-                  </li>
+                  <div key={index} className="flex items-center gap-2 text-sm">
+                    <span className="font-medium">{item.article.name}</span>
+                    <span className="text-muted-foreground">
+                      ({item.quantity} {item.article.unit})
+                    </span>
+                    <span className="text-muted-foreground">•</span>
+                    <span className="text-muted-foreground">{item.price}€</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </TableCell>
           </TableRow>
         ))}
