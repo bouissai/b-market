@@ -37,7 +37,17 @@ export default function OrderList({ orders }: OrderListProps) {
             <TableCell>{order.userId}</TableCell>
             <TableCell>
               <Badge
-                variant={order.status === 'shipped' ? 'secondary' : 'default'}
+                variant={
+                  order.status === 'pending'
+                    ? 'secondary'
+                    : order.status === 'awaiting_payment'
+                    ? 'info'
+                    : order.status === 'completed'
+                    ? 'success'
+                    : order.status === 'cancelled'
+                    ? 'destructive'
+                    : 'default'
+                }
               >
                 {order.status}
               </Badge>
