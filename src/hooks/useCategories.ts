@@ -33,6 +33,16 @@ export function useCategories() {
         setCategories(categories.map((c) => (c.id === updatedCategory.id ? updatedCategory : c)))
     }
 
+    const deleteCategory = async (id: string) => {
+        const response = await fetch(`/api/category/${id}`, {method: "DELETE"});
+        if (!response.ok) {
+            const error = await response.json();
+            throw {status: response.status, message: error.message};
+        }
+        setCategories(categories.filter((c) => c.id !== id));
+        return response.json();
+    }
+
     const saveCategory = async (category: Category, method: "POST" | "PUT", url: string) => {
         setIsSubmitting(true);
         try {
@@ -43,26 +53,17 @@ export function useCategories() {
             });
 
             if (!response.ok) {
-                const errorResponse = await response.json(); // Récupérer l'objet d'erreur
+                const errorResponse = await response.json();
                 throw {status: response.status, message: errorResponse.message || "Erreur inconnue"};
             }
 
             return await response.json();
         } catch (error) {
-            throw error; // Relance l'erreur pour une gestion ultérieure
+            throw error;
         } finally {
             setIsSubmitting(false);
         }
     };
-
-
-    const deleteCategory = async (id: string) => {
-        await fetch(`/api/category/${id}`, {method: "DELETE"})
-            .then((response) => {
-                if (!response.ok) throw {message: response.json(), status: response.status};
-                setCategories(categories.filter((c) => c.id !== id));
-            })
-    }
 
     return {
         categories,

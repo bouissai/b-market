@@ -6,9 +6,7 @@ export function useArticles() {
     const [articles, setArticles] = useState<Article[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
-
     const {toast} = useToast()
-
 
     useEffect(() => {
         fetchArticles()
@@ -39,14 +37,26 @@ export function useArticles() {
     const deleteArticle = async (id: string) => {
         try {
             const response = await fetch(`/api/article/${id}`, {method: "DELETE"})
-            if (!response.ok) throw {message: response.json(), status: response.status};
+            const data = await response.json()
+            
+            if (!response.ok) {
+                toast({
+                    title: "Erreur",
+                    description: data.message || "Une erreur est survenue lors de la suppression",
+                    variant: "destructive",
+                });
+                return false;
+            }
+            
             setArticles(articles.filter((a) => a.id !== id))
-        } catch (error) {
+            return true;
+        } catch (error: any) {
             toast({
-                title: "Aïe caramba ! 🤠",
-                description: error?.message || "Erreur inconnue",
+                title: "Erreur",
+                description: "Une erreur est survenue lors de la suppression",
                 variant: "destructive",
             });
+            return false;
         }
     }
 

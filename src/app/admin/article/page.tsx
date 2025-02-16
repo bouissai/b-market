@@ -1,7 +1,7 @@
 "use client"
 
 import {useState} from "react"
-import {Loader2, Pencil, Trash} from "lucide-react"
+import {Loader2, Pencil, Trash, ArrowUpDown} from "lucide-react"
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table"
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 import {Button} from "@/components/ui/button"
@@ -18,7 +18,19 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import {useToast} from "@/hooks/use-toast"
-import {Article} from "@/types/article";
+import {Article} from "@/types/article"
+import {
+    ColumnDef,
+    flexRender,
+    getCoreRowModel,
+    useReactTable,
+    getPaginationRowModel,
+    SortingState,
+    getSortedRowModel,
+    ColumnFiltersState,
+    getFilteredRowModel,
+} from '@tanstack/react-table'
+import {Input} from "@/components/ui/input"
 
 export default function ArticlePage() {
     const {toast} = useToast()
@@ -26,6 +38,96 @@ export default function ArticlePage() {
     const [selectedArticle, setSelectedArticle] = useState<Article | null>(null)
     const [isFormOpen, setIsFormOpen] = useState<boolean>(false)
     const [articleToDelete, setArticleToDelete] = useState<Article | null>(null)
+    const [sorting, setSorting] = useState<SortingState>([])
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+
+    const columns: ColumnDef<Article>[] = [
+        {
+            accessorKey: 'name',
+            header: ({column}) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Nom
+                        <ArrowUpDown className="ml-2 h-4 w-4"/>
+                    </Button>
+                )
+            },
+        },
+        {
+            accessorKey: 'price',
+            header: ({column}) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Prix
+                        <ArrowUpDown className="ml-2 h-4 w-4"/>
+                    </Button>
+                )
+            },
+            cell: ({row}) => `${row.getValue<number>('price').toFixed(2)} €`,
+        },
+        {
+            accessorKey: 'categoryName',
+            header: ({column}) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Catégorie
+                        <ArrowUpDown className="ml-2 h-4 w-4"/>
+                    </Button>
+                )
+            },
+        },
+        {
+            accessorKey: 'unit',
+            header: 'Unité',
+        },
+        {
+            id: 'actions',
+            cell: ({row}) => {
+                const article = row.original
+                return (
+                    <>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                                setIsFormOpen(true)
+                                setSelectedArticle(article)
+                            }}
+                        >
+                            <Pencil className="w-4 h-4"/>
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => setArticleToDelete(article)}>
+                            <Trash className="w-4 h-4 text-red-500"/>
+                        </Button>
+                    </>
+                )
+            },
+        },
+    ]
+
+    const table = useReactTable({
+        data: articles,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        onSortingChange: setSorting,
+        getSortedRowModel: getSortedRowModel(),
+        onColumnFiltersChange: setColumnFilters,
+        getFilteredRowModel: getFilteredRowModel(),
+        state: {
+            sorting,
+            columnFilters,
+        },
+    })
 
     if (isLoading) {
         return (
@@ -45,12 +147,14 @@ export default function ArticlePage() {
 
     const handleDelete = async () => {
         if (articleToDelete) {
-            await deleteArticle(articleToDelete.id)
-            setArticleToDelete(null)
-            toast({
-                title: "Succès",
-                description: "Article supprimé avec succès",
-            })
+            const success = await deleteArticle(articleToDelete.id);
+            if (success) {
+                toast({
+                    title: "Succès",
+                    description: "Article supprimé avec succès",
+                });
+            }
+            setArticleToDelete(null);
         }
     }
 
@@ -69,44 +173,83 @@ export default function ArticlePage() {
                     </Button>
                 </CardHeader>
                 <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Nom</TableHead>
-                                <TableHead>Prix</TableHead>
-                                <TableHead>Catégorie</TableHead>
-                                <TableHead>Unité</TableHead>
-                                <TableHead>Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {articles.map((article) => (
-                                <TableRow key={article.id}>
-                                    <TableCell>{article.name}</TableCell>
-                                    <TableCell>{article.price.toFixed(2)} €</TableCell>
-                                    <TableCell>{article.categoryName}</TableCell>
-                                    <TableCell>{article.unit}</TableCell>
-                                    <TableCell>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => {
-                                                setIsFormOpen(true)
-                                                setSelectedArticle(article)
-                                            }}
+                    <div className="flex items-center py-4">
+                        <Input
+                            placeholder="Filtrer par nom..."
+                            value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+                            onChange={(event) =>
+                                table.getColumn('name')?.setFilterValue(event.target.value)
+                            }
+                            className="max-w-sm"
+                        />
+                    </div>
+                    <div className="rounded-md border">
+                        <Table>
+                            <TableHeader>
+                                {table.getHeaderGroups().map((headerGroup) => (
+                                    <TableRow key={headerGroup.id}>
+                                        {headerGroup.headers.map((header) => (
+                                            <TableHead key={header.id}>
+                                                {header.isPlaceholder
+                                                    ? null
+                                                    : flexRender(
+                                                        header.column.columnDef.header,
+                                                        header.getContext(),
+                                                    )}
+                                            </TableHead>
+                                        ))}
+                                    </TableRow>
+                                ))}
+                            </TableHeader>
+                            <TableBody>
+                                {table.getRowModel().rows?.length ? (
+                                    table.getRowModel().rows.map((row) => (
+                                        <TableRow key={row.id}>
+                                            {row.getVisibleCells().map((cell) => (
+                                                <TableCell key={cell.id}>
+                                                    {flexRender(
+                                                        cell.column.columnDef.cell,
+                                                        cell.getContext(),
+                                                    )}
+                                                </TableCell>
+                                            ))}
+                                        </TableRow>
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell
+                                            colSpan={columns.length}
+                                            className="h-24 text-center"
                                         >
-                                            <Pencil className="w-4 h-4"/>
-                                        </Button>
-                                        <Button variant="ghost" size="icon" onClick={() => setArticleToDelete(article)}>
-                                            <Trash className="w-4 h-4 text-red-500"/>
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                                            Aucun résultat.
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
+                    <div className="flex items-center justify-end space-x-2 py-4">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => table.previousPage()}
+                            disabled={!table.getCanPreviousPage()}
+                        >
+                            Précédent
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => table.nextPage()}
+                            disabled={!table.getCanNextPage()}
+                        >
+                            Suivant
+                        </Button>
+                    </div>
                 </CardContent>
             </Card>
+
+            {/* Forms and Dialogs */}
             {isFormOpen && (
                 <ArticleForm
                     article={selectedArticle}

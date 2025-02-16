@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {Beef, ChartBarStacked, ShoppingBag} from "lucide-react";
+import {Beef, ChartBarStacked, LogOutIcon, ShoppingBag} from "lucide-react";
 
 import {NavMain} from "@/components/nav-main";
 import {NavUser} from "@/components/nav-user";
@@ -65,7 +65,7 @@ export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
                 <NavMain items={data.navMain}/>
             </SidebarContent>
             <SidebarFooter>
-                <Button>Déconnexion</Button>
+                <Button><LogOutIcon/>Déconnexion</Button>
             </SidebarFooter>
             <SidebarRail/>
         </Sidebar>
