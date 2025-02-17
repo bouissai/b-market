@@ -1,6 +1,6 @@
 'use client';
 
-import OrderForm from '@/components/orderAdmin/OrderForm';
+import { OrderForm } from '@/components/orderAdmin/orderForm';
 import { OrderTable } from '@/components/orderAdmin/orderTable';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
