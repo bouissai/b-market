@@ -41,3 +41,5 @@ export const OrderSchema = z.object({
       )
       .nonempty("Au moins un article est requis"),
   })
+
+  export type OrderFormValues = z.infer<typeof OrderSchema>
