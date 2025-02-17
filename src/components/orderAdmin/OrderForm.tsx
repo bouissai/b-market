@@ -25,11 +25,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { useArticles } from '@/hooks/useArticles';
 import { cn } from '@/lib/utils';
 import { Article } from '@/types/article';
 import { OrderSchema } from '@/types/order';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Check, ChevronsUpDown } from 'lucide-react';
+import { Check, ChevronsUpDown, GrabIcon, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -39,73 +40,10 @@ interface OrderFormProps {
   onCancel: () => void;
 }
 
-const articles: Article[] = [
-  {
-    id: 'art1',
-    name: 'Côte de bœuf',
-    unit: 'kg',
-    price: 29.99,
-    image: 'https://example.com/cote-de-boeuf.jpg',
-    description:
-      'Une côte de bœuf tendre et savoureuse, idéale pour le barbecue.',
-    createdAt: new Date('2024-01-10T10:00:00Z'),
-    updatedAt: new Date('2024-02-01T12:00:00Z'),
-    categoryName: 'Bœuf',
-    category: {
-      id: 'cat1',
-      name: 'Bœuf',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    cartItems: [],
-    orderItems: [],
-  },
-  {
-    id: 'art2',
-    name: 'Escalope de poulet',
-    unit: 'kg',
-    price: 12.5,
-    image: 'https://example.com/escalope-poulet.jpg',
-    description:
-      'Escalopes de poulet maigres et savoureuses, parfaites pour vos plats.',
-    createdAt: new Date('2024-01-15T08:30:00Z'),
-    updatedAt: new Date('2024-02-02T14:00:00Z'),
-    categoryName: 'Volaille',
-    category: {
-      id: 'cat2',
-      name: 'Volaille',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    cartItems: [],
-    orderItems: [],
-  },
-  {
-    id: 'art3',
-    name: 'Saucisses de Toulouse',
-    unit: 'kg',
-    price: 15.0,
-    image: 'https://example.com/saucisses-toulouse.jpg',
-    description:
-      'Délicieuses saucisses de Toulouse, parfaites pour le barbecue ou les plats mijotés.',
-    createdAt: new Date('2024-01-20T11:45:00Z'),
-    updatedAt: new Date('2024-02-05T16:30:00Z'),
-    categoryName: 'Porc',
-    category: {
-      id: 'cat3',
-      name: 'Porc',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    cartItems: [],
-    orderItems: [],
-  },
-];
-
 export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
-  // const { articles } = useArticles();
+  const { articles } = useArticles();
   const [open, setOpen] = useState(false);
-  const [selectedProductId, setSelectedProductId] = useState<string>('');
+  const [selectedArticle, setSelectedArticle] = useState<Article>();
 
   const form = useForm<z.infer<typeof OrderSchema>>({
     resolver: zodResolver(OrderSchema), // Apply the zodResolver
@@ -143,22 +81,33 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
             <FormItem className="flex flex-col">
               <FormLabel>Articles</FormLabel>
               <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className="w-full justify-between"
-                    >
-                      {selectedProductId
-                        ? articles.find(
-                            (article) => article.id === selectedProductId,
-                          )?.name
-                        : 'Select product...'}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
+                <div className='flex flex-row gap-x-2'>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className="w-full justify-between"
+                      >
+                        {selectedArticle
+                          ? articles.find(
+                              (article) => article.id === selectedArticle.id,
+                            )?.name
+                          : 'Sélectionner un article...'}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <Button 
+                    variant="secondary"
+                    onClick={() => {
+                      if (selectedArticle) {
+                        append({articleId: selectedArticle.id, articleName: selectedArticle.name, quantity: 1 });
+                        setSelectedArticle(undefined);
+                      }
+                    }}
+                    disabled={!selectedArticle}>Ajouter l'article</Button>
+                </div>
                 <PopoverContent className="w-full p-0">
                   <Command>
                     <CommandInput placeholder="Search product..." />
@@ -169,10 +118,10 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
                           <CommandItem
                             key={article.id}
                             onSelect={() => {
-                              setSelectedProductId(
-                                article.id === selectedProductId
-                                  ? ''
-                                  : article.id,
+                              setSelectedArticle(
+                                article.id === selectedArticle?.id
+                                  ? undefined
+                                  : article,
                               );
                               setOpen(false);
                             }}
@@ -180,7 +129,7 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
                             <Check
                               className={cn(
                                 'mr-2 h-4 w-4',
-                                selectedProductId === article.id
+                                selectedArticle?.id === article.id
                                   ? 'opacity-100'
                                   : 'opacity-0',
                               )}
@@ -197,6 +146,18 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
             </FormItem>
           )}
         />
+
+        {itemFields.map((field, index) => (
+          <div key={field.id} className="flex flex-row gap-x-4">
+            {field.articleName}
+            <Button 
+              size="icon"
+              onClick={remove.bind(null, index)}>
+                <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        ))}
+
         {/* <FormField
           control={form.control}
           name="total"
@@ -211,7 +172,7 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
           )}
         /> */}
         <DialogFooter>
-          <Button type="button" variant="secondary" onClick={onCancel}>
+          <Button type="button" variant="outline" onClick={onCancel}>
             Cancel
           </Button>
           <Button type="submit">Create Order</Button>
