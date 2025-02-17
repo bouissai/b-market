@@ -27,11 +27,11 @@ export default function OrdersManagement() {
           <div className="flex justify-between items-center">
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button>Create New Order</Button>
+                <Button>Nouvelle commande</Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
+              <DialogContent className="sm:max-w-[625px]">
                 <DialogHeader>
-                  <DialogTitle>Create New Order</DialogTitle>
+                  <DialogTitle>Nouvelle commande</DialogTitle>
                 </DialogHeader>
                 <OrderForm
                   onSubmit={async (values) => {

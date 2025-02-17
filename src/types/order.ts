@@ -34,9 +34,12 @@ export const OrderSchema = z.object({
     orderItems: z
       .array(
         z.object({
+          articleId: z.string().nonempty("L'id de l'article est requis"),
           articleName: z.string().nonempty("Le nom de l'article est requis"),
           quantity: z.number().int().positive("La quantité doit être un entier positif"),
         }),
       )
       .nonempty("Au moins un article est requis"),
   })
+
+  export type OrderFormValues = z.infer<typeof OrderSchema>
