@@ -3,8 +3,8 @@
 import * as React from "react";
 import {Beef, ChartBarStacked, LogOutIcon, ShoppingBag} from "lucide-react";
 
-import {NavMain} from "@/components/nav-main";
-import {NavUser} from "@/components/nav-user";
+import {NavMain} from "@/components/nav/nav-main";
+import {NavUser} from "@/components/nav/nav-user";
 import {Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail,} from "@/components/ui/sidebar";
 import {Button} from "@/components/ui/button";
 

@@ -1,7 +1,7 @@
 'use client';
 
-import OrderForm from '@/components/orderAdmin/OrderForm';
-import OrderList from '@/components/orderAdmin/OrderList';
+import OrderForm from '@/components/orderAdmin/orderForm';
+import { OrderTable } from '@/components/orderAdmin/orderTable';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -45,7 +45,12 @@ export default function OrdersManagement() {
           </div>
         </CardHeader>
         <CardContent>
-          <OrderList orders={orders} />
+          
+          <OrderTable
+            data={orders}
+            onEdit={(order) => {}}
+            onDelete={(category) => {}}>
+          </OrderTable>
         </CardContent>
       </Card>
       {/* <OrderForm

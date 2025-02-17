@@ -1,6 +1,6 @@
 import "./globals.css";
 import {SidebarInset, SidebarProvider, SidebarTrigger,} from "@/components/ui/sidebar";
-import {AppSidebar} from "@/components/app-sidebar";
+import {AppSidebar} from "@/components/nav/app-sidebar";
 import {ThemeProvider} from "@/components/theme-provider";
 import {ModeToggle} from "@/components/mode-toogle";
 import {Toaster} from "@/components/ui/toaster";
