@@ -1,5 +1,5 @@
-import {NextRequest, NextResponse} from "next/server";
-import {db} from "@/app/lib/db";
+import { db } from "@/app/lib/db";
+import { NextRequest, NextResponse } from "next/server";
 
 
 // 🔴 DELETE → Supprimer une commande avec ses `OrderItems`
@@ -29,5 +29,31 @@ export async function DELETE(req: NextRequest, {params}: { params: { id: string 
     } catch (error) {
         console.error("Erreur lors de la suppression de la commande :", error);
         return NextResponse.json({message: "Erreur serveur lors de la suppression"}, {status: 500});
+    }
+}
+
+// 🔵 GET → Récupérer une commande avec ses `OrderItems`
+export async function GET(req: NextRequest, {params}: { params: { id: string } }) {
+    try {
+        const {id} = await params;
+
+        if (!id) {
+            return NextResponse.json({message: "L'ID de la commande est requis"}, {status: 400});
+        }
+
+        // Récupérer la commande avec ses OrderItems
+        const order = await db.order.findUnique({
+            where: {id},
+            include: {orderItems: true},
+        });
+
+        if (!order) {
+            return NextResponse.json({message: "Commande introuvable"}, {status: 404});
+        }
+
+        return NextResponse.json(order, {status: 200});
+    } catch (error) {
+        console.error("Erreur lors de la récupération de la commande :", error);
+        return NextResponse.json({message: "Erreur serveur lors de la récupération"}, {status: 500});
     }
 }

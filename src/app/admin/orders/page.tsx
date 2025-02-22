@@ -1,6 +1,6 @@
 'use client';
 
-import { OrderForm } from '@/components/orderAdmin/orderForm';
+import OrderForm from '@/components/orderAdmin/OrderForm';
 import { OrderTable } from '@/components/orderAdmin/orderTable';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -45,21 +45,13 @@ export default function OrdersManagement() {
           </div>
         </CardHeader>
         <CardContent>
-          
           <OrderTable
             data={orders}
             onEdit={(order) => {}}
-            onDelete={(category) => {}}>
-          </OrderTable>
+            onDelete={(category) => {}}
+          ></OrderTable>
         </CardContent>
       </Card>
-      {/* <OrderForm
-        onSubmit={async (values) => {
-          console.log('submit', values);
-          return Promise.resolve();
-        }}
-        onCancel={() => setIsDialogOpen(false)}
-      /> */}
     </div>
   );
 }

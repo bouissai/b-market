@@ -1,21 +1,27 @@
-"use client"
+'use client';
 
-import { Button } from "@/components/ui/button"
-import { Order } from "@/types/order"
-import { ColumnDef, useReactTable } from "@tanstack/react-table"
-import { ArrowUpDown } from "lucide-react"
-import { Badge } from "../ui/badge"
-import { DataTable } from "../table/dataTable"
+import { Button } from '@/components/ui/button';
+import { Order } from '@/types/order';
+import { ColumnDef } from '@tanstack/react-table';
+import { ArrowUpDown } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { DataTable } from '../table/dataTable';
+import { Badge } from '../ui/badge';
 
 interface OrderTableProps {
-    data: Order[]
-    onEdit: (Order: Order) => void
-    onDelete: (Order: Order) => void
+  data: Order[];
+  onEdit: (Order: Order) => void;
+  onDelete: (Order: Order) => void;
 }
 
-export function OrderTable({data, onEdit, onDelete}: OrderTableProps) {
-    
-const columns: ColumnDef<Order>[] = [
+export function OrderTable({ data, onEdit, onDelete }: OrderTableProps) {
+  const router = useRouter();
+
+  function handleRowClick(row: Order): void {
+    router.push(`/admin/orders/${row.id}`);
+  }
+
+  const columns: ColumnDef<Order>[] = [
     {
       accessorKey: 'id',
       header: 'Order ID',
@@ -25,7 +31,9 @@ const columns: ColumnDef<Order>[] = [
       header: 'Client',
       cell: ({ row }) => row.original.user.name,
       filterFn: (row, id, value) => {
-        return row.original.user.name.toLowerCase().includes(value.toLowerCase())
+        return row.original.user.name
+          .toLowerCase()
+          .includes(value.toLowerCase());
       },
     },
     {
@@ -34,13 +42,13 @@ const columns: ColumnDef<Order>[] = [
         return (
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             className="-ml-4"
           >
             Status
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
-        )
+        );
       },
       cell: ({ row }) => {
         const status = row.getValue('status') as string;
@@ -64,18 +72,21 @@ const columns: ColumnDef<Order>[] = [
       },
       sortingFn: (rowA, rowB) => {
         const statusOrder = {
-          'pending': 1,
-          'awaiting_payment': 2,
-          'completed': 3,
-          'cancelled': 4
+          pending: 1,
+          awaiting_payment: 2,
+          completed: 3,
+          cancelled: 4,
         };
         const statusA = rowA.original.status;
         const statusB = rowB.original.status;
-        return statusOrder[statusA as keyof typeof statusOrder] - statusOrder[statusB as keyof typeof statusOrder];
+        return (
+          statusOrder[statusA as keyof typeof statusOrder] -
+          statusOrder[statusB as keyof typeof statusOrder]
+        );
       },
     },
     {
-      accessorKey: 'orderItems',
+      accessorKey: 'actions',
       header: 'Articles',
       cell: ({ row }) => {
         const orderItems = row.original.orderItems;
@@ -101,15 +112,13 @@ const columns: ColumnDef<Order>[] = [
     },
   ];
 
-
-
   return (
-    <DataTable 
-        columns={columns} 
-        data={data} 
-        filterColumn="user"
-        filterPlaceholder="Filtrer par client..."
+    <DataTable
+      columns={columns}
+      data={data}
+      filterColumn="user"
+      filterPlaceholder="Filtrer par client..."
+      onRowClick={(row) => handleRowClick(row)}
     />
-)
-
+  );
 }

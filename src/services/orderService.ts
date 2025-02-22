@@ -1,5 +1,5 @@
-import {db} from "@/app/lib/db";
-import {Order} from "@prisma/client";
+import { db } from "@/app/lib/db";
+import { Order } from "@prisma/client";
 
 
 export async function getAllOrders(): Promise<Order[]> {

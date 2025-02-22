@@ -1,5 +1,5 @@
-import { Order } from "@/types/order";
-import { useEffect, useState } from "react";
+import { Order, OrderDetailsDTO } from "@/types/order";
+import { useCallback, useEffect, useState } from "react";
 
 export function useOrders() {
     const [orders, setOrders] = useState<Order[]>([]);
@@ -14,7 +14,7 @@ export function useOrders() {
     const fetchOrders = async () => {
         try{
             setIsLoading(true);
-            const response = await fetch("/api/order");
+            const response = await fetch("/api/orders");
             if(!response.ok) throw new Error("Failed to fetch orders");
             const data = await response.json();
             setOrders(data);
@@ -59,6 +59,12 @@ export function useOrders() {
         await fetch(`/api/orders/${id}`, {method: "DELETE"});
     };
 
+    const fetchOrderDetails = useCallback(async (id: string) : Promise<OrderDetailsDTO> => {
+        const response = await fetch(`/api/orders/${id}`);
+        if(!response.ok) throw new Error("Failed to fetch order");
+        return await response.json();
+    }, []);
+
 
     return {
         orders,
@@ -69,7 +75,8 @@ export function useOrders() {
         updateOrder,
         saveOrder,
         deleteOrder,
-        fetchOrders
+        fetchOrders,
+        fetchOrderDetails,
     }
     
 }

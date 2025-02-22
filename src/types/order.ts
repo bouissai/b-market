@@ -43,3 +43,18 @@ export const OrderSchema = z.object({
   })
 
   export type OrderFormValues = z.infer<typeof OrderSchema>
+
+  export interface OrderDetailsDTO {
+    id: string;
+    customerName: string;
+    total: number;
+    status: string;
+    items: OrderItemDTO[];
+  }
+  
+  interface OrderItemDTO {
+    id: string;
+    name: string;
+    quantity: number;
+    price: number;
+  }
