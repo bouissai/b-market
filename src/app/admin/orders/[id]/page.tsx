@@ -41,7 +41,7 @@ export default function OrderDetailPage() {
       <p className="mt-4">Statut: {order.status}</p>
       <h2 className="text-xl font-bold mt-6">Produits</h2>
       <ul className="mt-4">
-        {order.items.map((item) => (
+        {order.items?.map((item) => (
           <li key={item.id} className="flex justify-between">
             <span>
               {item.name} x {item.quantity}

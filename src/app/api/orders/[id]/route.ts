@@ -1,8 +1,10 @@
 import { db } from "@/app/lib/db";
+import { getOrderById } from "@/services/orderService";
 import { NextRequest, NextResponse } from "next/server";
 
 
 // 🔴 DELETE → Supprimer une commande avec ses `OrderItems`
+// TODO : utiliser le service
 export async function DELETE(req: NextRequest, {params}: { params: { id: string } }) {
     try {
         const {id} = await params;
@@ -42,11 +44,7 @@ export async function GET(req: NextRequest, {params}: { params: { id: string } }
         }
 
         // Récupérer la commande avec ses OrderItems
-        const order = await db.order.findUnique({
-            where: {id},
-            include: {orderItems: true},
-        });
-
+        const order = await getOrderById(id);
         if (!order) {
             return NextResponse.json({message: "Commande introuvable"}, {status: 404});
         }

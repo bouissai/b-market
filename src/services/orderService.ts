@@ -1,4 +1,5 @@
 import { db } from "@/app/lib/db";
+import { OrderDetailsDTO } from "@/types/order";
 import { Order } from "@prisma/client";
 
 
@@ -23,8 +24,28 @@ export async function updateOrderStatus(orderId: string, newStatus: "pending" | 
     });
 }
 
-export async function getOrderById(id: string): Promise<Order | null> {
-    return db.order.findUnique({where: {id}, include: {orderItems: true}});
+export async function getOrderById(id: string): Promise<OrderDetailsDTO | null> {
+    const order = await db.order.findUnique({
+        where: {id},
+        include: {
+            orderItems: {
+                include: {
+                    article: true
+                }
+            },
+            user: true
+        }
+    });
+
+    if (!order) {
+        return null;
+    }
+    return {id: order.id, customerName: order.user.name, total: order.total, status: order.status, items: order.orderItems.map((item) => ({
+        id: item.id,   // ✅ Ajout de l'id de l'item
+        name: item.article.name,
+        quantity: item.quantity,
+        price: item.price
+    }))};
 }
 
 
