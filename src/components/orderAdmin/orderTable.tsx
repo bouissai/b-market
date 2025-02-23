@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Order } from '@/types/order';
+import { ordersDTO } from '@/types/order';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -9,31 +9,47 @@ import { DataTable } from '../table/dataTable';
 import { Badge } from '../ui/badge';
 
 interface OrderTableProps {
-  data: Order[];
-  onEdit: (Order: Order) => void;
-  onDelete: (Order: Order) => void;
+  data: ordersDTO[];
+  onEdit: (Order: ordersDTO) => void;
+  onDelete: (Order: ordersDTO) => void;
 }
 
 export function OrderTable({ data, onEdit, onDelete }: OrderTableProps) {
   const router = useRouter();
 
-  function handleRowClick(row: Order): void {
+  function handleRowClick(row: ordersDTO): void {
     router.push(`/admin/orders/${row.id}`);
   }
 
-  const columns: ColumnDef<Order>[] = [
+  const columns: ColumnDef<ordersDTO>[] = [
     {
       accessorKey: 'id',
-      header: 'Order ID',
+      header: 'Numéro de commande',
     },
     {
       accessorKey: 'user',
       header: 'Client',
-      cell: ({ row }) => row.original.user.name,
-      filterFn: (row, id, value) => {
-        return row.original.user.name
+      cell: ({ row }) => row.original.customerName,
+      filterFn: (row, value) => {
+        return row.original.customerName
           .toLowerCase()
           .includes(value.toLowerCase());
+      },
+    },
+    {
+      accessorKey: 'nbArticles',
+      header: `Nombre d'articles `,
+      cell: ({ row }) => row.original.nbArticles,
+      filterFn: (row, value) => {
+        return row.original.nbArticles.toString() === value;
+      },
+    },
+    {
+      accessorKey: 'total',
+      header: 'Prix total',
+      cell: ({ row }) => row.original.total + ' €',
+      filterFn: (row, value) => {
+        return row.original.total.toString() === value;
       },
     },
     {
@@ -82,31 +98,6 @@ export function OrderTable({ data, onEdit, onDelete }: OrderTableProps) {
         return (
           statusOrder[statusA as keyof typeof statusOrder] -
           statusOrder[statusB as keyof typeof statusOrder]
-        );
-      },
-    },
-    {
-      accessorKey: 'actions',
-      header: 'Articles',
-      cell: ({ row }) => {
-        const orderItems = row.original.orderItems;
-        return (
-          <div className="flex flex-col gap-1">
-            {orderItems?.map((item, index) => (
-              <div key={index} className="flex items-center gap-2 text-sm">
-                <span className="font-medium">{item.article.name}</span>
-                <span className="text-muted-foreground">
-                  ({item.quantity} {item.article.unit})
-                </span>
-                <span className="text-muted-foreground">•</span>
-                <span className="text-muted-foreground">{item.price}€</span>
-              </div>
-            ))}
-            <div className="mt-2 flex justify-between items-center text-sm font-semibold">
-              <span>Total</span>
-              <span>{row.original.total.toFixed(2)}€</span>
-            </div>
-          </div>
         );
       },
     },
