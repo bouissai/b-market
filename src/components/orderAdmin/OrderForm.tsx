@@ -11,10 +11,14 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { useArticles } from '@/hooks/useArticles';
 import { cn } from '@/lib/utils';
-import { OrderSchema } from '@/types/order';
+import { OrderFormValues, OrderItemSchema, OrderSchema } from '@/types/order';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, ChevronsUpDown, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -29,22 +33,6 @@ import {
   CommandList,
 } from '../ui/command';
 import { ScrollArea } from '../ui/scroll-area';
-
-// Define the structure for each order item
-interface OrderItem {
-  articleId: string;
-  articleName: string;
-  quantity: number;
-  unit: string;
-  price: number;
-}
-
-// Define the structure of the form's data
-interface OrderFormValues {
-  userName: string;
-  orderItems: OrderItem[];
-  total: number;
-}
 
 // Define the component props
 interface OrderFormProps {
@@ -61,36 +49,40 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
   const form = useForm<OrderFormValues>({
     resolver: zodResolver(OrderSchema),
     defaultValues: {
-      userName: "",
+      userName: '',
       total: 0,
       orderItems: [],
     },
   });
 
   // useFieldArray manages the dynamic orderItems array
-  const { fields: itemFields, remove, append } = useFieldArray({
+  const {
+    fields: itemFields,
+    remove,
+    append,
+  } = useFieldArray({
     control: form.control,
-    name: "orderItems",
+    name: 'orderItems',
   });
 
   // useWatch to track changes in orderItems for calculating the total
   const watchedOrderItems = useWatch({
     control: form.control,
-    name: "orderItems",
+    name: 'orderItems',
   });
 
   // Compute the total order price using useMemo for performance optimization.
   // This recalculates only when watchedOrderItems change.
   const computedTotal = useMemo(() => {
     if (!watchedOrderItems || watchedOrderItems.length === 0) return 0;
-    return watchedOrderItems.reduce((sum: number, item: OrderItem) => {
+    return watchedOrderItems.reduce((sum: number, item: OrderItemSchema) => {
       return sum + item.price * item.quantity;
     }, 0);
   }, [watchedOrderItems]);
 
   // Whenever computedTotal changes, update the form value for total.
   useEffect(() => {
-    form.setValue("total", computedTotal);
+    form.setValue('total', computedTotal);
   }, [computedTotal, form]);
 
   // Handle selecting or deselecting an article
@@ -102,9 +94,9 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
       if (isSelected) {
         // Deselect: remove from selectedArticlesIds and remove from orderItems array
         setSelectedArticlesIds((prev) => prev.filter((id) => id !== articleId));
-        const index = form.getValues().orderItems.findIndex(
-          (item) => item.articleId === articleId
-        );
+        const index = form
+          .getValues()
+          .orderItems.findIndex((item) => item.articleId === articleId);
         if (index !== -1) {
           remove(index);
         }
@@ -115,7 +107,7 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
           // Add the article to selectedArticlesIds for UI indication
           setSelectedArticlesIds((prev) => [...prev, articleId]);
           // Create a new order item with a default quantity of 1
-          const newOrderItem: OrderItem = {
+          const newOrderItem: OrderItemSchema = {
             articleId: articleToAdd.id,
             articleName: articleToAdd.name,
             quantity: 1,
@@ -130,16 +122,19 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
         }
       }
     },
-    [selectedArticlesIds, articles, form, remove, append]
+    [selectedArticlesIds, articles, form, remove, append],
   );
 
   return (
     <div className="w-full h-full">
       {/* Main ScrollArea for the entire form */}
-      <ScrollArea className="w-full h-70">
+      <ScrollArea className="w-full h-70 box-border">
         {/* Form wrapper integrated with react-hook-form */}
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8 box-border px-1"
+          >
             {/* User name input field */}
             <FormField
               control={form.control}
@@ -164,8 +159,12 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
                   <FormLabel>Articles</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
-                      <Button variant="outline" role="combobox" className="w-full justify-between">
-                        Selectionné produit...
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className="w-full justify-between"
+                      >
+                        Selectionner un produit...
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
                     </PopoverTrigger>
@@ -173,7 +172,7 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
                       <Command>
                         <CommandInput placeholder="Chercher produit..." />
                         <CommandList>
-                          <CommandEmpty>No product found.</CommandEmpty>
+                          <CommandEmpty>Aucun produit trouvé.</CommandEmpty>
                           <CommandGroup>
                             {articles.map((article) => (
                               <CommandItem
@@ -184,8 +183,10 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
                                 {/* Show checkmark if the article is selected */}
                                 <Check
                                   className={cn(
-                                    "mr-2 h-4 w-4",
-                                    selectedArticlesIds.includes(article.id) ? "opacity-100" : "opacity-0"
+                                    'mr-2 h-4 w-4',
+                                    selectedArticlesIds.includes(article.id)
+                                      ? 'opacity-100'
+                                      : 'opacity-0',
                                   )}
                                 />
                                 {article.name} - {article.price.toFixed(2)}€
@@ -202,7 +203,7 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
             />
 
             {/* Scrollable list of selected order items */}
-            <ScrollArea className="w-full h-80">
+            <ScrollArea className="w-full max-h-80 overflow-y-auto">
               <div className="space-y-2">
                 {itemFields.map((field, index) => {
                   // Retrieve the current item values
@@ -216,55 +217,55 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
                       name={`orderItems.${index}.quantity`}
                       render={({ field: quantityField }) => (
                         <FormItem>
-                          <div className="flex justify-between items-center gap-x-4 p-2 border rounded-md">
+                          <div className="grid grid-rows-1 grid-cols-6 items-center text-sm border rounded-md py-1 box-border">
                             {/* Display article name */}
-                            <div className="w-1/4 font-medium">{item.articleName}</div>
-                            <div className="flex items-center gap-x-2">
-                              <FormControl>
-                                {/* Quantity input */}
-                                <Input
-                                  type="number"
-                                  {...quantityField}
-                                  onChange={(e) => {
-                                    // Parse input ensuring a valid number (minimum 1)
-                                    let newValue = Number.parseInt(e.target.value);
-                                    if (isNaN(newValue) || newValue < 1) {
-                                      newValue = 1;
-                                    }
-                                    quantityField.onChange(newValue);
-                                  }}
-                                  min={1}
-                                  className="w-20"
-                                />
-                              </FormControl>
-                              {/* Display unit */}
-                              <span className="w-12">{item.unit}</span>
+                            <div className="col-span-2 justify-self-start pl-2 box-border">
+                              {item.articleName}
                             </div>
-                            <div className="flex items-center gap-x-4">
+
+                            <FormControl>
+                              {/* Quantity input */}
+                              <Input
+                                type="number"
+                                {...quantityField}
+                                onChange={(e) => {
+                                  // Parse input ensuring a valid number (minimum 1)
+                                  let newValue = Number.parseInt(
+                                    e.target.value,
+                                  );
+                                  if (isNaN(newValue) || newValue < 1) {
+                                    newValue = 1;
+                                  }
+                                  quantityField.onChange(newValue);
+                                }}
+                                min={1}
+                              />
+                            </FormControl>
+                            <div className="justify-self-end text-gray-500">
                               {/* Display price per unit */}
-                              <span className="text-sm text-gray-500">
-                                {item.price.toFixed(2)}€/{item.unit}
-                              </span>
+                              {item.price.toFixed(2)}€/{item.unit}
                               {/* Display total price for the current item */}
-                              <div className="w-24 text-right font-medium">
-                                {itemTotal.toFixed(2)}€
-                              </div>
+                            </div>
+                            <div className="justify-self-end">
+                              {itemTotal.toFixed(2)}€
                             </div>
                             {/* Remove item button */}
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => {
-                                // Remove article from selected list and order items
-                                setSelectedArticlesIds((prev) =>
-                                  prev.filter((id) => id !== item.articleId)
-                                );
-                                remove(index);
-                              }}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                            <div className="justify-self-end pr-2 box-border">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => {
+                                  // Remove article from selected list and order items
+                                  setSelectedArticlesIds((prev) =>
+                                    prev.filter((id) => id !== item.articleId),
+                                  );
+                                  remove(index);
+                                }}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
                         </FormItem>
                       )}
@@ -279,7 +280,7 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
               <div className="flex justify-end items-center gap-x-2 pt-4 border-t">
                 <span className="font-medium">Total:</span>
                 <span className="text-lg font-bold">
-                  {computedTotal.toFixed(2)}€
+                  {computedTotal.toFixed(2)} €
                 </span>
               </div>
             )}
@@ -287,9 +288,9 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
             {/* Footer with Cancel and Submit buttons */}
             <DialogFooter>
               <Button type="button" variant="outline" onClick={onCancel}>
-                Cancel
+                Annuler
               </Button>
-              <Button type="submit">Nouvelle commande</Button>
+              <Button type="submit">Valider</Button>
             </DialogFooter>
           </form>
         </Form>
