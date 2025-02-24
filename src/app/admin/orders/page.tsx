@@ -12,12 +12,18 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useOrders } from '@/hooks/useOrders';
+import { OrderFormValues } from '@/types/order';
 import { useState } from 'react';
 
 export default function OrdersManagement() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const { orders } = useOrders();
+  const { orders, saveOrder } = useOrders();
+
+  const handleOnsubmit = async (values: OrderFormValues) => {
+    await saveOrder(values, 'POST', '/api/orders');
+    setIsDialogOpen(false);
+  };
 
   return (
     <div className="p-6">
@@ -34,10 +40,7 @@ export default function OrdersManagement() {
                   <DialogTitle>Nouvelle commande</DialogTitle>
                 </DialogHeader>
                 <OrderForm
-                  onSubmit={async (values) => {
-                    console.log('submit', values);
-                    return Promise.resolve();
-                  }}
+                  onSubmit={(values) => handleOnsubmit(values)}
                   onCancel={() => setIsDialogOpen(false)}
                 />
               </DialogContent>

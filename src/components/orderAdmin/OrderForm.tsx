@@ -17,13 +17,13 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { useArticles } from '@/hooks/useArticles';
+import { useUsers } from '@/hooks/useUsers';
 import { cn } from '@/lib/utils';
 import { OrderFormValues, OrderItemSchema, OrderSchema } from '@/types/order';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, ChevronsUpDown, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
-import { z } from 'zod';
 import {
   Command,
   CommandEmpty,
@@ -36,12 +36,13 @@ import { ScrollArea } from '../ui/scroll-area';
 
 // Define the component props
 interface OrderFormProps {
-  onSubmit: (values: z.infer<typeof OrderSchema>) => Promise<void>;
+  onSubmit: (values: OrderFormValues) => Promise<void>;
   onCancel: () => void;
 }
 
 export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
   const { articles } = useArticles();
+  const { users } = useUsers();
   // Track IDs of selected articles for UI feedback
   const [selectedArticlesIds, setSelectedArticlesIds] = useState<string[]>([]);
 
@@ -138,13 +139,65 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
             {/* User name input field */}
             <FormField
               control={form.control}
-              name="userName"
+              name="userId"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nom d'utilisateur</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Hafid" {...field} />
-                  </FormControl>
+                <FormItem className="w-full flex flex-col">
+                  <FormLabel>Client</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            'justify-between',
+                            !field.value && 'text-muted-foreground',
+                          )}
+                        >
+                          {field.value
+                            ? users.find((user) => user.id === field.value)
+                                ?.name +
+                              ' - ' +
+                              users.find((user) => user.id === field.value)
+                                ?.email
+                            : 'Selectionner un client'}
+                          <ChevronsUpDown className="opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0">
+                      <Command>
+                        <CommandInput
+                          placeholder="Rechercher un client..."
+                          className="h-9"
+                        />
+                        <CommandList>
+                          <CommandEmpty>Aucun client trouvé.</CommandEmpty>
+                          <CommandGroup>
+                            {users.map((user) => (
+                              <CommandItem
+                                value={user.name}
+                                key={user.id}
+                                onSelect={() => {
+                                  form.setValue('userId', user.id);
+                                }}
+                              >
+                                {user.name} - {user.email}
+                                <Check
+                                  className={cn(
+                                    'ml-auto',
+                                    user.id === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0',
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}

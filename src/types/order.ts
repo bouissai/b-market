@@ -12,7 +12,7 @@ const OrderItemSchema = z.object({
 });
 
 export const OrderSchema = z.object({
-  userName: z.string().nonempty("Le nom d'utilisateur est requis"),
+  userId: z.string().nonempty("L'identifiant de l'utilisateur est requis"),
   total: z.number().nonnegative('Le total doit être un nombre non négatif'),
   orderItems: z
     .array(OrderItemSchema)
@@ -43,5 +43,11 @@ export interface ordersDTO {
   customerName: string;
   total: number;
   nbArticles: number;
+  status: string;
+}
+
+export interface ordersPostDTO {
+  customerName: string;
+  total: number;
   status: string;
 }
