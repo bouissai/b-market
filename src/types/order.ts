@@ -8,7 +8,7 @@ const OrderItemSchema = z.object({
     .number()
     .int()
     .positive('La quantité doit être un entier positif'),
-  unit: z.string().nonempty('L\'unité est requise'),
+  unit: z.string().nonempty("L'unité est requise"),
 });
 
 export const OrderSchema = z.object({

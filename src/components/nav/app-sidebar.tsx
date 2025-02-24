@@ -1,6 +1,12 @@
 'use client';
 
-import { Beef, ChartBarStacked, LogOutIcon, ShoppingBag } from 'lucide-react';
+import {
+  Beef,
+  ChartBarStacked,
+  LogOutIcon,
+  ShoppingBag,
+  User,
+} from 'lucide-react';
 import * as React from 'react';
 
 import { NavMain } from '@/components/nav/nav-main';
@@ -14,7 +20,6 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar';
 
-//  TODO.
 const data = {
   user: {
     name: 'admin',
@@ -37,27 +42,11 @@ const data = {
       url: '/admin/orders',
       icon: ShoppingBag,
     },
-    // {
-    // 	title: "Gestion des commandes",
-    // 	url: "/admin/order",
-    // 	icon: PackageSearch,
-    // },
-    // Exemple pour groupe
-    // {
-    // 	title: "a",
-    // 	url: "#",
-    // 	icon: a,
-    // 	items: [
-    // 		{
-    // 			title: "b",
-    // 			url: "#",
-    // 		},
-    // 		{
-    // 			title: "c",
-    // 			url: "#",
-    // 		},
-    // 	],
-    // },
+    {
+      title: 'Gestion des utlisateurs',
+      url: '/admin/users',
+      icon: User,
+    },
   ],
 };
 

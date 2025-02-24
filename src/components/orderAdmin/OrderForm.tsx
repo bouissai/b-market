@@ -50,7 +50,6 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
   const form = useForm<OrderFormValues>({
     resolver: zodResolver(OrderSchema),
     defaultValues: {
-      userName: '',
       total: 0,
       orderItems: [],
     },
