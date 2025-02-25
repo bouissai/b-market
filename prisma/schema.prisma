@@ -13,30 +13,31 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   name      String
-  email     String    @unique
+  email     String   @unique
   password  String
-  role      String    @default("user")
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  cartId    String?   @unique
-  cart      Cart?     @relation
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cartId    String?  @unique
+  cart      Cart?    @relation
   orders    Order[]
 }
+
 model Article {
-  id          String    @id @default(cuid())
-  name        String    @unique
-  unit        String
-  price       Float
-  image       String
-  description String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id           String      @id @default(cuid())
+  name         String      @unique
+  unit         String
+  price        Float
+  image        String
+  description  String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
   categoryName String
-  category    Category  @relation(fields: [categoryName], references: [name])
-  cartItems   CartItem[]
-  orderItems  OrderItem[]
+  category     Category    @relation(fields: [categoryName], references: [name])
+  cartItems    CartItem[]
+  orderItems   OrderItem[]
 }
 
 model Category {
@@ -48,11 +49,11 @@ model Category {
 }
 
 model Cart {
-  id        String    @id @default(cuid())
-  userId    String    @unique
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  user      User?     @relation(fields: [userId], references: [id])
+  id        String     @id @default(cuid())
+  userId    String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  user      User?      @relation(fields: [userId], references: [id])
   cartItems CartItem[]
 }
 
@@ -63,27 +64,29 @@ model CartItem {
   articleId String
   article   Article @relation(fields: [articleId], references: [id])
   quantity  Int     @default(1)
-  @@unique([cartId, articleId])  // 🚀 Ajout de la contrainte UNIQUE
+
+  @@unique([cartId, articleId]) // 🚀 Ajout de la contrainte UNIQUE
 }
 
 model Order {
-  id          String      @id @default(cuid())
-  userId      String
-  user        User        @relation(fields: [userId], references: [id])
-  total       Float
-  status      String      @default("pending") // "pending", "completed", etc.
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  orderItems  OrderItem[]
+  id         String      @id @default(cuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id])
+  total      Float
+  status     String      @default("PENDING") // "pending", "completed", etc.
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  orderItems OrderItem[]
 }
 
 model OrderItem {
   id        String  @id @default(cuid())
   orderId   String
-  order     Order   @relation(fields: [orderId], references: [id])
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   articleId String
   article   Article @relation(fields: [articleId], references: [id])
   quantity  Int     @default(1)
   price     Float
-  @@unique([orderId, articleId])  // 🚀 Ajout de la contrainte UNIQUE
+
+  @@unique([orderId, articleId]) // 🚀 Ajout de la contrainte UNIQUE
 }

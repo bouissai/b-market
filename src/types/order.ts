@@ -43,11 +43,26 @@ export interface ordersDTO {
   customerName: string;
   total: number;
   nbArticles: number;
-  status: string;
+  status: keyof typeof OrderStatus;
 }
 
-export interface ordersPostDTO {
-  customerName: string;
+export interface OrdersSaveDTO {
+  userId: string;
   total: number;
-  status: string;
+  status: keyof typeof OrderStatus;
+  orderItems: OrderItemSaveDTO[];
 }
+
+interface OrderItemSaveDTO {
+  articleId: string;
+  quantity: number;
+  price: number;
+}
+
+export const OrderStatus = {
+  PENDING: { status: 'En attente', color: 'secondary' },
+  PENDING_PAYMENT: { status: 'En attente de paiement', color: 'info' },
+  CONFIRMED: { status: 'Confirmée', color: 'success' },
+  CANCELLED: { status: 'Annulée', color: 'destructive' },
+};
+

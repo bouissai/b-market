@@ -8,24 +8,26 @@ import { NextRequest, NextResponse } from "next/server";
 export async function DELETE(req: NextRequest, {params}: { params: { id: string } }) {
     try {
         const {id} = await params;
+        console.log("id", id);
 
         if (!id) {
             return NextResponse.json({message: "L'ID de la commande est requis"}, {status: 400});
         }
 
-        // Vérifier si la commande existe
-        const existingOrder = await db.order.findUnique({
-            where: {id},
+        const OrderItemsDeleted =  db.orderItem.deleteMany({
+            where: {
+                orderId: id,
+            },
         });
-
-        if (!existingOrder) {
-            return NextResponse.json({message: "Commande introuvable"}, {status: 404});
-        }
 
         // Suppression de la commande (cascade supprime aussi les OrderItems)
-        await db.order.delete({
-            where: {id},
+        const orderDeleted = db.order.delete({
+            where: {id : id},
         });
+
+        const transaction = await db.$transaction([OrderItemsDeleted, orderDeleted]);
+
+        console.log("orderDeleted", orderDeleted);
 
         return NextResponse.json({message: "Commande supprimée avec succès"}, {status: 200});
     } catch (error) {

@@ -6,7 +6,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { DataTable } from '../table/dataTable';
-import { Badge } from '../ui/badge';
+import OrderStatusBadge from './badge';
 
 interface OrderTableProps {
   data: ordersDTO[];
@@ -67,24 +67,9 @@ export function OrderTable({ data, onEdit, onDelete }: OrderTableProps) {
         );
       },
       cell: ({ row }) => {
-        const status = row.getValue('status') as string;
-        return (
-          <Badge
-            variant={
-              status === 'pending'
-                ? 'secondary'
-                : status === 'awaiting_payment'
-                ? 'info'
-                : status === 'completed'
-                ? 'success'
-                : status === 'cancelled'
-                ? 'destructive'
-                : 'default'
-            }
-          >
-            {status}
-          </Badge>
-        );
+        const status = row.getValue('status');
+        console.log('status', row.original.status);
+        return <OrderStatusBadge status={row.original.status} />;
       },
       sortingFn: (rowA, rowB) => {
         const statusOrder = {
