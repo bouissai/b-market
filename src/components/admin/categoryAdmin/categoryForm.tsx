@@ -4,12 +4,12 @@ import {Button} from "@/components/ui/button"
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
-import {Category} from "@/types/article"
 import {zodResolver} from "@hookform/resolvers/zod"
 import {useForm} from "react-hook-form"
 import * as z from "zod"
 import {useCategories} from "@/hooks/useCategories";
 import {useToast} from "@/hooks/use-toast";
+import { Category } from "@/types/category"
 
 const formSchema = z.object({
     name: z.string().min(1, "Le nom est requis"),

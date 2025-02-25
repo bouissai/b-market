@@ -1,10 +1,10 @@
 "use client"
 
+import { DataTable } from "@/components/table/dataTable"
 import { Button } from "@/components/ui/button"
 import { Category } from "@/types/article"
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, Pencil, Trash } from "lucide-react"
-import { DataTable } from "../table/dataTable"
 
 interface CategoryTableProps {
     data: Category[]
@@ -12,24 +12,24 @@ interface CategoryTableProps {
     onDelete: (Category: Category) => void
 }
 
-export function CategoryTable({data, onEdit, onDelete}: CategoryTableProps) {
+export function CategoryTable({ data, onEdit, onDelete }: CategoryTableProps) {
     const columns: ColumnDef<Category>[] = [
         {
             accessorKey: "name",
-            header: ({column}) => (
+            header: ({ column }) => (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
                     Nom
-                    <ArrowUpDown className="ml-2 h-4 w-4"/>
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             ),
         },
         {
             header: "Action",
             id: 'actions',
-            cell: ({row}) => {
+            cell: ({ row }) => {
                 const category = row.original
                 return (
                     <>
@@ -38,14 +38,14 @@ export function CategoryTable({data, onEdit, onDelete}: CategoryTableProps) {
                             size="icon"
                             onClick={() => onEdit(category)}
                         >
-                            <Pencil className="w-4 h-4"/>
+                            <Pencil className="w-4 h-4" />
                         </Button>
-                        <Button 
-                            variant="ghost" 
-                            size="icon" 
+                        <Button
+                            variant="ghost"
+                            size="icon"
                             onClick={() => onDelete(category)}
                         >
-                            <Trash className="w-4 h-4 text-red-500"/>
+                            <Trash className="w-4 h-4 text-red-500" />
                         </Button>
                     </>
                 )
@@ -54,9 +54,9 @@ export function CategoryTable({data, onEdit, onDelete}: CategoryTableProps) {
     ]
 
     return (
-        <DataTable 
-            columns={columns} 
-            data={data} 
+        <DataTable
+            columns={columns}
+            data={data}
             filterColumn="name"
             filterPlaceholder="Filtrer par nom..."
         />

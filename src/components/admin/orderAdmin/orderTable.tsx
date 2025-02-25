@@ -5,8 +5,8 @@ import { ordersDTO } from '@/types/order';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { DataTable } from '../table/dataTable';
-import { Badge } from '../ui/badge';
+import { DataTable } from '../../table/dataTable';
+import { Badge } from '../../ui/badge';
 
 interface OrderTableProps {
   data: ordersDTO[];

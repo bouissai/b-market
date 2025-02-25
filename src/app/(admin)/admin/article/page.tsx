@@ -1,7 +1,7 @@
 "use client"
 
-import { ArticleForm } from "@/components/articleAdmin/articleForm"
-import { ArticleTable } from "@/components/articleAdmin/articleTable"
+import { ArticleForm } from "@/components/admin/articleAdmin/articleForm"
+import { ArticleTable } from "@/components/admin/articleAdmin/articleTable"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -21,8 +21,8 @@ import { Loader2 } from "lucide-react"
 import { useState } from "react"
 
 export default function ArticlePage() {
-    const {toast} = useToast()
-    const {articles, isLoading, error, addArticle, updateArticle, deleteArticle} = useArticles()
+    const { toast } = useToast()
+    const { articles, isLoading, error, addArticle, updateArticle, deleteArticle } = useArticles()
     const [selectedArticle, setSelectedArticle] = useState<Article | null>(null)
     const [isFormOpen, setIsFormOpen] = useState<boolean>(false)
     const [articleToDelete, setArticleToDelete] = useState<Article | null>(null)
@@ -30,7 +30,7 @@ export default function ArticlePage() {
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <Loader2 className="h-8 w-8 animate-spin"/>
+                <Loader2 className="h-8 w-8 animate-spin" />
             </div>
         )
     }
@@ -71,7 +71,7 @@ export default function ArticlePage() {
                     </Button>
                 </CardHeader>
                 <CardContent>
-                    <ArticleTable 
+                    <ArticleTable
                         data={articles}
                         onEdit={(article) => {
                             setIsFormOpen(true)

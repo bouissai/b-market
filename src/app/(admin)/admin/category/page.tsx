@@ -1,7 +1,7 @@
 'use client';
 
-import { CategoryForm } from '@/components/categoryAdmin/categoryForm';
-import { CategoryTable } from '@/components/categoryAdmin/categoryTable';
+import { CategoryForm } from '@/components/admin/categoryAdmin/categoryForm';
+import { CategoryTable } from '@/components/admin/categoryAdmin/categoryTable';
 import {
   AlertDialog,
   AlertDialogAction,

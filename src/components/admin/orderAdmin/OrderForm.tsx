@@ -31,8 +31,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '../ui/command';
-import { ScrollArea } from '../ui/scroll-area';
+} from '../../ui/command';
+import { ScrollArea } from '../../ui/scroll-area';
 
 // Define the component props
 interface OrderFormProps {
