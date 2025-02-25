@@ -1,5 +1,3 @@
-import { FooterUser } from "@/components/user/footerUser";
-import { HeaderUser } from "@/components/user/headerUser";
 import "@/app/globals.css";
 import { UserNavBar } from "@/components/user/userNavBar";
 
@@ -12,7 +10,9 @@ export default function RootLayout({
         <html lang="fr" suppressHydrationWarning>
             <head />
             <body>
-                <UserNavBar/>
+                <UserNavBar>
+                    {children}
+                </UserNavBar>
 
             </body>
         </html>

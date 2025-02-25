@@ -1,5 +1,5 @@
 import { FooterUser } from "./footerUser";
-import { HeaderUser } from "./headerUser";
+import { HeaderUser } from "./header/headerUser";
 
 export function UserNavBar({
     children,
