@@ -1,4 +1,4 @@
-import { FooterUser } from "./footerUser";
+import { FooterUser } from "./footer/footerUser";
 import { HeaderUser } from "./header/headerUser";
 
 export function UserNavBar({
