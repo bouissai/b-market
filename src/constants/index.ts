@@ -1,22 +1,22 @@
 import { FAQItem } from '@/types/faq';
-import { Award, Clock, ShoppingBag, ThumbsUp, Truck } from 'lucide-react';
+import { Clock, ShoppingBag, Truck } from 'lucide-react';
 
 
 export const LES_VALEURS = [
   {
-      id: 1,
-      title: 'Qualité',
-      description: "Sélection rigoureuse des meilleures viandes, volaille de Drôme et bovin d'Allier."
+    id: 1,
+    title: 'Qualité',
+    description: "Sélection rigoureuse des meilleures viandes, volaille de Drôme et bovin d'Allier."
   },
   {
-      id: 2,
-      title: 'Savoir-faire',
-      description: 'Un savoir-faire unique dans la préparation des viandes, géré par un boucher expérimenté'
+    id: 2,
+    title: 'Savoir-faire',
+    description: 'Un savoir-faire unique dans la préparation des viandes, géré par un boucher expérimenté'
   },
   {
-      id: 3,
-      title: 'Service',
-      description: 'Conseils personnalisés et préparations sur mesure, adaptés à vos besoins.'
+    id: 3,
+    title: 'Service',
+    description: 'Conseils personnalisés et préparations sur mesure, adaptés à vos besoins.'
   }
 ];
 
@@ -26,24 +26,6 @@ export const MENU_ITEMS = [
   { label: 'Click & Collect', href: '/#click-collect' },
   { label: 'Faq', href: '/faq' },
   { label: 'Contact', href: '/#contact' }
-];
-
-export const FEATURES = [
-  {
-    icon: Award,
-    title: "100% Halal",
-    description: "Viande certifiée halal de première qualité"
-  },
-  {
-    icon: ThumbsUp,
-    title: "Qualité Premium",
-    description: "Sélection rigoureuse de nos viandes depuis plus de 30 ans"
-  },
-  {
-    icon: Clock,
-    title: "Click & Collect",
-    description: "Commandez en ligne et retirez en magasin"
-  }
 ];
 
 export const PRODUCTS = [
