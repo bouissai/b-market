@@ -68,7 +68,6 @@ export function OrderTable({ data, onEdit, onDelete }: OrderTableProps) {
       },
       cell: ({ row }) => {
         const status = row.getValue('status');
-        console.log('status', row.original.status);
         return <OrderStatusBadge status={row.original.status} />;
       },
       sortingFn: (rowA, rowB) => {

@@ -55,11 +55,11 @@ VALUES
 -- Insérer des commandes avec différents statuts
 INSERT INTO "Order" (id, "userId", total, status, "createdAt", "updatedAt")
 VALUES 
-  ('order1', 'user1', 98.70, 'completed', NOW() - INTERVAL '5 days', NOW() - INTERVAL '5 days'),
-  ('order2', 'user2', 45.60, 'pending', NOW() - INTERVAL '3 days', NOW() - INTERVAL '3 days'),
-  ('order3', 'user1', 87.90, 'awaiting_payment', NOW() - INTERVAL '2 days', NOW() - INTERVAL '2 days'),
-  ('order4', 'user2', 64.30, 'cancelled', NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day'),
-  ('order5', 'user1', 122.10, 'completed', NOW(), NOW());
+  ('order1', 'user1', 98.70, 'CONFIRMED', NOW() - INTERVAL '5 days', NOW() - INTERVAL '5 days'),
+  ('order2', 'user2', 45.60, 'PENDING', NOW() - INTERVAL '3 days', NOW() - INTERVAL '3 days'),
+  ('order3', 'user1', 87.90, 'PENDING_PAYMENT', NOW() - INTERVAL '2 days', NOW() - INTERVAL '2 days'),
+  ('order4', 'user2', 64.30, 'CANCELLED', NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day'),
+  ('order5', 'user1', 122.10, 'CONFIRMED', NOW(), NOW());
 
 -- Insérer des articles dans les commandes
 INSERT INTO "OrderItem" (id, "orderId", "articleId", quantity, price)

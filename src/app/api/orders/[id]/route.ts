@@ -8,7 +8,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function DELETE(req: NextRequest, {params}: { params: { id: string } }) {
     try {
         const {id} = await params;
-        console.log("id", id);
 
         if (!id) {
             return NextResponse.json({message: "L'ID de la commande est requis"}, {status: 400});
@@ -27,7 +26,6 @@ export async function DELETE(req: NextRequest, {params}: { params: { id: string 
 
         const transaction = await db.$transaction([OrderItemsDeleted, orderDeleted]);
 
-        console.log("orderDeleted", orderDeleted);
 
         return NextResponse.json({message: "Commande supprimée avec succès"}, {status: 200});
     } catch (error) {

@@ -10,36 +10,39 @@ import {
 import { usePathname } from 'next/navigation';
 import React from 'react';
 
+const breadcrumbNameMap: { [key: string]: string } = {
+  admin: 'Tableau de bord',
+  article: 'Gestion des articles',
+  orders: 'Gestion des commandes',
+  category: 'Gestion des categories',
+  users: 'Gestion des utilisateurs',
+};
+
 export function AdminBreadcrumb() {
   const pathname = usePathname();
 
   // Découpe l'URL et enlève les parties vides
   const pathSegments = pathname
     .split('/')
-    .filter((segment) => segment.length > 0 && segment !== 'admin');
+    .filter((segment) => segment.length > 0);
 
   return (
     <Breadcrumb>
       <BreadcrumbList>
-        <BreadcrumbItem key={'/admin'}>
-          <BreadcrumbLink href="/admin">admin</BreadcrumbLink>
-        </BreadcrumbItem>
-
         {pathSegments.map((segment, index) => {
           const href = `/${pathSegments.slice(0, index + 1).join('/')}`;
           const isLast = index === pathSegments.length - 1;
-          console;
+          const segmentName =
+            breadcrumbNameMap[segment] || decodeURIComponent(segment);
 
           return (
             <React.Fragment key={href}>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem key={href}>
+              {index > 0 && <BreadcrumbSeparator />}
+              <BreadcrumbItem>
                 {isLast ? (
-                  <BreadcrumbPage>{decodeURIComponent(segment)}</BreadcrumbPage>
+                  <BreadcrumbPage>{segmentName}</BreadcrumbPage>
                 ) : (
-                  <BreadcrumbLink href={href}>
-                    {decodeURIComponent(segment)}
-                  </BreadcrumbLink>
+                  <BreadcrumbLink href={href}>{segmentName}</BreadcrumbLink>
                 )}
               </BreadcrumbItem>
             </React.Fragment>

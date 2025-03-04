@@ -1,5 +1,5 @@
 import { db } from '@/app/lib/db';
-import { OrderDetailsDTO, ordersDTO } from '@/types/order';
+import { OrderDetailsDTO, ordersDTO, OrderStatus } from '@/types/order';
 
 // Récupérer toutes les commandes et les formatter en `ordersDTO`
 export async function getAllOrders(): Promise<ordersDTO[]> {
@@ -15,7 +15,7 @@ export async function getAllOrders(): Promise<ordersDTO[]> {
     customerName: order.user.name,
     total: order.total,
     nbArticles: order.orderItems.length,
-    status: order.status,
+    status: order.status as keyof typeof OrderStatus,
   }));
 }
 
@@ -136,6 +136,6 @@ export async function getOrdersByUserId(userId: string): Promise<ordersDTO[]> {
     customerName: order.user.name,
     total: order.total,
     nbArticles: order.orderItems.length,
-    status: order.status,
+    status: order.status as keyof typeof OrderStatus,
   }));
 }
