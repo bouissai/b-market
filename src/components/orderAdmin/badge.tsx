@@ -17,6 +17,7 @@ const OrderStatusBadge: React.FC<OrderProps> = ({ status }) => {
           | 'info'
           | 'success'
           | 'destructive'
+          | 'state'
           | 'default'
           | 'warning'
           | 'outline'

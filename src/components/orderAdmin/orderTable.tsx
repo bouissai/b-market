@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { ordersDTO } from '@/types/order';
+import { ordersDTO, OrderStatus } from '@/types/order';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -67,22 +67,12 @@ export function OrderTable({ data, onEdit, onDelete }: OrderTableProps) {
         );
       },
       cell: ({ row }) => {
-        const status = row.getValue('status');
         return <OrderStatusBadge status={row.original.status} />;
       },
       sortingFn: (rowA, rowB) => {
-        const statusOrder = {
-          pending: 1,
-          awaiting_payment: 2,
-          completed: 3,
-          cancelled: 4,
-        };
         const statusA = rowA.original.status;
         const statusB = rowB.original.status;
-        return (
-          statusOrder[statusA as keyof typeof statusOrder] -
-          statusOrder[statusB as keyof typeof statusOrder]
-        );
+        return (OrderStatus[statusA]?.order ?? 0) - (OrderStatus[statusB]?.order ?? 0);
       },
     },
   ];

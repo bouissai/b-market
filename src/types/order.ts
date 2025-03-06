@@ -26,6 +26,9 @@ export type OrderItemSchema = z.infer<typeof OrderItemSchema>;
 export interface OrderDetailsDTO {
   id: string;
   customerName: string;
+  customerEmail: string;
+  customerPhone?: string;
+  date: Date;
   total: number;
   status: string;
   items: OrderItemDTO[];
@@ -60,9 +63,10 @@ interface OrderItemSaveDTO {
 }
 
 export const OrderStatus = {
-  PENDING: { status: 'En attente', color: 'secondary' },
-  PENDING_PAYMENT: { status: 'En attente de paiement', color: 'info' },
-  CONFIRMED: { status: 'Confirmée', color: 'success' },
-  CANCELLED: { status: 'Annulée', color: 'destructive' },
+  PENDING: { status: 'En attente', color: 'secondary', order:1 },
+  PREPARING: { status: 'En préparation', color: 'state', order:2 },
+  PENDING_PAYMENT: { status: 'En attente de paiement', color: 'info', order:3 },
+  CONFIRMED: { status: 'Confirmée', color: 'success', order:4 },
+  CANCELLED: { status: 'Annulée', color: 'destructive', order:5 },
 };
 

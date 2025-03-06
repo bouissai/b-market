@@ -44,6 +44,10 @@ export default {
   			success: {
   				DEFAULT: '#10B981',
   				foreground: '#FFFFFF'
+  			},  			
+			state: {
+  				DEFAULT: '#F57F17',
+  				foreground: '#FFFFFF'
   			},
   			info: {
   				DEFAULT: '#3B82F6',

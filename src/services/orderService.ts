@@ -40,6 +40,9 @@ export async function getOrderById(
   return {
     id: order.id,
     customerName: order.user.name,
+    customerEmail: order.user.email,
+    customerPhone: "+33 6 95 50 90 33",
+    date: order.createdAt,
     total: order.total,
     status: order.status,
     items: order.orderItems.map((item) => ({
@@ -105,6 +108,9 @@ export async function createOrder(
   return {
     id: newOrder.id,
     customerName: newOrder.user.name,
+    customerEmail: newOrder.user.email,
+    customerPhone: "+33 6 95 50 90 33",
+    date: newOrder.createdAt,
     total: newOrder.total,
     status: newOrder.status,
     items: newOrder.orderItems.map((item) => ({
