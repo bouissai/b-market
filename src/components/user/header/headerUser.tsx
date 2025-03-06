@@ -15,7 +15,7 @@ export function HeaderUser() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ type: "spring", stiffness: 100 }}
-      className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50"
+      className="bg-background/80 backdrop-blur-md shadow-sm sticky top-0 z-50"
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         <div><h1>Logo</h1></div>

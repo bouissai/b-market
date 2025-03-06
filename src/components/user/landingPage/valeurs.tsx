@@ -16,40 +16,37 @@ export function NosValeurs() {
     const isInView = useInView(ref, { once: true });
 
     return (
-        <motion.div
-            ref={ref} initial={{ opacity: 0, x: -40 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 1 }}
-            className="text-center">
-            <h3 className="mb-8 text-3xl font-bold"
+        <div ref={ref} className="p-10 box-border">
+            <motion.div
+                variants={animations.withDelay(animations.scale, 0.2)}
+                initial="hidden"
+                animate={isInView ? "visible" : "hidden"}
             >
-                Nos Valeurs
-            </h3>
-            <div ref={refCard} className="grid grid-cols-1 gap-8 md:grid-cols-3">
-                {LES_VALEURS.map((value, index) => (
-                    <motion.div
-                        key={value.id}
-                        custom={index}
-                        initial="hidden"
-                        animate={isInViewCard ? "visible" : "hidden"}
-                        exit="hidden"
-                        variants={animations.oneByOne}
-                    >
-                        <Card
-                            className="min-h-full bg-white shadow-lg transition-transform duration-300 hover:scale-105"
-                            role="region"
-                            aria-labelledby={`card-title-${value.id}`}
+                <h3 className="text-3xl text-center font-bold mb-6">Nos Valeurs</h3>
+                <div ref={refCard} className="grid grid-cols-1 gap-28 md:grid-cols-3">
+                    {LES_VALEURS.map((value, index) => (
+                        <motion.div
+                            key={value.id}
+                            custom={index}
+                            variants={animations.oneByOne}
                         >
-                            <CardContent className="p-6">
-                                <h4 id={`card-title-${value.id}`} className="mb-2 text-xl font-semibold">
-                                    {value.title}
-                                </h4>
-                                <p className="text-gray-600">{value.description}</p>
-                            </CardContent>
-                        </Card>
-                    </motion.div>
-                ))}
-            </div>
-        </motion.div>
+                            <Card
+                                className="min-h-full bg-white shadow-lg transition-transform duration-300 hover:scale-105 hover:text-red-600  "
+                                role="region"
+                                aria-labelledby={`card-title-${value.id}`}
+                            >
+                                <CardContent className="py-4 box-border flex flex-col items-center justify-center">
+                                    <p className="text-5xl">{<value.icon strokeWidth="1.6" size="44" />}</p>
+                                    <h4 id={`card-title-${value.id}`} className="text-center pb-2 text-3xl font-semibold">
+                                        {value.title}
+                                    </h4>
+                                    <p className="text-center  text-gray-600 max-w-sm">{value.description}</p>
+                                </CardContent>
+                            </Card>
+                        </motion.div>
+                    ))}
+                </div>
+            </motion.div>
+        </div>
     )
 }

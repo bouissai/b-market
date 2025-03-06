@@ -1,23 +1,54 @@
 import { FAQItem } from '@/types/faq';
-import { Clock, ShoppingBag, Truck } from 'lucide-react';
+import { Award, Beef, ChefHat, Clock, HandPlatter, Mail, MapPin, Phone, ShoppingBag, Sparkle, Sparkles, Truck } from 'lucide-react';
+
+
+// Contact information items
+export const contactItems = [
+  {
+    icon: Mail,
+    title: "Email",
+    info: "contact@example.com"
+  },
+  {
+    icon: Phone,
+    title: "Téléphone",
+    info: "+33 1 23 45 67 89"
+  },
+  {
+    icon: MapPin,
+    title: "Adresse",
+    info: "123 Avenue des Champs-Élysées, 75008 Paris, France"
+  }
+];
+
+// Hours information
+export const hoursInfo = [
+  { day: "Lundi - Vendredi", hours: "9h00 - 18h00" },
+  { day: "Samedi", hours: "10h00 - 15h00" },
+  { day: "Dimanche", hours: "Fermé" }
+];
+
 
 
 export const LES_VALEURS = [
   {
     id: 1,
-    title: 'Qualité',
-    description: "Sélection rigoureuse des meilleures viandes, volaille de Drôme et bovin d'Allier."
-  },
-  {
-    id: 2,
+    icon: ChefHat,
     title: 'Savoir-faire',
     description: 'Un savoir-faire unique dans la préparation des viandes, géré par un boucher expérimenté'
   },
   {
+    id: 2,
+    icon: Sparkles,
+    title: 'Qualité',
+    description: "Sélection rigoureuse des meilleures viandes, volaille de Drôme et bovin d'Allier."
+  },
+  {
     id: 3,
+    icon: HandPlatter,
     title: 'Service',
     description: 'Conseils personnalisés et préparations sur mesure, adaptés à vos besoins.'
-  }
+  },
 ];
 
 export const MENU_ITEMS = [

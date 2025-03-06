@@ -1,11 +1,12 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2 } from 'lucide-react';
-import { useUsers } from '@/hooks/useUsers';
-import { UserTable } from '@/components/userAdmin/userTable';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useUsers } from '@/hooks/useUsers';
+import { Loader2 } from 'lucide-react';
 
+import UserForm from '@/components/admin/userAdmin/userForm';
+import { UserTable } from '@/components/admin/userAdmin/userTable';
 import {
   Dialog,
   DialogContent,
@@ -14,7 +15,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useState } from 'react';
-import UserForm from '@/components/userAdmin/userForm';
 
 export default function UserPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);

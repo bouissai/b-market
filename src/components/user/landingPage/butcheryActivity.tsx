@@ -16,7 +16,7 @@ export function ButcheryActivity() {
                         initial={{ opacity: 0, x: -50 }}
                         animate={isInView ? { opacity: 1, x: 0 } : {}}
                         transition={{ duration: 0.2 }}
-                        className="space-y-6"
+                        className="space-y-6 text-center"
                     >
                         <motion.h1
                             initial={{ opacity: 0, y: -20 }}

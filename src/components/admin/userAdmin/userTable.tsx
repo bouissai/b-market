@@ -1,8 +1,8 @@
 'use client';
 
-import { ColumnDef } from '@tanstack/react-table';
-import { DataTable } from '../table/dataTable';
+import { DataTable } from '@/components/table/dataTable';
 import { User } from '@prisma/client';
+import { ColumnDef } from '@tanstack/react-table';
 
 interface UserTableProps {
   data: User[];
