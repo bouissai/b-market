@@ -1,40 +1,52 @@
-"use client";
+'use client';
 
-import { type LucideIcon } from "lucide-react";
-import Link from "next/link";
+import { type LucideIcon } from 'lucide-react';
 
 import {
-	SidebarGroup,
-	SidebarGroupLabel,
-	SidebarMenu,
-	SidebarMenuButton,
-	SidebarMenuItem,
-} from "@/components/ui/sidebar";
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@/components/ui/sidebar';
+import { usePathname } from 'next/navigation';
 
 export function NavMain({
-	items,
+  items,
 }: {
-	items: {
-		title: string;
-		url: string;
-		icon?: LucideIcon;
-	}[];
+  items: {
+    title: string;
+    url: string;
+    icon: LucideIcon;
+  }[];
 }) {
-	return (
-		<SidebarGroup>
-			<SidebarGroupLabel>Gestion de la boucherie</SidebarGroupLabel>
-			<SidebarMenu>
-				{items.map((item) => (
-					<SidebarMenuItem key={item.title}>
-						<Link href={item.url} passHref>
-							<SidebarMenuButton tooltip={item.title}>
-								{item.icon && <item.icon className="w-5 h-5" />}
-								<span>{item.title}</span>
-							</SidebarMenuButton>
-						</Link>
-					</SidebarMenuItem>
-				))}
-			</SidebarMenu>
-		</SidebarGroup>
-	);
+  const pathname = usePathname();
+
+  return (
+    <SidebarGroup>
+      <SidebarGroupLabel></SidebarGroupLabel>
+      <SidebarMenu>
+        {items.map((item) => {
+          return (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton
+                asChild
+                tooltip={item.title}
+                isActive={
+                  item.url === '/admin'
+                    ? pathname === '/admin'
+                    : pathname.startsWith(item.url)
+                }
+              >
+                <a href={item.url}>
+                  <item.icon />
+                  <span>{item.title}</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          );
+        })}
+      </SidebarMenu>
+    </SidebarGroup>
+  );
 }
