@@ -85,7 +85,7 @@ export function useOrders() {
 
   // Suppression d'une commande
   const deleteOrder = useCallback(
-    async (id: string): Promise<boolean> => {
+    async (id: number): Promise<boolean> => {
       try {
         await apiRequest(`/api/orders/${id}`, 'DELETE');
         setOrders((prev) => prev.filter((order) => order.id !== id));
@@ -104,7 +104,7 @@ export function useOrders() {
 
   // Récupération des détails d'une commande
   const fetchOrderDetails = useCallback(
-    async (id: string): Promise<OrderDetailsDTO> => {
+    async (id: number): Promise<OrderDetailsDTO> => {
       return await apiRequest(`/api/orders/${id}`);
     },
     [apiRequest],

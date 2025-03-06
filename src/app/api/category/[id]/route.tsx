@@ -6,12 +6,10 @@ export async function DELETE(req: Request, context: { params: { id?: string } })
     const params = await context.params;
 
     if (!params?.id) {
-        console.error("❌ ID manquant !");
         return NextResponse.json({message: "ID de catégorie manquant"}, {status: 400});
     }
 
     const id = String(params.id);
-    console.log("🟢 ID reçu pour suppression :", id);
 
     try {
         // Vérifier si la catégorie existe
@@ -21,13 +19,11 @@ export async function DELETE(req: Request, context: { params: { id?: string } })
         });
 
         if (existingCategory == undefined) {
-            console.error("❌ Catégorie non trouvée en base !");
             return NextResponse.json({message: "Catégorie non trouvée"}, {status: 404});
         }
 
         // Vérifier si des articles sont liés
         if (existingCategory.articles.length > 0) {
-            console.error("❌ Suppression impossible, des articles sont liés !");
             return NextResponse.json(
                 {message: "Impossible de supprimer cette catégorie : des articles y sont encore liés."},
                 {status: 409} // Conflit
@@ -36,8 +32,6 @@ export async function DELETE(req: Request, context: { params: { id?: string } })
 
         // Supprimer la catégorie
         await db.category.delete({where: {id}});
-
-        console.log("✅ Catégorie supprimée avec succès !");
         return NextResponse.json({message: "Catégorie supprimée avec succès"}, {status: 200});
 
     } catch (error) {

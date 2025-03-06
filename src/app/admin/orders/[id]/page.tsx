@@ -12,15 +12,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { useOrders } from "@/hooks/useOrders"
 import { getStatusStep } from "@/lib/helpers/orderHelpers"
-import { OrderStatus, type OrderDetailsDTO } from "@/types/order"
-import { ArrowLeft, Calendar, CheckCircle2, Clock, Euro, Pen, ShoppingBasket, SquareX, Trash, User } from "lucide-react"
+import { type OrderDetailsDTO } from "@/types/order"
+import { ArrowLeft, Calendar, Clock, Euro, Pen, ShoppingBasket, SquareX, Trash, User } from "lucide-react"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -35,36 +35,53 @@ export default function OrderDetailPage() {
   const { toast } = useToast()
 
   useEffect(() => {
-    if (!id || typeof id !== "string") return
-    const getOrderDetails = async () => {
-      try {
-        setLoading(true)
-        const data = await fetchOrderDetails(id)
-        setOrder(data)
-      } catch {
-        setError("Erreur lors de la récupération de la commande.")
-      } finally {
-        setLoading(false)
-      }
+    if (!id) return; // Vérifier si id est bien défini
+
+    const numericId = Number(id); // Convertir id en number
+    if (isNaN(numericId)) {
+      setError("ID de commande invalide.");
+      return;
     }
 
-    getOrderDetails()
-  }, [id, fetchOrderDetails])
+    const getOrderDetails = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchOrderDetails(numericId); // Passer l'ID en number
+        setOrder(data);
+      } catch {
+        setError("Erreur lors de la récupération de la commande.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getOrderDetails();
+  }, [id, fetchOrderDetails]);
 
 
 
   const handleDelete = async () => {
-    if (!id || typeof id !== "string") return
+    if (!id) return;
 
-    const success = await deleteOrder(id)
+    const numericId = Number(id);
+    if (isNaN(numericId)) {
+      toast({
+        title: "Erreur",
+        description: "ID de commande invalide.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const success = await deleteOrder(numericId);
     if (success) {
-      router.push(`/admin/orders`)
+      router.push(`/admin/orders`);
       toast({
         title: "Succès",
         description: "Commande supprimée avec succès",
-      })
+      });
     }
-  }
+  };
 
 
   if (loading) {
@@ -286,18 +303,18 @@ export default function OrderDetailPage() {
         </CardFooter>
       </Card>
 
-      {/* Notes et commentaires 
-      {order.notes && (
+
+      {order.note && (
         <Card className="mt-6">
           <CardHeader>
             <CardTitle>Notes et commentaires</CardTitle>
           </CardHeader>
           <CardContent>
-            <p>{order.notes}</p>
+            <Textarea value={order.note} disabled/>
           </CardContent>
         </Card>
       )}
-        */}
+
     </div>
   )
 }

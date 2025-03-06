@@ -24,6 +24,7 @@ export default function OrdersManagement() {
     const newOrder: OrdersSaveDTO = {
       userId: values.userId,
       total: values.total,
+      note: values.note,
       status: 'PENDING',
       orderItems: values.orderItems.map((item) => ({
         articleId: item.articleId,

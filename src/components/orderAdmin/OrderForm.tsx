@@ -33,6 +33,7 @@ import {
   CommandList,
 } from '../ui/command';
 import { ScrollArea } from '../ui/scroll-area';
+import { Textarea } from '../ui/textarea';
 
 // Define the component props
 interface OrderFormProps {
@@ -55,6 +56,7 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
     defaultValues: {
       total: 0,
       orderItems: [],
+      note:""
     },
   });
 
@@ -346,6 +348,24 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
               </div>
             )}
 
+            {/* Comment for order */}
+            <FormField
+              control={form.control}
+              name="note"
+              render={({ field }) => (
+                <FormItem className="w-full flex flex-col">
+                  <FormLabel>Note</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Rajouter un commentaire si besoin."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             {/* Footer with Cancel and Submit buttons */}
             <DialogFooter>
               <Button type="button" variant="outline" onClick={onCancel}>
@@ -356,7 +376,7 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
           </form>
         </Form>
       </ScrollArea>
-    </div>
+    </div >
   );
 }
 

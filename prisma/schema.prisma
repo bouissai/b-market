@@ -15,6 +15,7 @@ datasource db {
 model User {
   id        String   @id @default(cuid())
   name      String
+  phone     String?
   email     String   @unique
   password  String
   role      String   @default("user")
@@ -69,10 +70,11 @@ model CartItem {
 }
 
 model Order {
-  id         String      @id @default(cuid())
+  id         Int         @id @default(autoincrement())
   userId     String
   user       User        @relation(fields: [userId], references: [id])
   total      Float
+  note       String?
   status     String      @default("PENDING") // "pending", "completed", etc.
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
@@ -81,12 +83,12 @@ model Order {
 
 model OrderItem {
   id        String  @id @default(cuid())
-  orderId   String
+  orderId   Int
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   articleId String
   article   Article @relation(fields: [articleId], references: [id])
   quantity  Int     @default(1)
   price     Float
 
-  @@unique([orderId, articleId]) // 🚀 Ajout de la contrainte UNIQUE
+  @@unique([orderId, articleId])
 }
