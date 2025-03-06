@@ -46,6 +46,9 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
   // Track IDs of selected articles for UI feedback
   const [selectedArticlesIds, setSelectedArticlesIds] = useState<string[]>([]);
 
+  // Tack state to manage open and close of the client popover
+  const [clientPopoverOpen, setClientPopoverOpen] = useState(false);
+
   // Initialize react-hook-form with default values and a zod resolver
   const form = useForm<OrderFormValues>({
     resolver: zodResolver(OrderSchema),
@@ -84,6 +87,10 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
   useEffect(() => {
     form.setValue('total', computedTotal);
   }, [computedTotal, form]);
+
+
+
+
 
   // Handle selecting or deselecting an article
   const handleArticleSelect = useCallback(
@@ -142,7 +149,7 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
               render={({ field }) => (
                 <FormItem className="w-full flex flex-col">
                   <FormLabel>Client</FormLabel>
-                  <Popover>
+                  <Popover open={clientPopoverOpen} onOpenChange={setClientPopoverOpen}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -155,10 +162,10 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
                         >
                           {field.value
                             ? users.find((user) => user.id === field.value)
-                                ?.name +
-                              ' - ' +
-                              users.find((user) => user.id === field.value)
-                                ?.email
+                              ?.name +
+                            ' - ' +
+                            users.find((user) => user.id === field.value)
+                              ?.email
                             : 'Selectionner un client'}
                           <ChevronsUpDown className="opacity-50" />
                         </Button>
@@ -179,6 +186,8 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
                                 key={user.id}
                                 onSelect={() => {
                                   form.setValue('userId', user.id);
+                                  // Fermer le popover après la sélection
+                                  setClientPopoverOpen(false);
                                 }}
                               >
                                 {user.name} - {user.email}
