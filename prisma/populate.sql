@@ -44,7 +44,8 @@ VALUES
 INSERT INTO "Cart" (id, "userId", "createdAt", "updatedAt")
 VALUES 
   ('cart1', 'user1', NOW(), NOW()),
-  ('cart2', 'user2', NOW(), NOW());
+  ('cart2', 'user2', NOW(), NOW()),
+  ('cart3', 'user3', NOW(), NOW());
 
 -- Insérer des articles dans les paniers
 INSERT INTO "CartItem" (id, "cartId", "articleId", quantity)
@@ -58,18 +59,18 @@ INSERT INTO "Order" (id, "userId", total, note, status, "createdAt", "updatedAt"
 VALUES 
   -- Commandes de la semaine dernière
   (1, 'user1', 98.70, 'Commande rapide', 'CONFIRMED', NOW() - INTERVAL '10 days', NOW() - INTERVAL '10 days'),
-  (1, 'user1', 98.70, 'Commande rapide', 'CONFIRMED', NOW() - INTERVAL '10 days', NOW() - INTERVAL '10 days'),
   (2, 'user2', 45.60, 'Livraison demain', 'PENDING', NOW() - INTERVAL '8 days', NOW() - INTERVAL '8 days'),
   (3, 'user3', 87.90, 'Bonne qualité', 'PENDING_PAYMENT', NOW() - INTERVAL '7 days', NOW() - INTERVAL '7 days'),
   (4, 'user3', 64.30, 'Remboursé', 'CANCELLED', NOW() - INTERVAL '6 days', NOW() - INTERVAL '6 days'),
   (5, 'user1', 122.10, 'Très satisfait', 'CONFIRMED', NOW() - INTERVAL '5 days', NOW() - INTERVAL '5 days'),
   (6, 'user2', 150.20, 'En attente', 'PENDING', NOW() - INTERVAL '4 days', NOW() - INTERVAL '4 days'),
   (7, 'user3', 32.80, 'Retard de paiement', 'PENDING_PAYMENT', NOW() - INTERVAL '3 days', NOW() - INTERVAL '3 days'),
-  (8, 'user', 75.90, 'Annulation demandée', 'CANCELLED', NOW() - INTERVAL '2 days', NOW() - INTERVAL '2 days'),
+  (8, 'user1', 75.90, 'Annulation demandée', 'CANCELLED', NOW() - INTERVAL '2 days', NOW() - INTERVAL '2 days'),
   (9, 'user1', 210.50, 'Gros achat', 'CONFIRMED', NOW(), NOW()),
   (10, 'user2', 55.30, 'A voir', 'PENDING', NOW(), NOW()),
   (11, 'user3', 95.40, 'Paiement en attente', 'PENDING_PAYMENT', NOW(), NOW()),
-  (12, 'user1', 130.20, 'Erreur de commande', 'CANCELLED', NOW(), NOW());
+  (12, 'user1', 130.20, 'Erreur de commande', 'CANCELLED', NOW(), NOW()),
+  (13, 'user1', 98.70, 'Commande rapide', 'CONFIRMED', NOW() - INTERVAL '10 days', NOW() - INTERVAL '10 days');
 
 
 INSERT INTO "Order" (id, "userId", total, note, status, "createdAt", "updatedAt")
