@@ -26,7 +26,8 @@ export async function GET(req: NextRequest) {
             topProducts,
             topRevenueProducts,
             topCategories,
-            uniqueCustomers
+            uniqueCustomers,
+            revenueByPeriod
         ] = await Promise.all([
             statsService.getTotalOrders(dateRanges.current),
             statsService.getTotalOrders(dateRanges.previous),
@@ -37,6 +38,7 @@ export async function GET(req: NextRequest) {
             statsService.getTopRevenueProducts(dateRanges.current),
             statsService.getTopCategories(dateRanges.current),
             statsService.getUniqueCustomers(dateRanges.current),
+            statsService.getRevenueByPeriod(period, dateRanges.current)
         ]);
 
         // Calculs des croissances
@@ -55,6 +57,7 @@ export async function GET(req: NextRequest) {
             ? Number((totalRevenue / totalOrders).toFixed(2))
             : 0;
 
+
         const response: StatsResponse = {
             period,
             totalOrders,
@@ -66,7 +69,8 @@ export async function GET(req: NextRequest) {
             averageOrderValue,
             revenueGrowth: revenueGrowth !== null ? Number(revenueGrowth.toFixed(2)) : null,
             ordersGrowth: ordersGrowth !== null ? Number(ordersGrowth.toFixed(2)) : null,
-            uniqueCustomers
+            uniqueCustomers,
+            revenueByPeriod
         };
 
         return NextResponse.json(response);

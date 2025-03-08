@@ -1,8 +1,16 @@
 export type StatsPeriod = "today" | "week" | "month" | "year" | null;
 export interface DateRange {
-    startDate: Date;
-    endDate: Date;
+  startDate: Date;
+  endDate: Date;
 }
+
+
+// Ajout de l'interface RevenueByPeriodItem dans types/stats.ts
+export interface RevenueByPeriodItem {
+  name: string;
+  revenue: number;
+}
+
 
 export interface StatsResponse {
   period: StatsPeriod;
@@ -16,6 +24,7 @@ export interface StatsResponse {
   revenueGrowth: number | null;
   ordersGrowth: number | null;
   uniqueCustomers: number;
+  revenueByPeriod: RevenueByPeriodItem[]; // Nouvelle propriété
 }
 
 export interface OrderStatusStats {
