@@ -67,9 +67,9 @@ VALUES
   -- Commande passée il y a 32 jours (environ 1 mois)
   ('user3', 41.3, 'Bonne qualité', 'PENDING_PAYMENT', NOW() - INTERVAL '32 days', NOW() - INTERVAL '32 days'),
   -- Commande très ancienne, passée il y a 365 jours (plus d'un an)
-  ('user1', 7.8, 'Au top', 'PENDING_PAYMENT', NOW() - INTERVAL '365 days', NOW() - INTERVAL '365 days'),
+  ('user1', 7.8, 'Au top', 'CONFIRMED', NOW() - INTERVAL '365 days', NOW() - INTERVAL '365 days'),
   -- Commande passée aujourd’hui
-  ('user1', 7.8, 'Au top', 'PENDING_PAYMENT', NOW(), NOW()),
+  ('user1', 7.8, 'Au top', 'CANCELLED', NOW(), NOW()),
   -- Commande passée il y a 64 jours (un peu plus de 2 mois)
   ('user1', 3.9, 'Rat yan', 'PENDING_PAYMENT', NOW() - INTERVAL '64 days', NOW() - INTERVAL '64 days');  
 
