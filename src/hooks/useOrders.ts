@@ -75,7 +75,11 @@ export function useOrders() {
         }
         return savedOrder;
       } catch (err) {
-        console.error(err);
+          toast({
+            title: "Erreur",
+            description: "Une erreur est survenue lors de la création de la commande ",
+            variant: "destructive",
+        });
       } finally {
         setIsSubmitting(false);
       }

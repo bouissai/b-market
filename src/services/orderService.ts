@@ -103,7 +103,7 @@ export async function createOrder(
   orderItems: OrderItemInput[],
 ): Promise<OrderDetailsDTO> {
   
-  const total = orderItems.reduce(
+  const total = await orderItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0,
   );
