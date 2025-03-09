@@ -24,7 +24,7 @@ import {
 } from '@tanstack/react-table';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
