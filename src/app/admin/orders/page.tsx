@@ -13,13 +13,20 @@ import {
 } from '@/components/ui/dialog';
 import { useOrders } from '@/hooks/useOrders';
 import { OrderFormValues, OrdersSaveDTO } from '@/types/order';
-import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
+import { use, useEffect, useState } from 'react';
 
 export default function OrdersManagement() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
   const { orders, saveOrder } = useOrders();
+  const searchParams  = useSearchParams();
 
+  useEffect(() => {
+    const status = searchParams.get("status");
+    setIsDialogOpen(status === "new");
+  }, [searchParams]);
+  
   const handleOnsubmit = async (values: OrderFormValues) => {
     const newOrder: OrdersSaveDTO = {
       userId: values.userId,

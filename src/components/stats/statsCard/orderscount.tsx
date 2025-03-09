@@ -1,7 +1,7 @@
 import { TrendIndicator } from "@/lib/helpers/statsHelpers";
 import { StatsResponse } from "@/types/stats";
 import { ShoppingCart } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "../../ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export function OrdersCount(stats : StatsResponse | null){
     if (!stats) return null;

@@ -1,5 +1,5 @@
 import { StatsResponse } from "@/types/stats";
-import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ShoppingBasket } from "lucide-react";
 
 export function AverageOrderValue(stats: StatsResponse | null) {

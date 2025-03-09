@@ -1,6 +1,6 @@
 import { TrendIndicator } from "@/lib/helpers/statsHelpers";
 import { DollarSign } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "../../ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { StatsResponse } from "@/types/stats";
 
 export function Revenue(stats : StatsResponse | null){

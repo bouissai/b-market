@@ -27,15 +27,16 @@ export function OrderTable({ data, onEdit, onDelete }: OrderTableProps) {
       header: 'Numéro de commande',
     },
     {
-      accessorKey: 'user',
+      accessorFn: (row) => row.customerName,
+      id: 'customerName',
       header: 'Client',
       cell: ({ row }) => row.original.customerName,
-      filterFn: (row, value) => {
-        return row.original.customerName
-          .toLowerCase()
-          .includes(value.toLowerCase());
+      enableColumnFilter: true,
+      filterFn: (row, _columnId, value) => {
+        const customerName : string = row.getValue('customerName'); // On récupère la valeur correcte        
+        return customerName.toLowerCase().includes(value.toLowerCase());
       },
-    },
+    },    
     {
       accessorKey: 'nbArticles',
       header: `Nombre d'articles `,
@@ -72,8 +73,13 @@ export function OrderTable({ data, onEdit, onDelete }: OrderTableProps) {
       sortingFn: (rowA, rowB) => {
         const statusA = rowA.original.status;
         const statusB = rowB.original.status;
+        
         return (OrderStatus[statusA]?.order ?? 0) - (OrderStatus[statusB]?.order ?? 0);
       },
+      filterFn: (row, _columnId, value) => {
+        if (!value) return true;
+        return row.original.status === value;
+      }
     },
   ];
 
@@ -81,7 +87,7 @@ export function OrderTable({ data, onEdit, onDelete }: OrderTableProps) {
     <DataTable
       columns={columns}
       data={data}
-      filterColumn="user"
+      filterColumn="customerName"
       filterPlaceholder="Filtrer par client..."
       onRowClick={(row) => handleRowClick(row)}
     />

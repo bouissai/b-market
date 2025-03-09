@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { OrderStatus } from '@/types/order';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -21,7 +22,9 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
@@ -40,6 +43,11 @@ export function DataTable<TData>({
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const searchParams = useSearchParams();
+  const initialStatus = searchParams.get("status")?.toUpperCase() || "ALL";
+  const [activeStatus, setActiveStatus] = useState<string>(initialStatus);
+
+
 
   const table = useReactTable({
     data,
@@ -55,22 +63,54 @@ export function DataTable<TData>({
       columnFilters,
     },
   });
+  // Utiliser useEffect uniquement pour initialiser le filtre une seule fois après que `table` soit prêt
+  useEffect(() => {
+    table.getColumn("status")?.setFilterValue(initialStatus === "ALL" ? "" : initialStatus);
+  }, [table, initialStatus]);
+
+
 
   return (
     <>
       {filterColumn && (
-        <div className="flex items-center py-4">
+        <div className="flex items-center py-4 gap-4">
+
           <Input
+            className="max-w-sm"
             placeholder={filterPlaceholder}
             value={
               (table.getColumn(filterColumn)?.getFilterValue() as string) ?? ''
             }
-            onChange={(event) =>
-              table.getColumn(filterColumn)?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
+            onChange={(event) => {
+              console.log('Filtrage appliqué:', event.target.value);
+              console.log('Valeur actuelle du filtre:', table.getColumn(filterColumn)?.getFilterValue());
+              table.getColumn(filterColumn)?.setFilterValue(event.target.value);
+            }}
           />
+
+          <Select
+            value={activeStatus}
+            onValueChange={(value) => {
+              setActiveStatus(value);
+              table.getColumn("status")?.setFilterValue(value === "ALL" ? "" : value);
+            }}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filtrer par statut" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">Toutes les commandes</SelectItem>
+              {Object.keys(OrderStatus).map((status) => (
+                <SelectItem key={status} value={status}>
+                  {OrderStatus[status as keyof typeof OrderStatus ]?.status || status}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
         </div>
+
+
       )}
       <div className="rounded-md border">
         <Table>
@@ -82,9 +122,9 @@ export function DataTable<TData>({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </TableHead>
                 ))}
               </TableRow>

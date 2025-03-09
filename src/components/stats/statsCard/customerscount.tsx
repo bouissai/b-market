@@ -1,5 +1,5 @@
 import { StatsResponse } from "@/types/stats";
-import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users } from "lucide-react";
 
 export function CustomersCount(stats: StatsResponse | null) {

@@ -1,5 +1,5 @@
 import { db } from "@/app/lib/db";
-import { CategoryStats, DateRange, ProductStats, RevenueByPeriodItem } from "@/types/stats";
+import { CategoryStats, DateRange, ProductStats, RevenueByPeriodItem, StatsPeriod } from "@/types/stats";
 
 export class StatsService {
     async getTotalOrders(dateRange: DateRange | null) {
@@ -346,11 +346,6 @@ export class StatsService {
 
             revenueByMonth.push({ name: monthNames[month], revenue });
         }
-
         return revenueByMonth;
     }
-
-
-
-
 }

@@ -13,18 +13,14 @@ import { OrderShortCut } from '@/components/stats/statsShortcut/orderShortCut';
 import { OrderTableStats } from '@/components/stats/statsTable/orderTableStats';
 import { TopArticles } from '@/components/stats/statsTable/topArticles';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
 import { useStatsStore } from '@/store/useStatsStore';
 import { StatsPeriod, StatsResponse } from '@/types/stats';
-import { BarChart3, Clock, Download, Plus, RefreshCw, ShoppingBasket, ShoppingCart } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Download, RefreshCw } from 'lucide-react';
 import { useEffect } from 'react';
 
 export default function AdminHome() {
-  const router = useRouter();
   const { stats, isLoading, error, period, setPeriod, loadStats } = useStatsStore();
   useEffect(() => {
     loadStats(period);
@@ -41,7 +37,7 @@ export default function AdminHome() {
   };
 
   if (isLoading) {
-    return <LoadingState/>;
+    return <LoadingState />;
   }
 
   if (!isLoading && error) {
@@ -96,7 +92,7 @@ export default function AdminHome() {
         <OrderTableStats stats={stats as StatsResponse} handleRefresh={handleRefresh} />
         <TopArticles {...stats as StatsResponse} />
       </div>
-      
+
       <OrderShortCut {...stats as StatsResponse} />
     </div>
   );

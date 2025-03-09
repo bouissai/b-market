@@ -5,12 +5,6 @@ export interface DateRange {
 }
 
 
-// Ajout de l'interface RevenueByPeriodItem dans types/stats.ts
-export interface RevenueByPeriodItem {
-  name: string;
-  revenue: number;
-}
-
 
 export interface StatsResponse {
   period: StatsPeriod;
@@ -50,4 +44,9 @@ export interface CategoryStats {
 export interface DayOfWeekStats {
   day: string;
   count: number;
+}
+
+export interface RevenueByPeriodItem {
+  name: string;
+  revenue: number;
 }

@@ -1,6 +1,6 @@
 import { OrderStatus } from '@/types/order';
 import React from 'react';
-import { Badge } from '../ui/badge';
+import { Badge } from '@/components/ui/badge';
 
 interface OrderProps {
   status: keyof typeof OrderStatus;

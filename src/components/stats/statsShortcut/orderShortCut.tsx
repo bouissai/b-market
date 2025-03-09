@@ -2,9 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatsResponse } from "@/types/stats";
 import { ShoppingCart, Plus, Clock, ShoppingBasket } from "lucide-react";
-import router from "next/router";
+import { useRouter } from 'next/navigation';
 
 export function OrderShortCut(stats: StatsResponse | null){
+  const router = useRouter();
+
     return(
         <Card>
         <CardHeader>
