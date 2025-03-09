@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  /* config options here */
+const nextConfig = {
+  productionBrowserSourceMaps: true, // Active les source maps en prod
 };
 
-export default nextConfig;
+module.exports = nextConfig;
