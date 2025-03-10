@@ -2,7 +2,7 @@
 
 import { DataTable } from "@/components/admin/table/dataTable"
 import { Button } from "@/components/ui/button"
-import { Category } from "@/types/article"
+import { Category } from "@/types/category"
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, Pencil, Trash } from "lucide-react"
 

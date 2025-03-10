@@ -21,7 +21,7 @@ export default function RootLayout({
                 {/* 🔑 Mots-clés SEO */}
                 <meta
                     name="keywords"
-                    content="boucherie halal Grenoble, viande halal Grenoble, boucherie Fontaine, boucherie Saint martin d heres, boucherie Meylan, halal Grenoble, viande de qualité"
+                    content="boucherie halal Grenoble, viande halal Grenoble, boucherie Fontaine, boucherie Grenoble, boucherie Saint martin d heres, boucherie Meylan, halal Grenoble, viande de qualité"
                 />
 
                 {/* 📍 SEO Local pour Google */}
@@ -73,6 +73,7 @@ export default function RootLayout({
                         "openingHours": "Mo-Sa 09:00-19:00"
                     })}
                 </script>
+
             </head>
             <body>
                 <UserNavBar>

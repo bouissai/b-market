@@ -1,11 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getOrderById } from "@/services/orderService"; // Assurez-vous d'importer correctement votre service
 import { db } from "@/app/lib/db";
+import { getOrderById } from "@/services/orderService"; // Assurez-vous d'importer correctement votre service
+import { NextRequest, NextResponse } from "next/server";
 
 // 🔴 DELETE → Supprimer une commande avec ses `OrderItems`
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }
+) {
     try {
-        const {id} = await params;
+        const id = (await params).id
         const numericId = Number(id);
 
         if (isNaN(numericId)) {
@@ -32,9 +33,10 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
 }
 
 // 🔵 GET → Récupérer une commande avec ses `OrderItems`
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }
+) {
     try {
-        const {id} = await params;
+        const id = (await params).id
         const numericId = Number(id);
 
         if (isNaN(numericId)) {

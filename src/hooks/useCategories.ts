@@ -1,4 +1,4 @@
-import { Category } from "@/types/article";
+import { Category } from "@/types/category";
 import { useEffect, useState } from "react";
 
 export function useCategories() {

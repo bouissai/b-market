@@ -1,6 +1,6 @@
 "use client"
 
-import OrderStatusBadge from "@/components/orderAdmin/badge"
+import OrderStatusBadge from "@/components/admin/orderAdmin/badge"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -310,7 +310,7 @@ export default function OrderDetailPage() {
             <CardTitle>Notes et commentaires</CardTitle>
           </CardHeader>
           <CardContent>
-            <Textarea value={order.note} disabled/>
+            <Textarea value={order.note} disabled />
           </CardContent>
         </Card>
       )}

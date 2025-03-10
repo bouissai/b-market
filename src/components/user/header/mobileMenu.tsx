@@ -1,6 +1,5 @@
 import { MENU_ITEMS } from '@/constants';
 import { AnimatePresence, motion } from 'framer-motion';
-import { OrderButton } from './basketButton';
 
 interface MobileMenuProps {
     isOpen: boolean;

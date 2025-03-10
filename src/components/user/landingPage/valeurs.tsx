@@ -22,7 +22,7 @@ export function NosValeurs() {
                 initial="hidden"
                 animate={isInView ? "visible" : "hidden"}
             >
-                <h3 className="text-3xl text-center font-bold mb-6">Nos Valeurs</h3>
+                <h2 className="text-3xl text-center font-bold mb-6">Nos Valeurs</h2>
                 <div ref={refCard} className="grid grid-cols-1 gap-28 md:grid-cols-3">
                     {LES_VALEURS.map((value, index) => (
                         <motion.div
@@ -37,9 +37,9 @@ export function NosValeurs() {
                             >
                                 <CardContent className="py-4 box-border flex flex-col items-center justify-center">
                                     <p className="text-5xl">{<value.icon strokeWidth="1.6" size="44" />}</p>
-                                    <h4 id={`card-title-${value.id}`} className="text-center pb-2 text-3xl font-semibold">
+                                    <h3 id={`card-title-${value.id}`} className="text-center pb-2 text-3xl font-semibold">
                                         {value.title}
-                                    </h4>
+                                    </h3>
                                     <p className="text-center  text-gray-600 max-w-sm">{value.description}</p>
                                 </CardContent>
                             </Card>

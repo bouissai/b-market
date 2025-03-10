@@ -1,6 +1,7 @@
 'use client'
 import { motion, useInView } from "framer-motion"; // Correction de l'import de motion
 import { MoveDown, ShoppingBag } from "lucide-react";
+import Image from 'next/image';
 import { useRef } from "react";
 
 export function ButcheryActivity() {
@@ -58,11 +59,13 @@ export function ButcheryActivity() {
                         transition={{ delay: 0.4, duration: 0.8 }}
                         className="relative"
                     >
-                        <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-                            <img
+                        <div className="relative w-full h-[600px] rounded-2xl overflow-hidden shadow-2xl">
+                            <Image
                                 src="https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=1200&q=80"
                                 alt="Boucher professionnel"
-                                className="w-full h-[600px] object-cover"
+                                fill
+                                className="object-cover"
+                                priority={false}
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
                         </div>

@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -24,7 +25,6 @@ import {
 } from '@tanstack/react-table';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
@@ -102,7 +102,7 @@ export function DataTable<TData>({
               <SelectItem value="ALL">Toutes les commandes</SelectItem>
               {Object.keys(OrderStatus).map((status) => (
                 <SelectItem key={status} value={status}>
-                  {OrderStatus[status as keyof typeof OrderStatus ]?.status || status}
+                  {OrderStatus[status as keyof typeof OrderStatus]?.status || status}
                 </SelectItem>
               ))}
             </SelectContent>

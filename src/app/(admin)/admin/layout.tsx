@@ -16,6 +16,7 @@ export default function AdminLayout({
                     enableSystem
                     disableTransitionOnChange
                 >
+                    
                     <AdminNavBar>{children}</AdminNavBar>
                 </ThemeProvider>
             </body>

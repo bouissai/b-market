@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useOrders } from "@/hooks/useOrders";
 import { StatsResponse } from "@/types/stats";
 import { Clock, RefreshCw } from "lucide-react";
-import router from "next/router";
+import { useRouter } from "next/navigation";
 
 
 interface StatsTableProps {
@@ -15,6 +15,8 @@ interface StatsTableProps {
 
 export function OrderTableStats({ stats, handleRefresh }: StatsTableProps) {
     const { orders, isLoading } = useOrders()
+    const router = useRouter()
+
 
     return (
         <Card className="col-span-1 lg:col-span-2">
