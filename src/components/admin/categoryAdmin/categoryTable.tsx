@@ -1,6 +1,6 @@
 "use client"
 
-import { DataTable } from "@/components/table/dataTable"
+import { DataTable } from "@/components/admin/table/dataTable"
 import { Button } from "@/components/ui/button"
 import { Category } from "@/types/article"
 import { ColumnDef } from "@tanstack/react-table"

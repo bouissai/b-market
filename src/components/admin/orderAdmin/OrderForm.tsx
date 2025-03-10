@@ -33,6 +33,7 @@ import {
   CommandList,
 } from '../../ui/command';
 import { ScrollArea } from '../../ui/scroll-area';
+import { Textarea } from '@/components/ui/textarea';
 
 // Define the component props
 interface OrderFormProps {

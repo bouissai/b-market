@@ -1,17 +1,17 @@
 'use client'
 
-import { AverageOrderValue } from '@/components/stats/statsCard/averageOrderValue';
-import { CustomersCount } from '@/components/stats/statsCard/customerscount';
-import { OrdersCount } from '@/components/stats/statsCard/orderscount';
-import { Revenue } from '@/components/stats/statsCard/revenue';
-import { EmptyState } from '@/components/stats/statsFallBackUI/EmptyState';
-import { ErrorState } from '@/components/stats/statsFallBackUI/ErrorState';
-import { LoadingState } from '@/components/stats/statsFallBackUI/LoadingState';
-import { RevenueDistibutionByCategory } from '@/components/stats/statsGraph/revenueDistibutionByCategory';
-import { RevenueGrowth } from '@/components/stats/statsGraph/revenuegrowth';
-import { OrderShortCut } from '@/components/stats/statsShortcut/orderShortCut';
-import { OrderTableStats } from '@/components/stats/statsTable/orderTableStats';
-import { TopArticles } from '@/components/stats/statsTable/topArticles';
+import { AverageOrderValue } from '@/components/admin/stats/statsCard/averageOrderValue';
+import { CustomersCount } from '@/components/admin/stats/statsCard/customerscount';
+import { OrdersCount } from '@/components/admin/stats/statsCard/orderscount';
+import { Revenue } from '@/components/admin/stats/statsCard/revenue';
+import { EmptyState } from '@/components/admin/stats/statsFallBackUI/EmptyState';
+import { ErrorState } from '@/components/admin/stats/statsFallBackUI/ErrorState';
+import { LoadingState } from '@/components/admin/stats/statsFallBackUI/LoadingState';
+import { RevenueDistibutionByCategory } from '@/components/admin/stats/statsGraph/revenueDistibutionByCategory';
+import { RevenueGrowth } from '@/components/admin/stats/statsGraph/revenuegrowth';
+import { OrderShortCut } from '@/components/admin/stats/statsShortcut/orderShortCut';
+import { OrderTableStats } from '@/components/admin/stats/statsTable/orderTableStats';
+import { TopArticles } from '@/components/admin/stats/statsTable/topArticles';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';

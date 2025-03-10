@@ -1,4 +1,4 @@
-import { OrderTable } from "@/components/orderAdmin/orderTable";
+import { OrderTable } from "@/components/admin/orderAdmin/orderTable";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useOrders } from "@/hooks/useOrders";

@@ -6,7 +6,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import OrderStatusBadge from './badge';
-import { DataTable } from '@/components/table/dataTable';
+import { DataTable } from '@/components/admin/table/dataTable';
 
 interface OrderTableProps {
   data: ordersDTO[];

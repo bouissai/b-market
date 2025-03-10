@@ -1,6 +1,6 @@
 'use client';
 
-import { DataTable } from '@/components/table/dataTable';
+import { DataTable } from '@/components/admin/table/dataTable';
 import { User } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 

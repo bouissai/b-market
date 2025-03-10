@@ -4,7 +4,7 @@ import {Article} from "@/types/article"
 import {ColumnDef} from "@tanstack/react-table"
 import {Button} from "@/components/ui/button"
 import {ArrowUpDown, Pencil, Trash} from "lucide-react"
-import { DataTable } from "@/components/table/dataTable"
+import { DataTable } from "@/components/admin/table/dataTable"
 
 interface ArticleTableProps {
     data: Article[]

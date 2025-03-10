@@ -1,4 +1,4 @@
-import { Faq } from "@/components/user/faq";
+import { Faq } from "@/components/user/faq/faq";
 
 export default function FaqPage() {
     return (
