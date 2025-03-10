@@ -1,11 +1,13 @@
+import { OrderDetailsDTO, ordersDTO, OrdersSaveDTO } from '@/types/order';
 import { useCallback, useEffect, useState } from 'react';
-import { ordersDTO, OrderDetailsDTO } from '@/types/order';
+import { useToast } from './use-toast';
 
 export function useOrders() {
   const [orders, setOrders] = useState<ordersDTO[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
 
   // Fonction générique pour éviter la répétition du fetch
   const apiRequest = useCallback(
@@ -62,7 +64,7 @@ export function useOrders() {
 
   // Sauvegarde d'une commande (POST ou PUT)
   const saveOrder = useCallback(
-    async (order: ordersDTO, method: 'POST' | 'PUT', url: string) => {
+    async (order: OrdersSaveDTO, method: 'POST' | 'PUT', url: string) => {
       setIsSubmitting(true);
       try {
         const savedOrder = await apiRequest(url, method, order);
@@ -73,7 +75,11 @@ export function useOrders() {
         }
         return savedOrder;
       } catch (err) {
-        console.error(err);
+          toast({
+            title: "Erreur",
+            description: "Une erreur est survenue lors de la création de la commande ",
+            variant: "destructive",
+        });
       } finally {
         setIsSubmitting(false);
       }
@@ -83,12 +89,18 @@ export function useOrders() {
 
   // Suppression d'une commande
   const deleteOrder = useCallback(
-    async (id: string) => {
+    async (id: number): Promise<boolean> => {
       try {
         await apiRequest(`/api/orders/${id}`, 'DELETE');
         setOrders((prev) => prev.filter((order) => order.id !== id));
+        return true;
       } catch (err) {
-        console.error(err);
+        toast({
+          title: "Erreur",
+          description: "Une erreur est survenue lors de la suppression",
+          variant: "destructive",
+      });
+        return false;
       }
     },
     [apiRequest],
@@ -96,7 +108,7 @@ export function useOrders() {
 
   // Récupération des détails d'une commande
   const fetchOrderDetails = useCallback(
-    async (id: string): Promise<OrderDetailsDTO> => {
+    async (id: number): Promise<OrderDetailsDTO> => {
       return await apiRequest(`/api/orders/${id}`);
     },
     [apiRequest],

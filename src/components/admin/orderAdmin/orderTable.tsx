@@ -1,12 +1,12 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { ordersDTO } from '@/types/order';
+import { ordersDTO, OrderStatus } from '@/types/order';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { DataTable } from '../../table/dataTable';
-import { Badge } from '../../ui/badge';
+import OrderStatusBadge from './badge';
+import { DataTable } from '@/components/table/dataTable';
 
 interface OrderTableProps {
   data: ordersDTO[];
@@ -27,15 +27,16 @@ export function OrderTable({ data, onEdit, onDelete }: OrderTableProps) {
       header: 'Numéro de commande',
     },
     {
-      accessorKey: 'user',
+      accessorFn: (row) => row.customerName,
+      id: 'customerName',
       header: 'Client',
       cell: ({ row }) => row.original.customerName,
-      filterFn: (row, value) => {
-        return row.original.customerName
-          .toLowerCase()
-          .includes(value.toLowerCase());
+      enableColumnFilter: true,
+      filterFn: (row, _columnId, value) => {
+        const customerName : string = row.getValue('customerName'); // On récupère la valeur correcte        
+        return customerName.toLowerCase().includes(value.toLowerCase());
       },
-    },
+    },    
     {
       accessorKey: 'nbArticles',
       header: `Nombre d'articles `,
@@ -67,39 +68,18 @@ export function OrderTable({ data, onEdit, onDelete }: OrderTableProps) {
         );
       },
       cell: ({ row }) => {
-        const status = row.getValue('status') as string;
-        return (
-          <Badge
-            variant={
-              status === 'pending'
-                ? 'secondary'
-                : status === 'awaiting_payment'
-                ? 'info'
-                : status === 'completed'
-                ? 'success'
-                : status === 'cancelled'
-                ? 'destructive'
-                : 'default'
-            }
-          >
-            {status}
-          </Badge>
-        );
+        return <OrderStatusBadge status={row.original.status} />;
       },
       sortingFn: (rowA, rowB) => {
-        const statusOrder = {
-          pending: 1,
-          awaiting_payment: 2,
-          completed: 3,
-          cancelled: 4,
-        };
         const statusA = rowA.original.status;
         const statusB = rowB.original.status;
-        return (
-          statusOrder[statusA as keyof typeof statusOrder] -
-          statusOrder[statusB as keyof typeof statusOrder]
-        );
+        
+        return (OrderStatus[statusA]?.order ?? 0) - (OrderStatus[statusB]?.order ?? 0);
       },
+      filterFn: (row, _columnId, value) => {
+        if (!value) return true;
+        return row.original.status === value;
+      }
     },
   ];
 
@@ -107,7 +87,7 @@ export function OrderTable({ data, onEdit, onDelete }: OrderTableProps) {
     <DataTable
       columns={columns}
       data={data}
-      filterColumn="user"
+      filterColumn="customerName"
       filterPlaceholder="Filtrer par client..."
       onRowClick={(row) => handleRowClick(row)}
     />

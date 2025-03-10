@@ -12,16 +12,34 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useOrders } from '@/hooks/useOrders';
-import { OrderFormValues } from '@/types/order';
-import { useState } from 'react';
+import { OrderFormValues, OrdersSaveDTO } from '@/types/order';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
+import { use, useEffect, useState } from 'react';
 
 export default function OrdersManagement() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
   const { orders, saveOrder } = useOrders();
+  const searchParams  = useSearchParams();
 
+  useEffect(() => {
+    const status = searchParams.get("status");
+    setIsDialogOpen(status === "new");
+  }, [searchParams]);
+  
   const handleOnsubmit = async (values: OrderFormValues) => {
-    await saveOrder(values, 'POST', '/api/orders');
+    const newOrder: OrdersSaveDTO = {
+      userId: values.userId,
+      total: values.total,
+      note: values.note,
+      status: 'PENDING',
+      orderItems: values.orderItems.map((item) => ({
+        articleId: item.articleId,
+        price: item.price,
+        quantity: item.quantity,
+      })),
+    };
+    await saveOrder(newOrder, 'POST', '/api/orders');
     setIsDialogOpen(false);
   };
 

@@ -3,6 +3,7 @@
 import {
   Beef,
   ChartBarStacked,
+  Home,
   LogOutIcon,
   ShoppingBag,
   User,
@@ -28,6 +29,11 @@ const data = {
   },
   navMain: [
     {
+      title: 'Tableau de bord',
+      url: '/admin',
+      icon: Home,
+    },
+    {
       title: 'Gestion des articles',
       url: '/admin/article',
       icon: Beef,
@@ -52,7 +58,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar variant="inset" collapsible="icon" {...props}>
       <SidebarHeader>
         <NavUser user={data.user} />
       </SidebarHeader>
