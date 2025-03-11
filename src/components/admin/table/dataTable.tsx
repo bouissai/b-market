@@ -2,7 +2,13 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -25,6 +31,7 @@ import {
 } from '@tanstack/react-table';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
@@ -44,10 +51,9 @@ export function DataTable<TData>({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const searchParams = useSearchParams();
-  const initialStatus = searchParams.get("status")?.toUpperCase() || "ALL";
+  const initialStatus = searchParams.get('status')?.toUpperCase() || 'ALL';
   const [activeStatus, setActiveStatus] = useState<string>(initialStatus);
-
-
+  const pathname = usePathname();
 
   const table = useReactTable({
     data,
@@ -63,18 +69,19 @@ export function DataTable<TData>({
       columnFilters,
     },
   });
-  // Utiliser useEffect uniquement pour initialiser le filtre une seule fois après que `table` soit prêt
+
   useEffect(() => {
-    table.getColumn("status")?.setFilterValue(initialStatus === "ALL" ? "" : initialStatus);
+    if (pathname === '/admin/orders' && table.getColumn('status')) {
+      table
+        .getColumn('status')
+        ?.setFilterValue(initialStatus === 'ALL' ? '' : initialStatus);
+    }
   }, [table, initialStatus]);
-
-
 
   return (
     <>
       {filterColumn && (
         <div className="flex items-center py-4 gap-4">
-
           <Input
             className="max-w-sm"
             placeholder={filterPlaceholder}
@@ -83,34 +90,39 @@ export function DataTable<TData>({
             }
             onChange={(event) => {
               console.log('Filtrage appliqué:', event.target.value);
-              console.log('Valeur actuelle du filtre:', table.getColumn(filterColumn)?.getFilterValue());
+              console.log(
+                'Valeur actuelle du filtre:',
+                table.getColumn(filterColumn)?.getFilterValue(),
+              );
               table.getColumn(filterColumn)?.setFilterValue(event.target.value);
             }}
           />
 
-          <Select
-            value={activeStatus}
-            onValueChange={(value) => {
-              setActiveStatus(value);
-              table.getColumn("status")?.setFilterValue(value === "ALL" ? "" : value);
-            }}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filtrer par statut" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">Toutes les commandes</SelectItem>
-              {Object.keys(OrderStatus).map((status) => (
-                <SelectItem key={status} value={status}>
-                  {OrderStatus[status as keyof typeof OrderStatus]?.status || status}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
+          {pathname === '/admin/orders' && (
+            <Select
+              value={activeStatus}
+              onValueChange={(value) => {
+                setActiveStatus(value);
+                table
+                  .getColumn('status')
+                  ?.setFilterValue(value === 'ALL' ? '' : value);
+              }}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filtrer par statut" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">Toutes les commandes</SelectItem>
+                {Object.keys(OrderStatus).map((status) => (
+                  <SelectItem key={status} value={status}>
+                    {OrderStatus[status as keyof typeof OrderStatus]?.status ||
+                      status}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
         </div>
-
-
       )}
       <div className="rounded-md border">
         <Table>
@@ -122,9 +134,9 @@ export function DataTable<TData>({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
