@@ -1,4 +1,3 @@
-import { fetchStats } from "@/hooks/useStats";
 import { StatsPeriod, StatsResponse } from "@/types/stats";
 import { create } from "zustand";
 
@@ -24,7 +23,12 @@ export const useStatsStore = create<StatsState>((set, get) => ({
     set({ isLoading: true, error: null });
 
     try {
-      const stats = await fetchStats(selectedPeriod);
+      const statsReponse = await fetch(period ? `/api/stats?period=${period}` : `/api/stats`);
+      if (!statsReponse.ok) {
+        throw new Error("Erreur lors de la récupération des statistiques");
+      }
+      const stats: StatsResponse = await statsReponse.json(); // 🔥 Convertir en JSON
+
       set({ stats, period: selectedPeriod, isLoading: false });
 
 
@@ -32,4 +36,8 @@ export const useStatsStore = create<StatsState>((set, get) => ({
       set({ error: error instanceof Error ? error.message : "Erreur inconnue", isLoading: false });
     }
   },
+
+
+
+
 }));

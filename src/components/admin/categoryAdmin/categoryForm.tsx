@@ -1,15 +1,15 @@
 "use client"
 
-import {Button} from "@/components/ui/button"
-import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog"
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"
-import {Input} from "@/components/ui/input"
-import {zodResolver} from "@hookform/resolvers/zod"
-import {useForm} from "react-hook-form"
-import * as z from "zod"
-import {useCategories} from "@/hooks/useCategories";
-import {useToast} from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { useToast } from "@/hooks/use-toast"
+import { useCategoryStore } from "@/store/useCategoryStore"
 import { Category } from "@/types/category"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
 
 const formSchema = z.object({
     name: z.string().min(1, "Le nom est requis"),
@@ -21,13 +21,13 @@ interface CategoryFormProps {
     onSaveAction: (data: Category) => void
 }
 
-export function CategoryForm({category, onCloseAction, onSaveAction}: CategoryFormProps) {
-    const {saveCategory, isSubmitting} = useCategories();
-    const {toast} = useToast();
+export function CategoryForm({ category, onCloseAction, onSaveAction }: CategoryFormProps) {
+    const { saveCategory, isSubmitting } = useCategoryStore();
+    const { toast } = useToast();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: category || {name: ""},
+        defaultValues: category || { name: "" },
     })
 
     const handleSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -36,8 +36,8 @@ export function CategoryForm({category, onCloseAction, onSaveAction}: CategoryFo
 
         // Construire un objet Category valide
         const categoryData: Partial<Category> = category
-            ? {...category, name: values.name} // Modifier une catégorie existante
-            : {name: values.name}; // Ajouter une nouvelle catégorie
+            ? { ...category, name: values.name } // Modifier une catégorie existante
+            : { name: values.name }; // Ajouter une nouvelle catégorie
 
         await saveCategory(categoryData as Category, method, url)
             .then((data) => {
@@ -68,19 +68,20 @@ export function CategoryForm({category, onCloseAction, onSaveAction}: CategoryFo
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>{category ? "Modifier la catégorie" : "Ajouter une catégorie"}</DialogTitle>
+                    <DialogDescription />
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                         <FormField
                             control={form.control}
                             name="name"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Nom</FormLabel>
                                     <FormControl>
                                         <Input placeholder="Nom de la catégorie" {...field} />
                                     </FormControl>
-                                    <FormMessage/>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />

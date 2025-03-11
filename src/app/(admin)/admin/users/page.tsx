@@ -2,7 +2,6 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useUsers } from '@/hooks/useUsers';
 import { Loader2 } from 'lucide-react';
 
 import UserForm from '@/components/admin/userAdmin/userForm';
@@ -14,12 +13,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { useState } from 'react';
+import { useUserStore } from '@/store/useUserStore';
+import { useEffect, useState } from 'react';
 
 export default function UserPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const { users, isLoading } = useUsers();
+  const { users, isLoading, fetchUsers } = useUserStore();
+
+  useEffect(() => {
+    fetchUsers()
+  }, [fetchUsers]);
 
   if (isLoading) {
     return (

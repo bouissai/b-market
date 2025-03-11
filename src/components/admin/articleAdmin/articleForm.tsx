@@ -26,10 +26,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { useCategories } from '@/hooks/useCategories';
+import { useCategoryStore } from '@/store/useCategoryStore';
 import type { Article } from '@/types/article';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -52,8 +52,14 @@ export function ArticleForm({
   onSaveAction,
 }: ArticleFormProps) {
   const { toast } = useToast();
-  const { categories } = useCategories();
+  const { categories, fetchCategories } = useCategoryStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -205,8 +211,8 @@ export function ArticleForm({
               {isSubmitting
                 ? 'Enregistrement...'
                 : article
-                ? 'Modifier'
-                : 'Ajouter'}
+                  ? 'Modifier'
+                  : 'Ajouter'}
             </Button>
           </form>
         </Form>

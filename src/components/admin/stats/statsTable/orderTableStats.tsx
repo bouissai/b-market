@@ -1,10 +1,11 @@
 import { OrderTable } from "@/components/admin/orderAdmin/orderTable";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { useOrders } from "@/hooks/useOrders";
+import { useOrderStore } from "@/store/useOrderStore";
 import { StatsResponse } from "@/types/stats";
 import { Clock, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 
 interface StatsTableProps {
@@ -13,10 +14,13 @@ interface StatsTableProps {
 }
 
 
-export function OrderTableStats({ stats, handleRefresh }: StatsTableProps) {
-    const { orders, isLoading } = useOrders()
+export function OrderTableStats({ stats }: StatsTableProps) {
+    const { orders, fetchOrders, init , isLoading } = useOrderStore()
     const router = useRouter()
-
+    
+    useEffect(() => {
+        init();
+    }, [init]);
 
     return (
         <Card className="col-span-1 lg:col-span-2">
@@ -43,7 +47,7 @@ export function OrderTableStats({ stats, handleRefresh }: StatsTableProps) {
                 <div className="text-sm text-muted-foreground">
                     Mise à jour <Clock className="h-3 w-3 inline mr-1" /> il y a quelques minutes
                 </div>
-                <Button variant="ghost" size="sm" onClick={handleRefresh}>
+                <Button variant="ghost" size="sm" onClick={fetchOrders}>
                     <RefreshCw className="h-4 w-4 mr-2" /> Actualiser
                 </Button>
             </CardFooter>

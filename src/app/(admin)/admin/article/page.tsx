@@ -1,7 +1,7 @@
 'use client';
 
-import { ArticleForm } from "@/components/admin/articleAdmin/articleForm"
-import { ArticleTable } from "@/components/admin/articleAdmin/articleTable"
+import { ArticleForm } from "@/components/admin/articleAdmin/articleForm";
+import { ArticleTable } from "@/components/admin/articleAdmin/articleTable";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,10 +15,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { useArticles } from '@/hooks/useArticles';
-import { Article } from '@/types/article';
+import { useArticleStore } from "@/store/useArticleStore";
 import { Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect } from "react";
 
 export default function ArticlePage() {
   const { toast } = useToast();
@@ -26,13 +25,18 @@ export default function ArticlePage() {
     articles,
     isLoading,
     error,
+    selectedArticle,
+    mode,
+    setSelectedArticle,
     addArticle,
+    fetchArticles,
     updateArticle,
     deleteArticle,
-  } = useArticles();
-  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
-  const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
-  const [articleToDelete, setArticleToDelete] = useState<Article | null>(null);
+  } = useArticleStore();
+
+  useEffect(() => {
+    fetchArticles()
+  }, [fetchArticles]);
 
   if (isLoading) {
     return (
@@ -51,16 +55,14 @@ export default function ArticlePage() {
   }
 
   const handleDelete = async () => {
-    if (articleToDelete) {
-      const success = await deleteArticle(articleToDelete.id);
-      if (success) {
-        toast({
-          title: 'Succès',
-          description: 'Article supprimé avec succès',
-        });
-      }
-      setArticleToDelete(null);
+    const success = await deleteArticle();
+    if (success) {
+      toast({
+        title: 'Succès',
+        description: 'Article supprimé avec succès',
+      });
     }
+    setSelectedArticle(null, null); // 🔥 Réinitialisation après suppression
   };
 
   return (
@@ -69,10 +71,7 @@ export default function ArticlePage() {
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Gestion des Articles</CardTitle>
           <Button
-            onClick={() => {
-              setIsFormOpen(true);
-              setSelectedArticle(null);
-            }}
+            onClick={() => setSelectedArticle(null, "new")}
           >
             Ajouter un article
           </Button>
@@ -80,33 +79,32 @@ export default function ArticlePage() {
         <CardContent>
           <ArticleTable
             data={articles}
-            onEdit={(article) => {
-              setIsFormOpen(true);
-              setSelectedArticle(article);
-            }}
-            onDelete={setArticleToDelete}
+            onEdit={(article) => setSelectedArticle(article, "edit")}
+            onDelete={(article) => setSelectedArticle(article, "delete")}
           />
         </CardContent>
       </Card>
 
-      {/* Forms and Dialogs */}
-      {isFormOpen && (
+      {/* Formulaire de création / modification */}
+      {(mode === "edit" || mode === "new") && (
         <ArticleForm
           article={selectedArticle}
-          onCloseAction={() => setIsFormOpen(false)}
+          onCloseAction={() => setSelectedArticle(null, null)}
           onSaveAction={(newArticle) => {
             if (selectedArticle) {
               updateArticle(newArticle);
             } else {
               addArticle(newArticle);
             }
-            setIsFormOpen(false);
+            setSelectedArticle(null, null);
           }}
         />
       )}
+
+      {/* Dialogue de suppression */}
       <AlertDialog
-        open={!!articleToDelete}
-        onOpenChange={() => setArticleToDelete(null)}
+        open={mode === "delete" && selectedArticle !== null}
+        onOpenChange={() => setSelectedArticle(null, null)}
       >
         <AlertDialogContent>
           <AlertDialogHeader>

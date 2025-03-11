@@ -15,22 +15,30 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { useCategories } from '@/hooks/useCategories';
+import { useCategoryStore } from '@/store/useCategoryStore';
 import { Category } from '@/types/category';
 import { Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect } from 'react';
 
 export default function CategoryPage() {
   const { toast } = useToast();
-  const { categories, isLoading, addCategory, updateCategory, deleteCategory } =
-    useCategories();
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null,
-  );
-  const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
-  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(
-    null,
-  );
+  const {
+    categories,
+    isLoading,
+    selectedCategory,
+    mode,
+    isFormOpen,
+    fetchCategories,
+    setSelectedCategory,
+    setIsFormOpen,
+    addCategory,
+    updateCategory,
+    deleteCategory,
+  } = useCategoryStore();
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   if (isLoading) {
     return (
@@ -41,27 +49,13 @@ export default function CategoryPage() {
   }
 
   const handleDelete = async () => {
-    if (!categoryToDelete) return;
-
-    await deleteCategory(categoryToDelete.id)
-      .then(() => {
-        toast({
-          title: 'Succès',
-          description: 'Catégorie supprimée avec succès',
-        });
-      })
-      .catch((error) => {
-        let errorMessage = 'Une erreur est survenue lors de la suppression.';
-        if (error.status === 409) {
-          errorMessage = 'Cette catégorie contient des articles.';
-        }
-        toast({
-          title: 'Erreur',
-          description: errorMessage,
-          variant: 'destructive',
-        });
-      })
-      .finally(() => setCategoryToDelete(null));
+    const success = await deleteCategory();
+    if (success) {
+      toast({
+        title: 'Succès',
+        description: 'Catégorie supprimée avec succès',
+      });
+    }
   };
 
   return (
@@ -72,7 +66,7 @@ export default function CategoryPage() {
           <Button
             onClick={() => {
               setIsFormOpen(true);
-              setSelectedCategory(null);
+              setSelectedCategory(null, 'new');
             }}
           >
             Ajouter une catégorie
@@ -83,10 +77,10 @@ export default function CategoryPage() {
             data={categories}
             onEdit={(category) => {
               setIsFormOpen(true);
-              setSelectedCategory(category);
+              setSelectedCategory(category, 'edit');
             }}
             onDelete={(category) => {
-              setCategoryToDelete(category);
+              setSelectedCategory(category, 'delete');
             }}
           />
         </CardContent>
@@ -96,8 +90,8 @@ export default function CategoryPage() {
         <CategoryForm
           category={selectedCategory}
           onCloseAction={() => setIsFormOpen(false)}
-          onSaveAction={(newCategory) => {
-            if (selectedCategory) {
+          onSaveAction={(newCategory: Category) => {
+            if (mode === 'edit') {
               updateCategory(newCategory);
             } else {
               addCategory(newCategory);
@@ -107,8 +101,10 @@ export default function CategoryPage() {
         />
       )}
       <AlertDialog
-        open={!!categoryToDelete}
-        onOpenChange={() => setCategoryToDelete(null)}
+        open={mode === 'delete'}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) setSelectedCategory(null, null);
+        }}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -121,7 +117,9 @@ export default function CategoryPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogCancel onClick={() => setSelectedCategory(null, null)}>
+              Annuler
+            </AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete}>
               Supprimer
             </AlertDialogAction>

@@ -16,9 +16,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { useArticles } from '@/hooks/useArticles';
-import { useUsers } from '@/hooks/useUsers';
+import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
+import { useArticleStore } from '@/store/useArticleStore';
+import { useUserStore } from '@/store/useUserStore';
 import { OrderFormValues, OrderItemSchema, OrderSchema } from '@/types/order';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, ChevronsUpDown, Trash2 } from 'lucide-react';
@@ -33,7 +34,6 @@ import {
   CommandList,
 } from '../../ui/command';
 import { ScrollArea } from '../../ui/scroll-area';
-import { Textarea } from '@/components/ui/textarea';
 
 // Define the component props
 interface OrderFormProps {
@@ -42,8 +42,8 @@ interface OrderFormProps {
 }
 
 export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
-  const { articles } = useArticles();
-  const { users } = useUsers();
+  const { articles, fetchArticles } = useArticleStore();
+  const { users, fetchUsers } = useUserStore();
   // Track IDs of selected articles for UI feedback
   const [selectedArticlesIds, setSelectedArticlesIds] = useState<string[]>([]);
 
@@ -56,7 +56,7 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
     defaultValues: {
       total: 0,
       orderItems: [],
-      note:""
+      note: ""
     },
   });
 
@@ -88,11 +88,9 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
   // Whenever computedTotal changes, update the form value for total.
   useEffect(() => {
     form.setValue('total', computedTotal);
-  }, [computedTotal, form]);
-
-
-
-
+    fetchArticles(),
+      fetchUsers()
+  }, [fetchArticles, computedTotal, form, fetchUsers]);
 
   // Handle selecting or deselecting an article
   const handleArticleSelect = useCallback(

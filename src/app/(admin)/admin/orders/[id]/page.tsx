@@ -17,63 +17,25 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Skeleton } from "@/components/ui/skeleton"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
-import { useOrders } from "@/hooks/useOrders"
 import { getStatusStep } from "@/lib/helpers/orderHelpers"
-import { type OrderDetailsDTO } from "@/types/order"
+import { useOrderStore } from "@/store/useOrderStore"
 import { ArrowLeft, Calendar, Clock, Euro, Pen, ShoppingBasket, SquareX, Trash, User } from "lucide-react"
 import { useParams, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 
 
 export default function OrderDetailPage() {
   const { id } = useParams()
-  const { fetchOrderDetails, deleteOrder } = useOrders()
-  const [order, setOrder] = useState<OrderDetailsDTO>()
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState("")
+  const { orderDetails, fetchOrderDetails, deleteOrder, isLoading, error } = useOrderStore()
   const router = useRouter()
   const { toast } = useToast()
 
   useEffect(() => {
-    if (!id) return; // Vérifier si id est bien défini
-
-    const numericId = Number(id); // Convertir id en number
-    if (isNaN(numericId)) {
-      setError("ID de commande invalide.");
-      return;
-    }
-
-    const getOrderDetails = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchOrderDetails(numericId); // Passer l'ID en number
-        setOrder(data);
-      } catch {
-        setError("Erreur lors de la récupération de la commande.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getOrderDetails();
+    fetchOrderDetails(Number(id));
   }, [id, fetchOrderDetails]);
 
-
-
   const handleDelete = async () => {
-    if (!id) return;
-
-    const numericId = Number(id);
-    if (isNaN(numericId)) {
-      toast({
-        title: "Erreur",
-        description: "ID de commande invalide.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const success = await deleteOrder(numericId);
+    const success = await deleteOrder(Number(id));
     if (success) {
       router.push(`/admin/orders`);
       toast({
@@ -84,7 +46,7 @@ export default function OrderDetailPage() {
   };
 
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="p-6 space-y-6">
         <div className="flex items-center gap-2">
@@ -118,7 +80,7 @@ export default function OrderDetailPage() {
     )
   }
 
-  if (!order) {
+  if (!orderDetails) {
     return (
       <div className="p-6">
         <Button variant="outline" onClick={() => router.push("/admin/orders")} className="mb-4">
@@ -144,8 +106,8 @@ export default function OrderDetailPage() {
     <div className="p-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="flex content-center justify-center items-center center gap-6">
-          <h1 className="text-2xl font-bold">Commande #{order.id}</h1>
-          <OrderStatusBadge status={order.status as "PENDING" | "PENDING_PAYMENT" | "CONFIRMED" | "CANCELLED"} />
+          <h1 className="text-2xl font-bold">Commande #{orderDetails.id}</h1>
+          <OrderStatusBadge status={orderDetails.status as "PENDING" | "PENDING_PAYMENT" | "CONFIRMED" | "CANCELLED"} />
         </div>
         <div className="flex gap-2">
           <Button onClick={() => console.log("TODO edit")} variant="outline" size="sm">
@@ -185,7 +147,7 @@ export default function OrderDetailPage() {
             <span>Statut de la commande</span>
           </CardTitle>
         </CardHeader>
-        <CardContent>{getStatusStep(order.status as "PENDING" | "PENDING_PAYMENT" | "CONFIRMED" | "CANCELLED")}</CardContent>
+        <CardContent>{getStatusStep(orderDetails.status as "PENDING" | "PENDING_PAYMENT" | "CONFIRMED" | "CANCELLED")}</CardContent>
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -200,18 +162,18 @@ export default function OrderDetailPage() {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Nom</span>
-                <span className="font-medium">{order.customerName}</span>
+                <span className="font-medium">{orderDetails.customerName}</span>
               </div>
-              {order.customerEmail && (
+              {orderDetails.customerEmail && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Email</span>
-                  <span className="font-medium">{order.customerEmail}</span>
+                  <span className="font-medium">{orderDetails.customerEmail}</span>
                 </div>
               )}
-              {order?.customerPhone && (
+              {orderDetails?.customerPhone && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Téléphone</span>
-                  <span className="font-medium">{order.customerPhone}</span>
+                  <span className="font-medium">{orderDetails.customerPhone}</span>
                 </div>
               )}
             </div>
@@ -229,17 +191,17 @@ export default function OrderDetailPage() {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Numéro</span>
-                <span className="font-medium">#{order.id}</span>
+                <span className="font-medium">#{orderDetails.id}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Total</span>
                 <span className="font-medium flex items-center">
-                  {order.total} <Euro className="ml-1 h-4 w-4" />
+                  {orderDetails.total} <Euro className="ml-1 h-4 w-4" />
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Articles</span>
-                <span className="font-medium">{order.items?.length || 0}</span>
+                <span className="font-medium">{orderDetails.items?.length || 0}</span>
               </div>
             </div>
           </CardContent>
@@ -258,7 +220,7 @@ export default function OrderDetailPage() {
                 <span className="text-muted-foreground">Date de commande</span>
                 <span className="font-medium flex items-center">
                   <Clock className="mr-1 h-4 w-4" />
-                  {order.date ? new Date(order.date).toLocaleDateString() : "N/A"}
+                  {orderDetails.date ? new Date(orderDetails.date).toLocaleDateString() : "N/A"}
                 </span>
               </div>
             </div>
@@ -285,7 +247,7 @@ export default function OrderDetailPage() {
                 </tr>
               </thead>
               <tbody>
-                {order.items?.map((item) => (
+                {orderDetails.items?.map((item) => (
                   <tr key={item.id} className="border-b">
                     <td className="py-3 px-4">{item.name}</td>
                     <td className="text-right py-3 px-4">{item.price} €</td>
@@ -299,18 +261,17 @@ export default function OrderDetailPage() {
         </CardContent>
         <CardFooter className="flex justify-between border-t p-4">
           <div className="font-medium">Total</div>
-          <div className="font-bold text-lg">{order.total} €</div>
+          <div className="font-bold text-lg">{orderDetails.total} €</div>
         </CardFooter>
       </Card>
 
-
-      {order.note && (
+      {orderDetails.note && (
         <Card className="mt-6">
           <CardHeader>
             <CardTitle>Notes et commentaires</CardTitle>
           </CardHeader>
           <CardContent>
-            <Textarea value={order.note} disabled />
+            <Textarea value={orderDetails.note} disabled />
           </CardContent>
         </Card>
       )}

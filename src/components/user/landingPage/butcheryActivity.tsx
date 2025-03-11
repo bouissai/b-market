@@ -61,12 +61,17 @@ export function ButcheryActivity() {
                     >
                         <div className="relative w-full h-[600px] rounded-2xl overflow-hidden shadow-2xl">
                             <Image
-                                src="https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=1200&q=80"
+                                src="https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=800&q=75"
                                 alt="Boucher professionnel"
                                 fill
+                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 40vw"
                                 className="object-cover"
-                                priority={false}
+                                priority={true}
+                                quality={75}
+                                fetchPriority="high"
+                                loading="eager"
                             />
+
                             <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
                         </div>
 
