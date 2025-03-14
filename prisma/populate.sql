@@ -10,7 +10,7 @@ TRUNCATE "User" CASCADE;
 -- Active: 1739726328662@@127.0.0.1@5433@bmarket
 -- Insérer des catégories de produits
 INSERT INTO "Category" (id, name, "createdAt", "updatedAt")
-VALUES 
+VALUES
   ('cat1', 'Boeuf', NOW(), NOW()),
   ('cat2', 'Agneau', NOW(), NOW()),
   ('cat3', 'Volaille', NOW(), NOW()),
@@ -19,7 +19,7 @@ VALUES
 
 -- Insérer des articles
 INSERT INTO "Article" (id, name, unit, price, image, description, "createdAt", "updatedAt", "categoryName")
-VALUES 
+VALUES
   -- Boeuf
   ('art1', 'Entrecôte de boeuf', 'kg', 39.90, 'entrecote.jpg', 'Entrecôte de boeuf maturée.', NOW(), NOW(), 'Boeuf'),
   ('art2', 'Steak haché', 'kg', 15.90, 'steak_hache.jpg', 'Steak haché pur boeuf.', NOW(), NOW(), 'Boeuf'),
@@ -34,16 +34,16 @@ VALUES
   ('art11', 'Huile d''olive', 'litre', 8.90, 'huile_olive.jpg', 'Huile d''olive extra vierge.', NOW(), NOW(), 'Épicerie');
 
 -- Insérer des utilisateurs
-INSERT INTO "User" (id, name, email, phone, password, role, "createdAt", "updatedAt", "cartId")
-VALUES 
-  ('user0', 'Test Jule', 'test@example.com', '+33 1 11 11 11 00', 'hashedpassworddd1', 'user', NOW(), NOW(), 'cart0'),
-  ('user1', 'Mohammed Benali', 'mohammed.benali@example.com', '+33 0 00 00 00 00', 'hashedpassword1', 'user', NOW(), NOW(), 'cart1'),
-  ('user2', 'Sarah Dubois', 'sarah.dubois@example.com', '' , 'hashedpassword2', 'user', NOW(), NOW(), 'cart2'),
-  ('user3', 'Ilyass Bouissa', 'bouissailyass@gmail.com', '+33 6 95 50 90 33', 'hashedpassword3', 'user', NOW(), NOW(), 'cart3');
+INSERT INTO "User" (id, name, email, phone, password, "createdAt", "updatedAt", "cartId")
+VALUES
+  ('user0', 'Test Jule', 'test@example.com', '+33 1 11 11 11 00', 'hashedpassworddd1', NOW(), NOW(), 'cart0'),
+  ('user1', 'Mohammed Benali', 'mohammed.benali@example.com', '+33 0 00 00 00 00', 'hashedpassword1', NOW(), NOW(), 'cart1'),
+  ('user2', 'Sarah Dubois', 'sarah.dubois@example.com', '' , 'hashedpassword2', NOW(), NOW(), 'cart2'),
+  ('user3', 'Ilyass Bouissa', 'bouissailyass@gmail.com', '+33 6 95 50 90 33', 'hashedpassword3', NOW(), NOW(), 'cart3');
 
 -- Insérer les paniers
 INSERT INTO "Cart" (id, "userId", "createdAt", "updatedAt")
-VALUES 
+VALUES
   ('cart0', 'user0', NOW(), NOW()),
   ('cart1', 'user1', NOW(), NOW()),
   ('cart2', 'user2', NOW(), NOW()),
@@ -51,7 +51,7 @@ VALUES
 
 -- Insérer des articles dans les paniers
 INSERT INTO "CartItem" (id, "cartId", "articleId", quantity)
-VALUES 
+VALUES
   ('ci1', 'cart1', 'art1', 2),
   ('ci2', 'cart1', 'art8', 1),
   ('ci3', 'cart2', 'art7', 1);
@@ -59,7 +59,7 @@ VALUES
 -- Insérer des commandes avec différents statuts
 -- Insérer des commandes avec différents statuts
 INSERT INTO "Order" ( "userId", total, note, status, "createdAt", "updatedAt")
-VALUES 
+VALUES
   -- Commande passée hier (1 jour avant aujourd'hui)
   ('user1', 33.8, 'Commande rapide', 'CONFIRMED', NOW() - INTERVAL '1 days', NOW() - INTERVAL '1 days'),
   -- Commande passée il y a 1 semaine
@@ -71,7 +71,7 @@ VALUES
   -- Commande passée aujourd’hui
   ('user1', 7.8, 'Au top', 'CANCELLED', NOW(), NOW()),
   -- Commande passée il y a 64 jours (un peu plus de 2 mois)
-  ('user1', 3.9, 'Rat yan', 'PENDING_PAYMENT', NOW() - INTERVAL '64 days', NOW() - INTERVAL '64 days');  
+  ('user1', 3.9, 'Rat yan', 'PENDING_PAYMENT', NOW() - INTERVAL '64 days', NOW() - INTERVAL '64 days');
 
 
 
@@ -88,7 +88,7 @@ VALUES
   -- Total 67,7 Commande passée il y a 1 semaine
   ('oi7', '3', 'art7', 2, 15.90),
   ('oi8', '3', 'art8', 2, 3.50),
-  ('oi9', '3', 'art9', 1, 2.50),  
+  ('oi9', '3', 'art9', 1, 2.50),
   -- Total 41,3 Commande passée il y a 32 jours
   ('oi10', '4', 'art10', 2, 3.9),
   -- Total 7.8 Commande très ancienne, passée il y a 365 jours (plus d'un an)
@@ -98,7 +98,7 @@ VALUES
   -- Total 3.9  Commande passée il y a 64 jours (un peu plus de 2 mois)
 
 
-SELECT 
+SELECT
     SUM(CASE WHEN "createdAt" >= CURRENT_DATE THEN total ELSE 0 END) AS total_today,
     SUM(CASE WHEN "createdAt" >= CURRENT_DATE - INTERVAL '7 days' THEN total ELSE 0 END) AS total_week,
     SUM(CASE WHEN "createdAt" >= DATE_TRUNC('month', CURRENT_DATE) THEN total ELSE 0 END) AS total_month,

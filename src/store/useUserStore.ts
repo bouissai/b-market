@@ -1,82 +1,92 @@
-import { toast } from "@/hooks/use-toast";
-import { User } from "@prisma/client";
-import { create } from "zustand";
+import { User, UserPut, UserPost } from '@/types/user';
+import { create } from 'zustand';
 
-type UserStore = {
+interface UserStore {
   users: User[];
-  selectedUser: User | null;
   isLoading: boolean;
-  error: string | null;
+  isSubmitting: boolean;
+  isFormOpen: boolean;
+  mode: 'new' | 'edit' | 'delete' | null;
+  selectedUser: UserPut | null;
   fetchUsers: () => Promise<void>;
-  addUser: (newUser: User) => void;
-  updateUser: (updatedUser: User) => void;
-  deleteUser: (id: string) => Promise<boolean>;
-  setSelectedUser: (user: User | null) => void;
-};
+  setSelectedUser: (
+    user: UserPut | null,
+    mode: 'new' | 'edit' | 'delete' | null,
+  ) => void;
+  setIsFormOpen: (isOpen: boolean) => void;
+  addUser: (user: UserPost) => Promise<void>;
+  updateUser: (user: UserPut) => Promise<void>;
+  deleteUser: () => Promise<boolean>;
+}
 
 export const useUserStore = create<UserStore>((set, get) => ({
   users: [],
-  selectedUser: null,
   isLoading: false,
-  error: null,
+  isSubmitting: false,
+  isFormOpen: false,
+  mode: null,
+  selectedUser: null,
 
   fetchUsers: async () => {
-    set({ isLoading: true, error: null });
-
+    set({ isLoading: true });
     try {
-      const response = await fetch("/api/users");
-      if (!response.ok) throw new Error("Erreur lors du chargement des utilisateurs");
-
-      const data: User[] = await response.json();
+      const response = await fetch('/api/users');
+      const data = await response.json();
       set({ users: data, isLoading: false });
     } catch (error) {
-      set({
-        error: error instanceof Error ? error.message : "Une erreur est survenue",
-        isLoading: false,
-      });
+      console.error('Erreur lors de la récupération des utilisateurs:', error);
+      set({ isLoading: false });
     }
   },
 
-  setSelectedUser: (user) => set({ selectedUser: user }), // 🔥 Gérer l'utilisateur sélectionné
+  setSelectedUser: (user, mode) => {
+    set({ selectedUser: user, mode });
+  },
 
-  addUser: (newUser) =>
-    set((state) => ({
-      users: [...state.users, newUser],
-    })),
+  setIsFormOpen: (isOpen) => set({ isFormOpen: isOpen }),
 
-  updateUser: (updatedUser) =>
-    set((state) => ({
-      users: state.users.map((u) =>
-        u.id === updatedUser.id ? updatedUser : u
-      ),
-    })),
-
-  deleteUser: async (id) => {
+  addUser: async (user) => {
+    set({ isSubmitting: true });
     try {
-      const response = await fetch(`/api/users/${id}`, { method: "DELETE" });
-      const data = await response.json();
+      await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(user),
+      });
+      await get().fetchUsers();
+    } catch (error) {
+      console.error('Erreur lors de l’ajout de l’utilisateur:', error);
+    } finally {
+      set({ isSubmitting: false });
+    }
+  },
 
-      if (!response.ok) {
-        toast({
-          title: "Erreur",
-          description: data.message || "Une erreur est survenue lors de la suppression",
-          variant: "destructive",
-        });
-        return false;
-      }
+  updateUser: async (user) => {
+    set({ isSubmitting: true });
+    try {
+      await fetch(`/api/users/${user.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(user),
+      });
+      await get().fetchUsers();
+    } catch (error) {
+      console.error('Erreur lors de la modification de l’utilisateur:', error);
+    } finally {
+      set({ isSubmitting: false });
+    }
+  },
 
-      set((state) => ({
-        users: state.users.filter((u) => u.id !== id),
-        selectedUser: null, // 🔥 Réinitialiser si l'utilisateur supprimé était sélectionné
-      }));
+  deleteUser: async () => {
+    const { selectedUser } = get();
+    if (!selectedUser) return false;
 
+    try {
+      await fetch(`/api/users/${selectedUser.id}`, { method: 'DELETE' });
+      await get().fetchUsers();
       return true;
     } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la suppression",
-        variant: "destructive",
-      });
+      console.error('Erreur lors de la suppression de l’utilisateur:', error);
       return false;
     }
   },
