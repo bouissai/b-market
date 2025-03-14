@@ -42,16 +42,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default function SiteLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <html lang="fr" suppressHydrationWarning>
-      <body className="font-sans antialiased">
-        <UserNavBar>{children}</UserNavBar>
-      </body>
-    </html>
-  );
+  return <UserNavBar>{children}</UserNavBar>;
 }
