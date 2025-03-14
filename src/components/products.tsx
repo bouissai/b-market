@@ -16,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -172,6 +173,7 @@ export default function ProductListing() {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold">All Products</h2>
         <Sheet>
+          <SheetDescription/>
           <SheetTrigger asChild>
             <Button variant="outline" className="relative">
               <ShoppingCart className="h-5 w-5 mr-2" />
