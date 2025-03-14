@@ -1,3 +1,5 @@
+'use client';
+
 import TabsProduit from '@/components/products';
 
 export default function Produits() {
