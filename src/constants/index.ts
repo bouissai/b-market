@@ -65,11 +65,10 @@ export const LES_VALEURS = [
 ];
 
 export const MENU_ITEMS = [
-  { label: 'Accueil', href: '/#accueil' },
+  { label: 'Accueil', href: '/' },
   { label: 'Nos Produits', href: '/produits' },
   { label: 'Recettes', href: '/recipes' },
   { label: 'Evenements', href: '/events' },
-  { label: 'Faq', href: '/faq' },
   { label: 'Contact', href: '/#contact' },
 ];
 

@@ -72,7 +72,7 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
   };
 
   return (
-    <Link href={`/recipe/${recipe.id}`}>
+    <Link href={`/recipes/${recipe.id}`}>
       <Card
         className="overflow-hidden h-full transition-all duration-200 hover:shadow-md"
         onMouseEnter={() => setIsHovered(true)}

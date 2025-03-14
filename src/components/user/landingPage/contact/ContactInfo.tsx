@@ -31,7 +31,6 @@ function ContactDetails() {
           key={index}
           className="flex items-start mb-6"
           variants={animations.formItem}
-          whileHover={animations.hover.moveRight}
           custom={index}
         >
           <div className="bg-primary/10 p-3 rounded-full mr-4">

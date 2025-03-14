@@ -1,12 +1,26 @@
+'use client';
+
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { FAQ_DATA } from "@/constants";
+import { animations } from "@/lib/helpers/animation";
+import { motion, useInView } from "motion/react";
+import { useRef } from "react";
 
 export function Faq() {
-
+    const ref = useRef(null);
+    const isInView = useInView(ref, { once: true });
     return (
-        <section id="faq">
+        <div ref={ref}
+            className="min-h-10 text-center w-full mx-auto py-12 px-4" id="faq">
             <div>
-                <h1 className="text-2xl font-bold mb-6" >Foire aux questions</h1>
+                <motion.h1
+                    variants={animations.withDelay(animations.fadeInDown, 0.2)}
+                    initial="hidden"
+                    animate={isInView ? 'visible' : 'hidden'}
+                    className="text-3xl font-bold mb-6"
+                >
+                    Foire aux questions
+                </motion.h1>
                 <div className="relative z-10 flex justify-between items-center px-12 ">
                     <Accordion className="min-w-full w-full" type="single" collapsible>
                         {FAQ_DATA.map((item, index) => (
@@ -20,7 +34,7 @@ export function Faq() {
                     </Accordion>
                 </div>
             </div>
-        </section>
+        </div>
     )
 
 
