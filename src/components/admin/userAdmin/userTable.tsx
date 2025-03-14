@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { User, UserDelete, UserPut } from '@/types/user';
 import { ColumnDef } from '@tanstack/react-table';
 import { Pencil, Trash } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface UserTableProps {
   data: User[];
@@ -13,6 +14,14 @@ interface UserTableProps {
 }
 
 export function UserTable({ data, onEdit, onDelete }: UserTableProps) {
+  const router = useRouter();
+
+  function handleRowClick(row: User): void {
+    router.push(`/admin/users/${row.id}`);
+  }
+
+
+
   const columns: ColumnDef<User>[] = [
     {
       accessorKey: 'name',
@@ -57,6 +66,8 @@ export function UserTable({ data, onEdit, onDelete }: UserTableProps) {
       data={data}
       filterColumn="name"
       filterPlaceholder="Filtrer par nom..."
+      onRowClick={(row) => handleRowClick(row)}
+
     />
   );
 }

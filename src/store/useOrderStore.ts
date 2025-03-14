@@ -1,19 +1,19 @@
 import { toast } from "@/hooks/use-toast";
-import { OrderDetailsDTO, ordersDTO, OrdersSaveDTO } from "@/types/order";
+import { OrderDetailsDTO, orderDTO, OrderSaveDTO } from "@/types/order";
 import { create } from "zustand";
 
 type OrderStore = {
-    orders: ordersDTO[];
+    orders: orderDTO[];
     orderDetails: OrderDetailsDTO | null;
     isLoading: boolean;
     isSubmitting: boolean;
     error: string | null;
     fetchOrders: () => Promise<void>;
     fetchOrderDetails: (id: number) => Promise<void>;
-    addOrder: (newOrder: ordersDTO) => void;
+    addOrder: (newOrder: orderDTO) => void;
     init: () => void
-    updateOrder: (updatedOrder: ordersDTO) => void;
-    saveOrder: (order: OrdersSaveDTO, method: "POST" | "PUT", url: string) => Promise<ordersDTO | void>;
+    updateOrder: (updatedOrder: orderDTO) => void;
+    saveOrder: (order: OrderSaveDTO, method: "POST" | "PUT", url: string) => Promise<orderDTO | void>;
     deleteOrder: (id: number) => Promise<boolean>;
 };
 

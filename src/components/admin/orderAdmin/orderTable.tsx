@@ -1,27 +1,27 @@
 'use client';
 
+import { DataTable } from '@/components/admin/table/dataTable';
 import { Button } from '@/components/ui/button';
-import { ordersDTO, OrderStatus } from '@/types/order';
+import { orderDTO, OrderStatus } from '@/types/order';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import OrderStatusBadge from './badge';
-import { DataTable } from '@/components/admin/table/dataTable';
 
 interface OrderTableProps {
-  data: ordersDTO[];
-  onEdit: (Order: ordersDTO) => void;
-  onDelete: (Order: ordersDTO) => void;
+  data: orderDTO[];
+  onEdit: (Order: orderDTO) => void;
+  onDelete: (Order: orderDTO) => void;
 }
 
 export function OrderTable({ data, onEdit, onDelete }: OrderTableProps) {
   const router = useRouter();
 
-  function handleRowClick(row: ordersDTO): void {
+  function handleRowClick(row: orderDTO): void {
     router.push(`/admin/orders/${row.id}`);
   }
 
-  const columns: ColumnDef<ordersDTO>[] = [
+  const columns: ColumnDef<orderDTO>[] = [
     {
       accessorKey: 'id',
       header: 'Numéro de commande',
@@ -33,10 +33,10 @@ export function OrderTable({ data, onEdit, onDelete }: OrderTableProps) {
       cell: ({ row }) => row.original.customerName,
       enableColumnFilter: true,
       filterFn: (row, _columnId, value) => {
-        const customerName : string = row.getValue('customerName'); // On récupère la valeur correcte        
+        const customerName: string = row.getValue('customerName'); // On récupère la valeur correcte        
         return customerName.toLowerCase().includes(value.toLowerCase());
       },
-    },    
+    },
     {
       accessorKey: 'nbArticles',
       header: `Nombre d'articles `,
@@ -73,7 +73,7 @@ export function OrderTable({ data, onEdit, onDelete }: OrderTableProps) {
       sortingFn: (rowA, rowB) => {
         const statusA = rowA.original.status;
         const statusB = rowB.original.status;
-        
+
         return (OrderStatus[statusA]?.order ?? 0) - (OrderStatus[statusB]?.order ?? 0);
       },
       filterFn: (row, _columnId, value) => {

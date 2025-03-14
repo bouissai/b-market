@@ -16,12 +16,13 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { PhoneInput } from '@/components/ui/phone-input';
 import { useToast } from '@/hooks/use-toast';
 import { useUserStore } from '@/store/useUserStore';
+import { UserPost, UserPut } from '@/types/user';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { UserPut, UserPost } from '@/types/user';
 
 const formSchema = z.object({
   name: z.string().min(1, 'Le nom est requis'),
@@ -127,7 +128,11 @@ export default function UserForm({
                 <FormItem>
                   <FormLabel>Téléphone</FormLabel>
                   <FormControl>
-                    <Input placeholder="Téléphone (optionnel)" {...field} />
+                    <PhoneInput
+                      {...field} 
+                      international={false}
+                      defaultCountry="FR"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -137,8 +142,8 @@ export default function UserForm({
               {isSubmitting
                 ? 'Enregistrement...'
                 : user
-                ? 'Modifier'
-                : 'Ajouter'}
+                  ? 'Modifier'
+                  : 'Ajouter'}
             </Button>
           </form>
         </Form>

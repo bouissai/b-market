@@ -1,10 +1,19 @@
-import { createOrder, getAllOrders } from "@/services/orderService";
+import { prisma } from "@/lib/prisma";
+import { createOrder, getAllOrders, getOrdersByUserId } from "@/services/orderService";
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(req: Request) {
     try {
-        const orders = await getAllOrders();
-        return NextResponse.json(orders, { status: 200 });
+        const { searchParams } = new URL(req.url);
+        const userId = searchParams.get("userId");
+
+        if (userId) {
+            const orders = await getOrdersByUserId(userId)
+            return NextResponse.json(orders, { status: 200 });
+        } else {
+            const orders = await getAllOrders();
+            return NextResponse.json(orders, { status: 200 });
+        }
     } catch (error) {
         console.error(error)
         return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 });
@@ -21,12 +30,12 @@ export async function POST(request: NextRequest) {
 
         if (!status) {
             return NextResponse.json({ message: "Le statut de la commande est requis" }, { status: 400 });
-        }        
-        
+        }
+
         if (note === undefined) {
             return NextResponse.json({ message: "La note de la commande est requise" }, { status: 400 });
         }
-        
+
         if (!Array.isArray(orderItems)) {
             return NextResponse.json({ message: "Les éléments de la commande doivent être un tableau" }, { status: 400 });
         }

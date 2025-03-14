@@ -43,7 +43,7 @@ interface OrderItemDTO {
   price: number;
 }
 
-export interface ordersDTO {
+export interface orderDTO {
   id: number;
   customerName: string;
   total: number;
@@ -51,7 +51,7 @@ export interface ordersDTO {
   status: keyof typeof OrderStatus;
 }
 
-export interface OrdersSaveDTO {
+export interface OrderSaveDTO {
   userId: string;
   total: number;
   note: string;

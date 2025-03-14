@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useOrderStore } from '@/store/useOrderStore';
-import { OrderFormValues, OrdersSaveDTO } from '@/types/order';
+import { OrderFormValues, OrderSaveDTO } from '@/types/order';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -31,7 +31,7 @@ export default function OrdersManagementContent() {
 
 
   const handleOnSubmit = async (values: OrderFormValues) => {
-    const newOrder: OrdersSaveDTO = {
+    const newOrder: OrderSaveDTO = {
       userId: values.userId,
       total: values.total,
       note: values.note,

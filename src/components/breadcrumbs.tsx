@@ -20,6 +20,7 @@ const breadcrumbNameMap: { [key: string]: string } = {
 
 export function AdminBreadcrumb() {
   const pathname = usePathname();
+  const isOrderPath = /^\/admin\/orders\/\d+$/.test(pathname);
 
   // Découpe l'URL et enlève les parties vides
   const pathSegments = pathname
@@ -40,7 +41,10 @@ export function AdminBreadcrumb() {
               {index > 0 && <BreadcrumbSeparator />}
               <BreadcrumbItem>
                 {isLast ? (
-                  <BreadcrumbPage>{segmentName}</BreadcrumbPage>
+                  isOrderPath ?
+                    <BreadcrumbPage>Commande N°{segmentName}</BreadcrumbPage>
+                    :
+                    <BreadcrumbPage>{segmentName}</BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink href={href}>{segmentName}</BreadcrumbLink>
                 )}

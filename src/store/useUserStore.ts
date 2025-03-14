@@ -1,14 +1,18 @@
+import { orderDTO } from '@/types/order';
 import { User, UserPut, UserPost } from '@/types/user';
 import { create } from 'zustand';
 
 interface UserStore {
   users: User[];
+  userOrders: orderDTO[];
+  isFetchingOrders: boolean,
   isLoading: boolean;
   isSubmitting: boolean;
   isFormOpen: boolean;
   mode: 'new' | 'edit' | 'delete' | null;
   selectedUser: UserPut | null;
   fetchUsers: () => Promise<void>;
+  fetchOrdersByUserID: (userId: string) => Promise<void>;
   setSelectedUser: (
     user: UserPut | null,
     mode: 'new' | 'edit' | 'delete' | null,
@@ -21,6 +25,8 @@ interface UserStore {
 
 export const useUserStore = create<UserStore>((set, get) => ({
   users: [],
+  userOrders: [],
+  isFetchingOrders: false,
   isLoading: false,
   isSubmitting: false,
   isFormOpen: false,
@@ -36,6 +42,21 @@ export const useUserStore = create<UserStore>((set, get) => ({
     } catch (error) {
       console.error('Erreur lors de la récupération des utilisateurs:', error);
       set({ isLoading: false });
+    }
+  },
+
+  fetchOrdersByUserID: async (userId: string) => {
+    set({ isFetchingOrders: true });
+    try {
+      const response = await fetch(`/api/orders?userId=${userId}`);
+      if (!response.ok) {
+        throw new Error("Impossible de récupérer les commandes.");
+      }
+      const data = await response.json();
+      set({ userOrders: data, isFetchingOrders: false });
+    } catch (error) {
+      console.error("Erreur lors de la récupération des commandes:", error);
+      set({ isFetchingOrders: false, userOrders: [] }); // Réinitialiser en cas d'erreur
     }
   },
 

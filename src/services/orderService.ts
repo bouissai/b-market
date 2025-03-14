@@ -1,8 +1,9 @@
 import { prisma } from '@/lib/prisma';
-import { OrderDetailsDTO, ordersDTO, OrderStatus } from '@/types/order';
+import { OrderDetailsDTO, orderDTO, OrderStatus } from '@/types/order';
+import { Order } from '@prisma/client';
 
 // Récupérer toutes les commandes et les formatter en `ordersDTO`
-export async function getAllOrders(): Promise<ordersDTO[]> {
+export async function getAllOrders(): Promise<orderDTO[]> {
   try {
     const orders = await prisma.order.findMany({
       include: {
@@ -153,20 +154,52 @@ export async function deleteOrder(id: number): Promise<void> {
 }
 
 // Récupération des commandes d'un utilisateur
-export async function getOrdersByUserId(userId: string): Promise<ordersDTO[]> {
-  const orders = await prisma.order.findMany({
-    where: { userId },
-    include: {
-      orderItems: true,
-      user: true,
-    },
-  });
 
-  return orders.map((order) => ({
-    id: order.id,
-    customerName: order.user.name,
-    total: order.total,
-    nbArticles: order.orderItems.length,
-    status: order.status as keyof typeof OrderStatus,
-  }));
+/**
+ * 🔵 Récupérer toutes les commandes d'un utilisateur
+ * @param userId - ID de l'utilisateur
+ * @returns Liste des commandes de l'utilisateur ou une erreur
+ */
+export async function getOrdersByUserId(userId: string): Promise<Order[]> {
+  try {
+    if (!userId) {
+      throw new Error("L'ID de l'utilisateur est requis.");
+    }
+
+    // Vérifier si l'utilisateur existe
+    const userExists = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!userExists) {
+      throw new Error(`Aucun utilisateur trouvé avec l'ID: ${userId}`);
+    }
+
+    // Récupérer les commandes
+    const orders = await prisma.order.findMany({
+      where: { userId },
+      include: {
+        orderItems: {
+          include: {
+            article: true,
+          },
+        },
+      },
+    });
+
+    if (orders.length === 0) {
+      throw new Error(`Aucune commande trouvée pour l'utilisateur ${userId}`);
+    }
+
+    return orders;
+  } catch (error) {
+    console.error(
+      `❌ [getOrdersByUserId] Erreur lors de la récupération des commandes pour l'utilisateur ${userId} :`,
+      error
+    );
+
+    throw new Error(
+      "Impossible de récupérer les commandes. Vérifiez l'ID utilisateur et réessayez."
+    );
+  }
 }

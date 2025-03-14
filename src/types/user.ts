@@ -1,9 +1,12 @@
+import { orderDTO } from "./order";
+
 export interface User {
   id: string;
   name: string;
   email: string;
   phone?: string | null;
   createdAt: Date;
+  orders?: orderDTO[];
 }
 
 export interface UserPut {

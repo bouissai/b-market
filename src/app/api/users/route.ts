@@ -10,6 +10,7 @@ export async function GET() {
         email: true,
         phone: true,
         createdAt: true,
+        orders: true,
       },
     });
     return NextResponse.json(users, { status: 200 });
