@@ -1,35 +1,41 @@
-'use client'
+'use client';
 
-import AnimatedButton from "@/components/ui/AnimatedButton"
-import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { animations } from "@/utils/animation"
-import { motion } from "framer-motion"
-import { CheckCircle, Send } from "lucide-react"
-import { ChangeEvent, FormEvent, useState } from "react"
+import AnimatedButton from '@/components/ui/AnimatedButton';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { animations } from '@/lib/helpers/animation';
+import { motion } from 'framer-motion';
+import { CheckCircle, Send } from 'lucide-react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 
 interface FormData {
-  name: string
-  email: string
-  subject: string
-  message: string
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
 }
 
 interface ContactFormFieldsProps {
-  formData: FormData
-  handleChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
-  handleSubmit: (e: FormEvent) => void
+  formData: FormData;
+  handleChange: (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
+  handleSubmit: (e: FormEvent) => void;
 }
 
 const formFields = [
-  { id: "name", label: "Nom", type: "text" },
-  { id: "email", label: "Email", type: "email" },
-  { id: "subject", label: "Sujet", type: "text" },
-]
+  { id: 'name', label: 'Nom', type: 'text' },
+  { id: 'email', label: 'Email', type: 'email' },
+  { id: 'subject', label: 'Sujet', type: 'text' },
+];
 
-function ContactFormFields({ formData, handleChange, handleSubmit }: ContactFormFieldsProps) {
+function ContactFormFields({
+  formData,
+  handleChange,
+  handleSubmit,
+}: ContactFormFieldsProps) {
   return (
     <motion.form
       variants={animations.formContainer}
@@ -37,7 +43,11 @@ function ContactFormFields({ formData, handleChange, handleSubmit }: ContactForm
       className="h-full"
     >
       {formFields.map((field) => (
-        <motion.div key={field.id} variants={animations.formItem} className="mb-6">
+        <motion.div
+          key={field.id}
+          variants={animations.formItem}
+          className="mb-6"
+        >
           <Label htmlFor={field.id} className="block mb-2">
             {field.label}
           </Label>
@@ -82,7 +92,7 @@ function ContactFormFields({ formData, handleChange, handleSubmit }: ContactForm
         </AnimatedButton>
       </motion.div>
     </motion.form>
-  )
+  );
 }
 
 function SubmissionSuccess() {
@@ -94,55 +104,60 @@ function SubmissionSuccess() {
       className="h-full flex flex-col items-center justify-center text-center"
     >
       <CheckCircle className="h-16 w-16 text-green-500 mb-4" />
-      <h3 className="text-2xl font-semibold text-foreground">Message envoyé!</h3>
+      <h3 className="text-2xl font-semibold text-foreground">
+        Message envoyé!
+      </h3>
       <p className="mt-2 text-muted-foreground">
-        Merci de nous avoir contacté. Nous vous répondrons dans les plus brefs délais.
+        Merci de nous avoir contacté. Nous vous répondrons dans les plus brefs
+        délais.
       </p>
     </motion.div>
-  )
+  );
 }
 
 export function ContactForm() {
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  })
+    name: '',
+    email: '',
+    subject: '',
+    message: '',
+  });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = (e: FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     // Simuler l'envoi du formulaire
     setTimeout(() => {
-      setIsSubmitted(true)
+      setIsSubmitted(true);
       // Réinitialiser le formulaire après 3 secondes
       setTimeout(() => {
-        setIsSubmitted(false)
+        setIsSubmitted(false);
         setFormData({
-          name: "",
-          email: "",
-          subject: "",
-          message: "",
-        })
-      }, 3000)
-    }, 1000)
-  }
+          name: '',
+          email: '',
+          subject: '',
+          message: '',
+        });
+      }, 3000);
+    }, 1000);
+  };
 
   return (
     <Card className="p-8">
-          <motion.div variants={animations.formItem} >
-      <h2 className="text-2xl font-bold mb-2">Envoyez-nous un message</h2>
-      <p className="text-muted-foreground">
-        Pour toute question ou autre qui n'ont pas pu être repondu dans la FAQ posez les nous ici.
-      </p>
-
-    </motion.div>
+      <motion.div variants={animations.formItem}>
+        <h2 className="text-2xl font-bold mb-2">Envoyez-nous un message</h2>
+        <p className="text-muted-foreground">
+          Pour toute question ou autre qui n'ont pas pu être repondu dans la FAQ
+          posez les nous ici.
+        </p>
+      </motion.div>
       <motion.div
         variants={animations.withDuration(animations.fadeIn, 1)}
         className="rounded-xl text-left mt-4"
@@ -150,13 +165,13 @@ export function ContactForm() {
         {isSubmitted ? (
           <SubmissionSuccess />
         ) : (
-          <ContactFormFields 
+          <ContactFormFields
             formData={formData}
             handleChange={handleChange}
             handleSubmit={handleSubmit}
           />
         )}
       </motion.div>
-    </Card >
-  )
-} 
+    </Card>
+  );
+}

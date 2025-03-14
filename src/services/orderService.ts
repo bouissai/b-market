@@ -1,12 +1,10 @@
-import { db } from '@/app/lib/db';
+import { prisma } from '@/lib/prisma';
 import { OrderDetailsDTO, ordersDTO, OrderStatus } from '@/types/order';
-
 
 // Récupérer toutes les commandes et les formatter en `ordersDTO`
 export async function getAllOrders(): Promise<ordersDTO[]> {
-
   try {
-    const orders = await db.order.findMany({
+    const orders = await prisma.order.findMany({
       include: {
         orderItems: true,
         user: true,
@@ -16,7 +14,7 @@ export async function getAllOrders(): Promise<ordersDTO[]> {
     const formattedOrders = orders.map((order) => {
       const formattedOrder = {
         id: order.id,
-        customerName: order.user?.name || "Inconnu",
+        customerName: order.user?.name || 'Inconnu',
         total: order.total,
         nbArticles: order.orderItems.length,
         status: order.status as keyof typeof OrderStatus,
@@ -26,7 +24,7 @@ export async function getAllOrders(): Promise<ordersDTO[]> {
 
     return formattedOrders;
   } catch (error) {
-    throw new Error("Impossible de récupérer les commandes.");
+    throw new Error('Impossible de récupérer les commandes.');
   }
 }
 
@@ -34,9 +32,8 @@ export async function getAllOrders(): Promise<ordersDTO[]> {
 export async function getOrderById(
   id: number,
 ): Promise<OrderDetailsDTO | null> {
-
   try {
-    const order = await db.order.findUnique({
+    const order = await prisma.order.findUnique({
       where: { id },
       include: {
         orderItems: {
@@ -52,29 +49,30 @@ export async function getOrderById(
       return null;
     }
 
-
     const formattedOrder: OrderDetailsDTO = {
       id: order.id,
-      customerName: order.user?.name ?? "Inconnu",
+      customerName: order.user?.name ?? 'Inconnu',
       customerEmail: order.user.email,
-      customerPhone: order.user?.phone ?? "Non renseigné", // Utiliser le champ phone du modèle
+      customerPhone: order.user?.phone ?? 'Non renseigné', // Utiliser le champ phone du modèle
       date: order.createdAt,
       total: order.total,
       status: order.status,
       note: order.note,
       items: order.orderItems.map((item) => ({
         id: item.id,
-        name: item.article?.name ?? "Article inconnu",
+        name: item.article?.name ?? 'Article inconnu',
         quantity: item.quantity,
         price: item.price,
       })),
     };
 
-
     return formattedOrder;
   } catch (error) {
-    console.error(`❌ [getOrderById] Erreur lors de la récupération de la commande avec ID ${id}:`, error);
-    throw new Error("Impossible de récupérer la commande.");
+    console.error(
+      `❌ [getOrderById] Erreur lors de la récupération de la commande avec ID ${id}:`,
+      error,
+    );
+    throw new Error('Impossible de récupérer la commande.');
   }
 }
 
@@ -83,7 +81,7 @@ export async function updateOrderStatus(
   orderId: number,
   newStatus: 'pending' | 'awaiting_payment' | 'completed' | 'cancelled',
 ) {
-  return db.order.update({
+  return prisma.order.update({
     where: { id: orderId },
     data: { status: newStatus },
   });
@@ -102,13 +100,12 @@ export async function createOrder(
   note: string,
   orderItems: OrderItemInput[],
 ): Promise<OrderDetailsDTO> {
-  
   const total = await orderItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0,
   );
 
-  const newOrder = await db.order.create({
+  const newOrder = await prisma.order.create({
     data: {
       userId,
       status,
@@ -136,7 +133,7 @@ export async function createOrder(
     id: newOrder.id,
     customerName: newOrder.user.name,
     customerEmail: newOrder.user.email,
-    customerPhone: "+33 6 95 50 90 33",
+    customerPhone: '+33 6 95 50 90 33',
     date: newOrder.createdAt,
     total: newOrder.total,
     status: newOrder.status,
@@ -152,12 +149,12 @@ export async function createOrder(
 
 // Suppression d'une commande
 export async function deleteOrder(id: number): Promise<void> {
-  await db.order.delete({ where: { id } });
+  await prisma.order.delete({ where: { id } });
 }
 
 // Récupération des commandes d'un utilisateur
 export async function getOrdersByUserId(userId: string): Promise<ordersDTO[]> {
-  const orders = await db.order.findMany({
+  const orders = await prisma.order.findMany({
     where: { userId },
     include: {
       orderItems: true,

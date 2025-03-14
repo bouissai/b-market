@@ -1,8 +1,8 @@
-import { Card } from "@/components/ui/card"
-import { contactItems, hoursInfo } from "@/constants"
-import { animations } from "@/utils/animation"
-import { motion } from "framer-motion"
-import React from "react"
+import { Card } from '@/components/ui/card';
+import { contactItems, hoursInfo } from '@/constants';
+import { animations } from '@/lib/helpers/animation';
+import { motion } from 'framer-motion';
+import React from 'react';
 
 export function ContactInfo() {
   return (
@@ -15,7 +15,7 @@ export function ContactInfo() {
         <OpeningHours />
       </motion.div>
     </Card>
-  )
+  );
 }
 
 function ContactDetails() {
@@ -23,7 +23,8 @@ function ContactDetails() {
     <motion.div variants={animations.formItem} className="mb-12">
       <h2 className="text-2xl font-bold mb-2">Nos coordonnées</h2>
       <p className="text-muted-foreground mb-16">
-        N'hésitez pas à nous contacter directement. Notre équipe est prête à vous aider.
+        N'hésitez pas à nous contacter directement. Notre équipe est prête à
+        vous aider.
       </p>
       {contactItems.map((item, index) => (
         <motion.div
@@ -43,7 +44,7 @@ function ContactDetails() {
         </motion.div>
       ))}
     </motion.div>
-  )
+  );
 }
 
 function OpeningHours() {
@@ -62,5 +63,5 @@ function OpeningHours() {
         ))}
       </div>
     </motion.div>
-  )
-} 
+  );
+}

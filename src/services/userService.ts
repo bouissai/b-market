@@ -1,6 +1,6 @@
-import { db } from '@/app/lib/db';
+import { prisma } from '@/lib/prisma';
 import { User } from '@prisma/client';
 
 export async function getAllUsers(): Promise<User[]> {
-  return await db.user.findMany();
+  return await prisma.user.findMany();
 }
