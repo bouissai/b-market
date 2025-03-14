@@ -159,15 +159,15 @@ export default function OrderDetailPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
+            <div className="space-y-2 ">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Nom</span>
-                <span className="font-medium">{orderDetails.customerName}</span>
+                <span className="font-medium break-all">{orderDetails.customerName}</span>
               </div>
               {orderDetails.customerEmail && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Email</span>
-                  <span className="font-medium">{orderDetails.customerEmail}</span>
+                  <span className="font-medium break-all">{orderDetails.customerEmail}</span>
                 </div>
               )}
               {orderDetails?.customerPhone && (
@@ -216,11 +216,13 @@ export default function OrderDetailPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <div className="flex justify-between">
+              <div className="flex flex-col sm:flex-row sm:justify-between">
                 <span className="text-muted-foreground">Date de commande</span>
-                <span className="font-medium flex items-center">
-                  <Clock className="mr-1 h-4 w-4" />
-                  {orderDetails.date ? new Date(orderDetails.date).toLocaleDateString() : "N/A"}
+                <span className="font-medium flex flex-wrap items-center mt-1 sm:mt-0">
+                  <Clock className="mr-1 h-4 w-4 flex-shrink-0" />
+                  <span className="break-all">
+                    {orderDetails.date ? new Date(orderDetails.date).toLocaleDateString() : "N/A"}
+                  </span>
                 </span>
               </div>
             </div>
