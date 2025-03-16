@@ -1,3 +1,4 @@
+import { Toaster } from "../ui/toaster";
 import { FooterUser } from "./footer/footerUser";
 import { HeaderUser } from "./header/headerUser";
 
@@ -9,9 +10,8 @@ export function UserNavBar({
     return (
         <div>
             <HeaderUser />
-            <main>
-                {children}
-            </main>
+            <main>{children}</main>
+            <Toaster />
             <FooterUser />
         </div>
     );

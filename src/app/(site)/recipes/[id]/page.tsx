@@ -122,7 +122,7 @@ export default function RecipeDetailPage({ params }: Props) {
     <>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
-          <Link href="/recipe">
+          <Link href="/recipes">
             <Button variant="ghost" size="sm" className="gap-1">
               <ChevronLeft className="h-4 w-4" />
               Retour aux recettes

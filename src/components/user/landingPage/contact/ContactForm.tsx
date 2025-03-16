@@ -1,153 +1,97 @@
 'use client';
 
+import { useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { motion } from 'framer-motion';
+import { Send } from 'lucide-react';
+
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { animations } from '@/lib/helpers/animation';
-import { motion } from 'framer-motion';
-import { CheckCircle, Send } from 'lucide-react';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { 
+  Form, 
+  FormControl, 
+  FormField, 
+  FormItem, 
+  FormLabel, 
+  FormMessage 
+} from '@/components/ui/form';
+import { useToast } from '@/hooks/use-toast';
 
-interface FormData {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-}
+// Schéma de validation avec Zod
+const formSchema = z.object({
+  name: z.string().min(2, { message: 'Le nom doit contenir au moins 2 caractères' }),
+  email: z.string().email({ message: 'Email invalide' }),
+  subject: z.string().min(2, { message: 'Le sujet doit contenir au moins 2 caractères' }),
+  message: z.string().min(10, { message: 'Votre message doit contenir au moins 10 caractères' }),
+});
 
-interface ContactFormFieldsProps {
-  formData: FormData;
-  handleChange: (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
-  handleSubmit: (e: FormEvent) => void;
-}
-
-const formFields = [
-  { id: 'name', label: 'Nom', type: 'text' },
-  { id: 'email', label: 'Email', type: 'email' },
-  { id: 'subject', label: 'Sujet', type: 'text' },
-];
-
-function ContactFormFields({
-  formData,
-  handleChange,
-  handleSubmit,
-}: ContactFormFieldsProps) {
-  return (
-    <motion.form
-      variants={animations.formContainer}
-      onSubmit={handleSubmit}
-      className="h-full"
-    >
-      {formFields.map((field) => (
-        <motion.div
-          key={field.id}
-          variants={animations.formItem}
-          className="mb-6"
-        >
-          <Label htmlFor={field.id} className="block mb-2">
-            {field.label}
-          </Label>
-          <Input
-            id={field.id}
-            name={field.id}
-            type={field.type}
-            value={formData[field.id as keyof FormData]}
-            onChange={handleChange}
-            required
-            className="w-full transition-all duration-300 focus:ring-2 focus:ring-primary"
-          />
-        </motion.div>
-      ))}
-
-      <motion.div variants={animations.formItem} className="mb-6">
-        <Label htmlFor="message" className="block mb-2">
-          Message
-        </Label>
-        <Textarea
-          id="message"
-          name="message"
-          value={formData.message}
-          onChange={handleChange}
-          required
-          rows={5}
-          className="w-full transition-all duration-300 focus:ring-2 focus:ring-primary"
-        />
-      </motion.div>
-
-      <motion.div
-        variants={animations.formItem}
-        whileHover={animations.hover.scale}
-        whileTap={animations.hover.tap}
-      >
-        <AnimatedButton
-          type="submit"
-          Icon={Send}
-          className="w-full py-6 text-lg"
-        >
-          Envoyer
-        </AnimatedButton>
-      </motion.div>
-    </motion.form>
-  );
-}
-
-function SubmissionSuccess() {
-  return (
-    <motion.div
-      variants={animations.scale}
-      initial="hidden"
-      animate="visible"
-      className="h-full flex flex-col items-center justify-center text-center"
-    >
-      <CheckCircle className="h-16 w-16 text-green-500 mb-4" />
-      <h3 className="text-2xl font-semibold text-foreground">
-        Message envoyé!
-      </h3>
-      <p className="mt-2 text-muted-foreground">
-        Merci de nous avoir contacté. Nous vous répondrons dans les plus brefs
-        délais.
-      </p>
-    </motion.div>
-  );
-}
+type FormValues = z.infer<typeof formSchema>;
 
 export function ContactForm() {
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  // Initialisation du formulaire avec react-hook-form
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      subject: '',
+      message: '',
+    }
   });
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const onSubmit = async (data: FormValues) => {
+    setIsSubmitting(true);
+    
+    try {
+      // Appel à la route d'API Next.js
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erreur lors de l\'envoi du formulaire');
+      }
+      
+      // Affichage du toast de succès
+      toast({
+        title: 'Message envoyé!',
+        description: 'Merci de nous avoir contacté. Nous vous répondrons dans les plus brefs délais.',
+        variant: 'default',
+      });
+      
+      // Réinitialisation du formulaire
+      form.reset();
+      
+    } catch (error) {
+      console.error('Erreur:', error);
+      toast({
+        title: 'Erreur',
+        description: error instanceof Error ? error.message : 'Une erreur est survenue lors de l\'envoi. Veuillez réessayer.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    // Simuler l'envoi du formulaire
-    setTimeout(() => {
-      setIsSubmitted(true);
-      // Réinitialiser le formulaire après 3 secondes
-      setTimeout(() => {
-        setIsSubmitted(false);
-        setFormData({
-          name: '',
-          email: '',
-          subject: '',
-          message: '',
-        });
-      }, 3000);
-    }, 1000);
-  };
+  const formFields = [
+    { id: 'name', label: 'Nom', type: 'text' },
+    { id: 'email', label: 'Email', type: 'email' },
+    { id: 'subject', label: 'Sujet', type: 'text' },
+  ];
 
   return (
     <Card className="p-8">
@@ -158,19 +102,85 @@ export function ContactForm() {
           posez les nous ici.
         </p>
       </motion.div>
+      
       <motion.div
         variants={animations.withDuration(animations.fadeIn, 1)}
         className="rounded-xl text-left mt-4"
       >
-        {isSubmitted ? (
-          <SubmissionSuccess />
-        ) : (
-          <ContactFormFields
-            formData={formData}
-            handleChange={handleChange}
-            handleSubmit={handleSubmit}
-          />
-        )}
+        <Form {...form}>
+          <motion.form
+            variants={animations.formContainer}
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="h-full"
+          >
+            {formFields.map((field) => (
+              <FormField
+                key={field.id}
+                control={form.control}
+                name={field.id as keyof FormValues}
+                render={({ field: fieldProps }) => (
+                  <motion.div
+                    variants={animations.formItem}
+                    className="mb-6"
+                  >
+                    <FormItem className="space-y-2">
+                      <FormLabel htmlFor={field.id} className="block mb-2">
+                        {field.label}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          id={field.id}
+                          type={field.type}
+                          className="w-full transition-all duration-300 focus:ring-2 focus:ring-primary"
+                          {...fieldProps}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  </motion.div>
+                )}
+              />
+            ))}
+
+            <FormField
+              control={form.control}
+              name="message"
+              render={({ field }) => (
+                <motion.div variants={animations.formItem} className="mb-6">
+                  <FormItem className="space-y-2">
+                    <FormLabel htmlFor="message" className="block mb-2">
+                      Message
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        id="message"
+                        rows={5}
+                        className="w-full transition-all duration-300 focus:ring-2 focus:ring-primary"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </motion.div>
+              )}
+            />
+
+            <motion.div
+              variants={animations.formItem}
+              whileHover={animations.hover.scale}
+              whileTap={animations.hover.tap}
+            >
+              <AnimatedButton
+                type="submit"
+                Icon={Send}
+                className="w-full py-6 text-lg"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Envoi en cours...' : 'Envoyer'}
+              </AnimatedButton>
+            </motion.div>
+          </motion.form>
+        </Form>
       </motion.div>
     </Card>
   );

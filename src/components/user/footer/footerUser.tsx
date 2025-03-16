@@ -43,7 +43,7 @@ export function FooterUser() {
             <ul className="space-y-2">
               <li className="flex items-center">
                 <Phone className="mr-2 h-4 w-4" />
-                <span>+33 1 23 45 67 89</span>
+                <span>04 38 86 15 65</span>
               </li>
               <li className="flex items-center">
                 <Mail className="mr-2 h-4 w-4" />
