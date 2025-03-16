@@ -24,20 +24,19 @@ export const contactItems = [
   {
     icon: Phone,
     title: 'Téléphone',
-    info: '+33 1 23 45 67 89',
+    info: '04 38 86 15 65',
   },
   {
     icon: MapPin,
     title: 'Adresse',
-    info: '123 Avenue des Champs-Élysées, 75008 Paris, France',
+    info: '39 Av. du Vercors, 38600 Fontaine',
   },
 ];
 
 // Hours information
 export const hoursInfo = [
-  { day: 'Lundi - Vendredi', hours: '9h00 - 18h00' },
-  { day: 'Samedi', hours: '10h00 - 15h00' },
-  { day: 'Dimanche', hours: 'Fermé' },
+  { day: 'Mardi - Dimanche', hours: '9h00 - 13h00 / 15h00 - 19h30 ' },
+  { day: 'Lundi', hours: 'Fermé' },
 ];
 
 export const LES_VALEURS = [
@@ -68,7 +67,7 @@ export const MENU_ITEMS = [
   { label: 'Accueil', href: '/' },
   { label: 'Nos Produits', href: '/produits' },
   { label: 'Recettes', href: '/recipes' },
-  { label: 'Evenements', href: '/events' },
+  { label: 'Événements', href: '/events' },
   { label: 'Contact', href: '/#contact' },
 ];
 

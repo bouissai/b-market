@@ -93,19 +93,17 @@ export default function ClickCollectSteps() {
           {steps.map((step, index) => (
             <motion.div
               key={index}
-              className={`flex flex-col items-center max-w-[250px] transition-all duration-300 ${
-                activeStep === index ? 'scale-105' : 'opacity-70'
-              }`}
+              className={`flex flex-col items-center max-w-[250px] transition-all duration-300 ${activeStep === index ? 'scale-105' : 'opacity-70'
+                }`}
               animate={activeStep === index ? { y: -10 } : { y: 0 }}
             >
               <motion.div
-                className={`relative flex items-center justify-center w-16 h-16 rounded-full mb-3 ${
-                  activeStep === index
-                    ? 'bg-red-600 text-white shadow-lg shadow-red-200'
-                    : completedSteps.includes(index)
+                className={`relative flex items-center justify-center w-16 h-16 rounded-full mb-3 ${activeStep === index
+                  ? 'bg-red-600 text-white shadow-lg shadow-red-200'
+                  : completedSteps.includes(index)
                     ? 'bg-red-200 text-red-700'
                     : 'bg-gray-100 text-gray-500'
-                }`}
+                  }`}
                 animate={activeStep === index ? { scale: [1, 1.1, 1] } : {}}
                 transition={{ duration: 0.5 }}
               >
