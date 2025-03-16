@@ -1,18 +1,18 @@
 'use client';
 
-import { useState } from 'react';
-import { Slider } from '@/components/ui/slider';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
 import { Search } from 'lucide-react';
+import { useState } from 'react';
 
 type RecipeFiltersProps = {
   forEvents?: boolean;
@@ -89,7 +89,8 @@ export default function RecipeFilters({
                 step={15}
                 value={timeRange}
                 onValueChange={setTimeRange}
-              />
+              />              
+              
               <div className="flex items-center justify-between">
                 <span className="text-sm">{timeRange[0]} min</span>
                 <span className="text-sm">{timeRange[1]} min</span>
