@@ -2,10 +2,41 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 // 1. Récupérer tous les articles
-export async function GET() {
+export async function GET(req : Request) {
   try {
-    const articles = await prisma.article.findMany();
-    return NextResponse.json(articles, { status: 200 });
+    // Récupération des paramètres de requête
+    const { searchParams } = new URL(req.url);
+    const category = searchParams.get('category');
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = parseInt(searchParams.get('limit') || '10', 10);
+    const skip = (page - 1) * limit;
+
+    // vérifier si la catégorie en paramètre existe
+    let whereClause: Record<string, unknown> = {};
+    if(category) {
+      const categoryExists = await prisma.category.findFirst({
+        where: { name: { equals: category, 
+          mode : "insensitive" } }, // Comparaison insensible à la casse
+      });
+
+      if (!categoryExists) {
+        return NextResponse.json(
+          { message: `La catégorie '${category}' n'existe pas` },
+          { status: 400 },
+        );
+      }
+
+      whereClause = { categoryName: categoryExists.name }; 
+    }
+    
+    // Récupération des articles
+    const articles = await prisma.article.findMany({
+      where: whereClause, 
+      skip,
+      take: limit,});
+    const total = await prisma.article.count({ where: whereClause });
+
+    return NextResponse.json({articles, total}, { status: 200 });
   } catch (error) {
     console.error('Erreur lors de la récupération des articles :', error);
     return NextResponse.json(

@@ -8,7 +8,8 @@ type ArticleStore = {
     mode: "new" | "edit" | "delete" | null;
     isLoading: boolean;
     error: string | null;
-    fetchArticles: () => Promise<void>;
+    totalArticles: number;
+    fetchArticles: (category?: string, page?: number, limit?: number) => Promise<void>;
     addArticle: (newArticle: Article) => void;
     updateArticle: (updatedArticle: Article) => void;
     setSelectedArticle: (article: Article | null, mode: null | "edit" | "delete" | "new") => void
@@ -21,17 +22,27 @@ export const useArticleStore = create<ArticleStore>((set, get) => ({
     isLoading: false,
     error: null,
     mode: null,
+    totalArticles: 0,
 
     // Charger les articles depuis l'API
-    fetchArticles: async () => {
+    fetchArticles: async (category?: string, page = 1, limit = 10) => {
         set({ isLoading: true, error: null });
 
         try {
-            const response = await fetch("/api/article");
+            // const url = category ? `/api/article?category=${category}` : "/api/article";
+            // const response = await fetch("/api/article");
+
+            const url = new URL('/api/article', window.location.origin);
+            if (category) url.searchParams.append('category', category);
+            url.searchParams.append('page', page.toString());
+            url.searchParams.append('limit', limit.toString());
+
+            const response = await fetch(url);
+
             if (!response.ok) throw new Error("Erreur lors du chargement des articles");
 
-            const data: Article[] = await response.json();
-            set({ articles: data, isLoading: false });
+            const data = await response.json();
+            set({ articles: data.articles, totalArticles: data.total, isLoading: false });
         } catch (error) {
             set({
                 error: error instanceof Error ? error.message : "Une erreur est survenue",
