@@ -1,4 +1,5 @@
 # Allumer Docker avant d'exécuter cette commande
+# TODO: Ajouter les commande de migration et generation avec better auth
 start:
 	docker-compose up -d
 	npx prisma migrate reset
