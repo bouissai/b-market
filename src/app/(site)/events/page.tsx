@@ -1,11 +1,12 @@
 import { ContactEvents } from '@/components/user/events/contact-events';
 import { CtaEvents } from '@/components/user/events/cta-events';
-import { FaqEvents } from '@/components/user/events/faq-events';
 import { HeroEvent } from '@/components/user/events/hero-events';
 import { IntroEvent } from '@/components/user/events/intro-events';
 import { ProcessEvents } from '@/components/user/events/process-event';
 import { ServiceEvents } from '@/components/user/events/service-events';
 import { TestimonialsEvents } from '@/components/user/events/test-events';
+import { FaqSection } from '@/components/user/landingPage/faq/faq-section';
+import { FAQ_DATA_EVENTS } from '@/constants';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -123,7 +124,11 @@ export default function EventsPage() {
 
       {/* FAQ section */}
       <section className="py-16 bg-muted/30">
-        <FaqEvents />
+        <FaqSection 
+          title="Questions fréquentes" 
+          subtitle="Tout ce que vous devez savoir sur nos services pour événements"  
+          data={FAQ_DATA_EVENTS} 
+        />
       </section>
 
       {/* Contact section */}

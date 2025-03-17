@@ -194,3 +194,42 @@ export const FAQ_DATA: FAQItem[] = [
       'Bien sûr ! Nous sommes heureux de partager des conseils sur la préparation et la cuisson de nos viandes. Demandez nous lors de votre visite.',
   },
 ];
+
+
+
+
+export const FAQ_DATA_EVENTS: { question: string; answer: string }[] = [
+  {
+    question: "Combien de temps à l'avance dois-je réserver ?",
+    answer:
+      "Nous recommandons de réserver au moins 2 semaines à l'avance pour les petits événements et 1 mois pour les grands événements comme les mariages.",
+  },
+  {
+    question: "Proposez-vous de la viande halal ?",
+    answer:
+      "Oui, toute notre viande est halal et certifiée selon les normes religieuses.",
+  },
+  {
+    question: "Livrez-vous à domicile ?",
+    answer:
+      "Oui, nous proposons la livraison à domicile ou sur le lieu de votre événement dans un rayon de 50 km.",
+  },
+  {
+    question: "Quelle quantité commander pour mon événement ?",
+    answer:
+      "Nous vous conseillons sur les quantités en fonction du nombre d'invités et du type d'événement. Contactez-nous pour une estimation personnalisée.",
+  },
+  {
+    question: "Puis-je modifier ma commande après confirmation ?",
+    answer:
+      "Oui, vous pouvez modifier votre commande jusqu'à 48 heures avant la date de livraison.",
+  },
+  {
+    question: "Quels modes de paiement acceptez-vous ?",
+    answer:
+      "Nous acceptons les paiements par carte bancaire, espèces et virement bancaire.",
+  },
+];
+
+
+
