@@ -20,7 +20,7 @@ const eventTypes = [
     id: '1',
     title: 'Mariages',
     description: 'Viande de qualité supérieure pour votre jour spécial',
-    image: '/placeholder.svg?height=300&width=400',
+    image: '/images/mariage.webp',
     features: [
       'Découpes sur mesure selon vos besoins',
       'Livraison le jour de l\'événement',
@@ -32,7 +32,7 @@ const eventTypes = [
     id: '2',
     title: 'Fêtes religieuses',
     description: "Viande halal pour l'Aïd et autres célébrations religieuses",
-    image: '/placeholder.svg?height=300&width=400',
+    image: '/images/religieux.webp',
     features: [
       'Viande halal certifiée',
       "Découpe de moutons entiers pour l'Aïd al-Adha",
@@ -44,7 +44,7 @@ const eventTypes = [
     id: '3',
     title: "Événements d'entreprise",
     description: 'Solutions pour vos réceptions et événements professionnels',
-    image: '/placeholder.svg?height=300&width=400',
+    image: '/images/afterwork.webp',
     features: [
       'Grandes quantités disponibles',
       'Options de livraison pour les entreprises',
@@ -56,7 +56,7 @@ const eventTypes = [
     id: '4',
     title: 'Célébrations familiales',
     description: 'Pour vos réunions de famille et fêtes entre amis',
-    image: '/placeholder.svg?height=300&width=400',
+    image: '/images/famille.webp',
     features: [
       "Portions adaptées à votre nombre d'invités",
       'Préparations spéciales sur demande',
@@ -70,27 +70,25 @@ const eventTypes = [
 const testimonials = [
   {
     id: '1',
-    name: 'Ahmed K.',
-    event: 'Mariage',
-    quote:
-      'La qualité de la viande était exceptionnelle. Tous nos invités ont été impressionnés par le repas. Merci pour votre service impeccable !',
-    image: '/placeholder.svg?height=100&width=100',
+    name: 'Fa B.',
+    date: '5 mois',
+    quote: 'Hacène n\'est pas simplement un boucher mais un artisan-boucher, car il va au delà de la simple vente, il maîtrise l\'ensemble du processus. Il fournit un large choix de viandes à ses clients, en vaillant à la leur fraîcheur et leur qualité, il met en œuvre son savoir-faire en découpant, et desossant la viande avec precession. Peut-être elle est un peu plus chère mais c\'est de la qualité.',
+    image: '/images/faBelli.png'
   },
   {
     id: '2',
-    name: 'Fatima M.',
-    event: 'Aïd al-Adha',
+    name: 'Annick C.',
+    date: '5 mois',
     quote:
-      "Nous commandons notre mouton chez eux chaque année pour l'Aïd. La viande est toujours fraîche et préparée selon nos traditions.",
-    image: '/placeholder.svg?height=100&width=100',
+    "Nous commandons notre mouton chez eux chaque année pour l'Aïd. La viande est toujours fraîche et préparée selon nos traditions.",
+    image: '/images/annick.png',
   },
   {
     id: '3',
+    date: '5 mois',
     name: 'Jean D.',
-    event: "Réception d'entreprise",
-    quote:
-      "Service professionnel et ponctuel. La qualité était au rendez-vous et le prix très compétitif pour notre événement d'entreprise.",
-    image: '/placeholder.svg?height=100&width=100',
+    quote: 'Meilleure boucherie de l\'agglomération ! Nous sommes ravis de retrouver notre boucher avec sa viande de qualité !! Service impeccable et toujours bien reçu ! Mes commandes sont toujours préparées avec soin. C\'est de loin la meilleure viande de Grenoble !',
+    image: '/images/ju.png',
   },
 ];
 

@@ -8,7 +8,7 @@ export function HeroEvent() {
         <>
             <div className="relative h-[400px] md:h-[500px]">
                 <Image
-                    src="/placeholder.svg?height=500&width=1200"
+                    src="/images/events.webp"
                     alt="Viande de qualité pour événements"
                     fill
                     className="object-cover"

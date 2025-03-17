@@ -21,7 +21,7 @@ export default function EventCard({ event }: EventCardProps) {
           alt={event.title}
           fill
           className="object-cover"
-        />
+          />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <h3 className="text-xl font-semibold text-white">{event.title}</h3>

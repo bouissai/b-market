@@ -4,7 +4,7 @@ import Image from 'next/image';
 type TestimonialsType = {
     id: string;
     name: string;
-    event: string;
+    date: string;
     quote: string;
     image: string;
 };
@@ -25,7 +25,7 @@ export function TestimonialsEvents(testimonials: TestimonialsEventsProps) {
                     </h2>
                     <p className="text-muted-foreground max-w-2xl mx-auto">
                         Découvrez les témoignages de clients satisfaits qui nous ont fait
-                        confiance pour leurs événements.
+                        confiance.
                     </p>
                 </div>
 
@@ -36,7 +36,7 @@ export function TestimonialsEvents(testimonials: TestimonialsEventsProps) {
                             className="bg-background p-6 rounded-lg shadow-sm border"
                         >
                             <div className="flex items-center mb-4">
-                                <div className="relative w-12 h-12 rounded-full overflow-hidden mr-4">
+                                <div className="relative w-12 h-12 overflow-hidden mr-4">
                                     <Image
                                         src={testimonial.image || '/placeholder.svg'}
                                         alt={testimonial.name}
@@ -47,7 +47,7 @@ export function TestimonialsEvents(testimonials: TestimonialsEventsProps) {
                                 <div>
                                     <h4 className="font-semibold">{testimonial.name}</h4>
                                     <p className="text-sm text-muted-foreground">
-                                        {testimonial.event}
+                                        Il y a {testimonial.date}
                                     </p>
                                 </div>
                             </div>
