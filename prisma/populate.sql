@@ -10,7 +10,7 @@ TRUNCATE "User" CASCADE;
 -- Active: 1739726328662@@127.0.0.1@5433@bmarket
 -- Insérer des catégories de produits
 INSERT INTO "Category" (id, name, "createdAt", "updatedAt")
-VALUES 
+VALUES
   ('cat1', 'Boeuf', NOW(), NOW()),
   ('cat2', 'Agneau', NOW(), NOW()),
   ('cat3', 'Volaille', NOW(), NOW()),
@@ -19,7 +19,7 @@ VALUES
 
 -- Insérer des articles
 INSERT INTO "Article" (id, name, unit, price, image, description, "createdAt", "updatedAt", "categoryName")
-VALUES 
+VALUES
   -- Boeuf
   ('art1', 'Entrecôte de boeuf', 'kg', 39.90, 'entrecote.jpg', 'Entrecôte de boeuf maturée.', NOW(), NOW(), 'Boeuf'),
   ('art2', 'Steak haché', 'kg', 15.90, 'steak_hache.jpg', 'Steak haché pur boeuf.', NOW(), NOW(), 'Boeuf'),
@@ -34,49 +34,73 @@ VALUES
   ('art11', 'Huile d''olive', 'litre', 8.90, 'huile_olive.jpg', 'Huile d''olive extra vierge.', NOW(), NOW(), 'Épicerie');
 
 -- Insérer des utilisateurs
-INSERT INTO "User" (id, name, email, password, role, "createdAt", "updatedAt", "cartId")
-VALUES 
-  ('user1', 'Mohammed Benali', 'mohammed.benali@example.com', 'hashedpassword1', 'user', NOW(), NOW(), 'cart1'),
-  ('user2', 'Sarah Dubois', 'sarah.dubois@example.com', 'hashedpassword2', 'user', NOW(), NOW(), 'cart2');
+INSERT INTO "User" (id, name, email, phone, password, "createdAt", "updatedAt", "cartId")
+VALUES
+  ('user0', 'Test Jule', 'test@example.com', '+33 1 11 11 11 00', 'hashedpassworddd1', NOW(), NOW(), 'cart0'),
+  ('user1', 'Mohammed Benali', 'mohammed.benali@example.com', '+33 0 00 00 00 00', 'hashedpassword1', NOW(), NOW(), 'cart1'),
+  ('user2', 'Sarah Dubois', 'sarah.dubois@example.com', '' , 'hashedpassword2', NOW(), NOW(), 'cart2'),
+  ('user3', 'Ilyass Bouissa', 'bouissailyass@gmail.com', '+33 6 95 50 90 33', 'hashedpassword3', NOW(), NOW(), 'cart3');
 
 -- Insérer les paniers
 INSERT INTO "Cart" (id, "userId", "createdAt", "updatedAt")
-VALUES 
+VALUES
+  ('cart0', 'user0', NOW(), NOW()),
   ('cart1', 'user1', NOW(), NOW()),
-  ('cart2', 'user2', NOW(), NOW());
+  ('cart2', 'user2', NOW(), NOW()),
+  ('cart3', 'user3', NOW(), NOW());
 
 -- Insérer des articles dans les paniers
 INSERT INTO "CartItem" (id, "cartId", "articleId", quantity)
-VALUES 
+VALUES
   ('ci1', 'cart1', 'art1', 2),
   ('ci2', 'cart1', 'art8', 1),
   ('ci3', 'cart2', 'art7', 1);
 
 -- Insérer des commandes avec différents statuts
-INSERT INTO "Order" (id, "userId", total, status, "createdAt", "updatedAt")
-VALUES 
-  ('order1', 'user1', 98.70, 'completed', NOW() - INTERVAL '5 days', NOW() - INTERVAL '5 days'),
-  ('order2', 'user2', 45.60, 'pending', NOW() - INTERVAL '3 days', NOW() - INTERVAL '3 days'),
-  ('order3', 'user1', 87.90, 'awaiting_payment', NOW() - INTERVAL '2 days', NOW() - INTERVAL '2 days'),
-  ('order4', 'user2', 64.30, 'cancelled', NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day'),
-  ('order5', 'user1', 122.10, 'completed', NOW(), NOW());
+-- Insérer des commandes avec différents statuts
+INSERT INTO "Order" ( "userId", total, note, status, "createdAt", "updatedAt")
+VALUES
+  -- Commande passée hier (1 jour avant aujourd'hui)
+  ('user1', 33.8, 'Commande rapide', 'CONFIRMED', NOW() - INTERVAL '1 days', NOW() - INTERVAL '1 days'),
+  -- Commande passée il y a 1 semaine
+  ('user2', 67.7, 'Livraison demain', 'PENDING', NOW() - INTERVAL '7 days', NOW() - INTERVAL '7 days'),
+  -- Commande passée il y a 32 jours (environ 1 mois)
+  ('user3', 41.3, 'Bonne qualité', 'PENDING_PAYMENT', NOW() - INTERVAL '32 days', NOW() - INTERVAL '32 days'),
+  -- Commande très ancienne, passée il y a 365 jours (plus d'un an)
+  ('user1', 7.8, 'Au top', 'CONFIRMED', NOW() - INTERVAL '365 days', NOW() - INTERVAL '365 days'),
+  -- Commande passée aujourd’hui
+  ('user1', 7.8, 'Au top', 'CANCELLED', NOW(), NOW()),
+  -- Commande passée il y a 64 jours (un peu plus de 2 mois)
+  ('user1', 3.9, 'Rat yan', 'PENDING_PAYMENT', NOW() - INTERVAL '64 days', NOW() - INTERVAL '64 days');
+
+
 
 -- Insérer des articles dans les commandes
 INSERT INTO "OrderItem" (id, "orderId", "articleId", quantity, price)
 VALUES
-  ('oi1', 'order1', 'art1', 2, 79.80),  -- 2kg Entrecôte
-  ('oi2', 'order1', 'art8', 3, 10.50),  -- 3x Ras el hanout
-  ('oi3', 'order1', 'art9', 2, 8.40),   -- 2x Cumin
-  ('oi4', 'order2', 'art6', 2, 25.80),  -- 2 Poulets
-  ('oi5', 'order2', 'art8', 1, 3.50),   -- 1x Ras el hanout
-  ('oi6', 'order2', 'art10', 2, 7.80),  -- 2kg Semoule
-  ('oi7', 'order3', 'art4', 2, 59.80),  -- 2kg Côtelettes
-  ('oi8', 'order3', 'art11', 2, 17.80), -- 2L Huile d'olive
-  ('oi9', 'order3', 'art8', 1, 3.50),   -- 1x Ras el hanout
-  ('oi10', 'order4', 'art2', 2, 31.80), -- 2kg Steak haché
-  ('oi11', 'order4', 'art7', 1, 15.90), -- 1kg Escalopes
-  ('oi12', 'order4', 'art10', 3, 11.70),-- 3kg Semoule
-  ('oi13', 'order5', 'art5', 2, 49.80), -- 2kg Gigot
-  ('oi14', 'order5', 'art7', 3, 47.70), -- 3kg Escalopes
-  ('oi15', 'order5', 'art11', 2, 17.80),-- 2L Huile d'olive
-  ('oi16', 'order5', 'art8', 2, 7.00);  -- 2x Ras el hanout
+  ('oi1', '1', 'art1', 3, 39.9),
+  ('oi2', '1', 'art2', 2, 15.90),
+  ('oi3', '1', 'art3', 2, 16.9),
+  -- Total 33,8  Commande passée hier (1 jour avant aujourd'hui)
+  ('oi4', '2', 'art4', 1, 29.90),
+  ('oi5', '2', 'art5', 1, 24.90),
+  ('oi6', '2', 'art6', 1, 12.90),
+  -- Total 67,7 Commande passée il y a 1 semaine
+  ('oi7', '3', 'art7', 2, 15.90),
+  ('oi8', '3', 'art8', 2, 3.50),
+  ('oi9', '3', 'art9', 1, 2.50),
+  -- Total 41,3 Commande passée il y a 32 jours
+  ('oi10', '4', 'art10', 2, 3.9),
+  -- Total 7.8 Commande très ancienne, passée il y a 365 jours (plus d'un an)
+  ('oi11', '5', 'art10', 2, 3.9),
+  -- Total 7.8  Commande passée aujourd’hu
+  ('oi12', '6', 'art10', 1, 3.9);
+  -- Total 3.9  Commande passée il y a 64 jours (un peu plus de 2 mois)
+
+
+SELECT
+    SUM(CASE WHEN "createdAt" >= CURRENT_DATE THEN total ELSE 0 END) AS total_today,
+    SUM(CASE WHEN "createdAt" >= CURRENT_DATE - INTERVAL '7 days' THEN total ELSE 0 END) AS total_week,
+    SUM(CASE WHEN "createdAt" >= DATE_TRUNC('month', CURRENT_DATE) THEN total ELSE 0 END) AS total_month,
+    SUM(CASE WHEN "createdAt" >= DATE_TRUNC('year', CURRENT_DATE) THEN total ELSE 0 END) AS total_year
+FROM "Order";
