@@ -11,7 +11,7 @@ export const BasketButton = ({ className = "" }: BasketButtonProps) => (
     <motion.a
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        href="#click-collect"
+        href="panier"
         className={`relative flex items-center ${className}`}
     >
             <motion.span
