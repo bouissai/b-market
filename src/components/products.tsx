@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { ShoppingCart, Plus, Minus } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, Trash } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -27,7 +27,6 @@ import { useCategoryStore } from '@/store/useCategoryStore';
 import { Article } from '@prisma/client';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from './ui/pagination';
 
-// Cart item type
 type CartItem = {
   article: Article;
   quantity: number;
@@ -66,54 +65,54 @@ export default function ProductListing() {
     }
   };
 
-  // Function to add product to cart
+  // ajout d'un article au panier
   const addToCart = (article: Article, quantity = 1) => {
-    setCartItems((prevItems) => {
-      const existingItem = prevItems.find(
-        (item) => item.article.id === article.id,
-      );
+    const currentQuantity = cartItems.find(item => item.article.id === article.id)?.quantity || 0;
+    updateQuantity(article, currentQuantity + quantity);
+  };
 
+  // suppression d'un article du panier
+  const removeFromCart = (article: Article) => {
+    setCartItems((prevItems) =>
+      prevItems.filter((item) => item.article.id !== article.id),
+    );
+  };
+
+  // mise à jour de la quantité d'un article dans le panier
+  const updateQuantity = (article: Article, newQuantity: number) => {
+    if (newQuantity < 0) {
+      return;
+    } 
+  
+    setCartItems((prevItems) => {
+      if (newQuantity === 0) {
+        // supprimer l'article si la quantité est 0
+        return prevItems.filter((item) => item.article.id !== article.id);
+      }
+  
+      const existingItem = prevItems.find((item) => item.article.id === article.id);
+      
       if (existingItem) {
-        // Update quantity if product already in cart
+        // mettre à jour la quantité si l'article existe déjà
         return prevItems.map((item) =>
           item.article.id === article.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item,
+            ? { ...item, quantity: newQuantity }
+            : item
         );
       } else {
-        // Add new product to cart
-        return [...prevItems, { article: article, quantity }];
+        // ajouter l'article s'il n'existe pas encore
+        return [...prevItems, { article, quantity: newQuantity }];
       }
     });
   };
 
-  // Function to remove product from cart
-  const removeFromCart = (articleId: string) => {
-    setCartItems((prevItems) =>
-      prevItems.filter((item) => item.article.id !== articleId.toString()),
-    );
-  };
-
-  // Function to update quantity
-  const updateQuantity = (articleId: string, newQuantity: number) => {
-    if (newQuantity < 1) return;
-
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.article.id === articleId.toString()
-          ? { ...item, quantity: newQuantity }
-          : item,
-      ),
-    );
-  };
-
-  // Calculate total price
+  // calcul du prix total
   const totalPrice = cartItems.reduce(
     (sum, item) => sum + item.article.price * item.quantity,
     0,
   );
 
-  // Calculate total items
+  // calcul du nombre total d'articles
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
@@ -164,7 +163,7 @@ export default function ProductListing() {
                         <div>
                           <p className="font-medium">{item.article.name}</p>
                           <p className="text-sm text-muted-foreground">
-                            €{item.article.price.toFixed(2)} × {item.quantity}
+                            {item.article.price.toFixed(2)}€ × {item.quantity}
                           </p>
                         </div>
                       </div>
@@ -174,21 +173,43 @@ export default function ProductListing() {
                           size="icon"
                           className="h-8 w-8"
                           onClick={() =>
-                            updateQuantity(item.article.id, item.quantity - 1)
+                            updateQuantity(item.article, item.quantity - 1)
                           }
                         >
                           <Minus className="h-4 w-4" />
                         </Button>
-                        <span>{item.quantity}</span>
+                        <input
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) => {
+                            const newQuantity = parseInt(e.target.value, 10);
+                            if (!isNaN(newQuantity)) {
+                              updateQuantity(item.article, newQuantity);
+                            }
+                          }}
+                          className="w-12 h-8 text-center border rounded-md
+                            [appearance:textfield] 
+                            [&::-webkit-outer-spin-button]:appearance-none 
+                            [&::-webkit-inner-spin-button]:appearance-none" // pour enlever les boutons d'incrementation de l'input number
+                          min="0"
+                        />                        
                         <Button
                           variant="outline"
                           size="icon"
                           className="h-8 w-8"
                           onClick={() =>
-                            updateQuantity(item.article.id, item.quantity + 1)
+                            updateQuantity(item.article, item.quantity + 1)
                           }
                         >
                           <Plus className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8 ml-2"
+                          onClick={() => removeFromCart(item.article)}
+                        >
+                          <Trash className="h-4 w-4 text-red-500" />
                         </Button>
                       </div>
                     </div>
@@ -196,7 +217,7 @@ export default function ProductListing() {
                   <Separator className="my-4" />
                   <div className="flex justify-between font-medium">
                     <span>Total</span>
-                    <span>${totalPrice.toFixed(2)}</span>
+                    <span>{totalPrice.toFixed(2)}€</span>
                   </div>
                   <Button className="w-full mt-4">Checkout</Button>
                 </div>
@@ -274,26 +295,41 @@ export default function ProductListing() {
                     );
                     const currentQuantity = item ? item.quantity : 0;
                     if (currentQuantity > 0) {
-                      updateQuantity(article.id, currentQuantity - 1);
+                      updateQuantity(article, currentQuantity - 1);
                     }
                   }}
                 >
                   <Minus className="h-4 w-4" />
                 </Button>
-                <span>
+                {/* <span>
                   {cartItems.find((item) => item.article.id === article.id)
                     ?.quantity || 0}
-                </span>
+                </span> */}
+                <input
+                  type="number"
+                  value={cartItems.find((item) => item.article.id === article.id)?.quantity || 0}
+                  onChange={(e) => {
+                    const newQuantity = parseInt(e.target.value, 10);
+                    if (!isNaN(newQuantity)) {
+                      updateQuantity(article, newQuantity);
+                    }
+                  }}
+                  className="w-12 h-8 text-center border rounded-md 
+                    [appearance:textfield] 
+                    [&::-webkit-outer-spin-button]:appearance-none 
+                    [&::-webkit-inner-spin-button]:appearance-none" // pour enlever les boutons d'incrementation de l'input number
+                  min="0"
+                />
                 <Button
                   variant="outline"
                   size="icon"
                   className="h-8 w-8"
-                  onClick={() => {
+                  onClick={() => {                            
                     const item = cartItems.find(
                       (item) => item.article.id === article.id,
                     );
                     const currentQuantity = item ? item.quantity : 0;
-                    updateQuantity(article.id, currentQuantity + 1);
+                    updateQuantity(article, currentQuantity + 1);
                   }}
                 >
                   <Plus className="h-4 w-4" />
