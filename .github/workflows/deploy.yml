@@ -1,4 +1,4 @@
-name: 🚀 Deploy to VPS
+name: 🚀 Build, Push & Deploy to VPS
 
 on:
   push:
@@ -6,7 +6,26 @@ on:
       - master
 
 jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Cloner le dépôt
+        uses: actions/checkout@v4
+
+      - name: 🔑 Se connecter à GitHub Container Registry (GHCR)
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+
+      - name: 🏗️ Build de l image Docker
+        run: |
+          docker build -t ghcr.io/bouissai/bmarket:latest .
+      
+      - name: 📤 Push de l image sur GHCR
+        run: |
+          docker push ghcr.io/bouissai/bmarket:latest
+
   deploy:
+    needs: build-and-push
     runs-on: ubuntu-latest
 
     steps:
@@ -22,7 +41,14 @@ jobs:
             echo "📌 Passage au dossier de l'application..."
             cd /root
 
+            echo "📦 Vérification de Docker Compose..."
+            if ! command -v docker-compose &> /dev/null; then
+              echo "❌ docker-compose n'est pas installé. Installation en cours..."
+              apt update && apt install -y docker-compose
+            fi
+
             echo "📦 Récupération de la nouvelle image..."
+            docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password ${{ secrets.GHCR_TOKEN }}
             docker-compose pull || { echo "❌ Échec du pull"; exit 1; }
 
             echo "🛑 Arrêt des anciens conteneurs..."
