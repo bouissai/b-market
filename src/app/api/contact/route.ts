@@ -22,6 +22,18 @@ const eventContactSchema = z.object({
   message: z.string().min(10),
 });
 
+
+interface form_contact{
+  name : string, 
+  subject ?:string,
+  email : string, 
+  phone ?: string, 
+  eventType ?: string, 
+  date ?: string, 
+  guests ?: string, 
+  message : string
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -29,7 +41,7 @@ export async function POST(req: NextRequest) {
     // Détecter le type de formulaire en fonction des champs présents
     const isEventForm = 'eventType' in body && 'phone' in body && 'guests' in body;
     
-    let validatedData;
+    let validatedData : form_contact  ;
     
     if (isEventForm) {
       // Valider le formulaire d'événement
@@ -74,11 +86,11 @@ export async function POST(req: NextRequest) {
     
     // Préparer le contenu de l'e-mail en fonction du type de formulaire
     let htmlContent: string;
-    let subject: string;
+    let subjectMessage: string;
     
     if (isEventForm) {
       const { name, email, phone, eventType, date, guests, message } = validatedData;
-      subject = `Nouvelle demande de devis de ${name}`;
+      subjectMessage = `Nouvelle demande de devis de ${name}`;
       htmlContent = `
         <h2>Nouvelle demande de devis</h2>
         <p><strong>Nom :</strong> ${name}</p>
@@ -90,13 +102,13 @@ export async function POST(req: NextRequest) {
         <p><strong>Message :</strong> ${message}</p>
       `;
     } else {
-      const { name, email, subject: messageSubject, message } = validatedData;
-      subject = `Nouveau message de contact de ${name}: ${messageSubject}`;
+      const { name, email, subject, message } = validatedData;
+      subjectMessage = `Nouveau message de contact de ${name}: ${subject}`;
       htmlContent = `
         <h2>Nouveau message de contact</h2>
         <p><strong>Nom :</strong> ${name}</p>
         <p><strong>Email :</strong> ${email}</p>
-        <p><strong>Sujet :</strong> ${messageSubject}</p>
+        <p><strong>Sujet :</strong> ${subject}</p>
         <p><strong>Message :</strong> ${message}</p>
       `;
     }
@@ -105,7 +117,7 @@ export async function POST(req: NextRequest) {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: process.env.RECIPIENT_EMAIL || 'bouissailyass@gmail.com',
-      subject,
+      subjectMessage,
       html: htmlContent,
     };
 

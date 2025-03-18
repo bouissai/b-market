@@ -1,4 +1,3 @@
-import { prisma } from "@/lib/prisma";
 import { createOrder, getAllOrders, getOrdersByUserId } from "@/services/orderService";
 import { NextRequest, NextResponse } from 'next/server';
 

@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
-import { Prisma } from '@prisma/client';
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+
 import { NextRequest, NextResponse } from 'next/server';
 
 // Récupérer un article par ID
@@ -130,7 +131,7 @@ export async function PATCH(
   } catch (error) {
     console.error("Erreur lors de la mise à jour de l'article:", error);
 
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    if (error instanceof PrismaClientKnownRequestError) {
       return NextResponse.json(
         { message: 'Erreur de base de données' },
         { status: 500 },
@@ -218,7 +219,7 @@ export async function DELETE(
   } catch (error) {
     console.error("Erreur lors de la suppression de l'article:", error);
 
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    if (error instanceof PrismaClientKnownRequestError) {
       if (error.code === 'P2025') {
         return NextResponse.json(
           { message: 'Article introuvable' },

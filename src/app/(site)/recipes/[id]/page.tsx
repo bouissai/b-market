@@ -85,11 +85,14 @@ const recipes = [
 ];
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
-export function generateMetadata({ params }: Props): Metadata {
-  const recipe = recipes.find((r) => r.id === params.id);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+
+  const resolvedParams = await params;
+
+  const recipe = recipes.find((r) => r.id === resolvedParams.id);
 
   if (!recipe) {
     return {
@@ -103,12 +106,15 @@ export function generateMetadata({ params }: Props): Metadata {
   };
 }
 
-export default function RecipeDetailPage({ params }: Props) {
-  const recipe = recipes.find((r) => r.id === params.id);
+export default async function RecipeDetailPage({ params }: Props) {
+  const resolvedParams = await params;
+
+  const recipe = recipes.find((r) => r.id === resolvedParams.id);
 
   if (!recipe) {
-    notFound();
+    return notFound();
   }
+  
 
   // Fonction pour formater le temps en heures et minutes
   const formatTime = (minutes: number) => {
