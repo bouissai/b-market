@@ -113,24 +113,14 @@ export const CLICK_COLLECT_STEPS = [
 // Données FAQ en respectant le type défini
 export const FAQ_DATA: FAQItem[] = [
   {
-    question: 'Comment puis-je passer une commande ?',
-    answer:
-      'Vous pouvez passer une commande directement via notre site en sélectionnant les produits que vous souhaitez acheter et en suivant le processus de commande. Vous avez également la possibilité de passer une commande par téléphone ou en personne à la boucherie.',
-  },
-  {
     question: 'Quels modes de paiement acceptez-vous ?',
     answer:
-      "Les paiements en ligne ne sont malheureusement pas disponibles pour le moment. Sur place, nous acceptons les cartes de crédit, les cartes de débit, l'espèce et les tickets restaurants.",
+      "Les paiements en ligne ne sont malheureusement pas disponibles pour le moment. Sur place, nous acceptons les paiements par carte bancaire, carte restaurant, espèces et chèques. Pour les commandes importantes ou sur mesure, un acompte peut être demandé.",
   },
   {
     question: 'Est-il possible de retourner un produit ?',
     answer:
       "En vertu de l'Article L121-20-2 du code de la consommation, le droit de rétractation ne s'applique pas pour les livraisons de produits frais périssables. En conséquence, une demande d'annulation de commande pour le non-respect du créneau horaire de livraison prévu n'est pas recevable.",
-  },
-  {
-    question: 'Comment puis-je suivre ma commande ?',
-    answer:
-      'Après avoir passé une commande, vous recevrez un email avec un numéro de suivi et des instructions pour suivre votre commande.',
   },
   {
     question: 'Puis-je annuler ma commande ?',
@@ -178,16 +168,6 @@ export const FAQ_DATA: FAQItem[] = [
       'Nous pouvons proposer des offres spéciales sur certains produits. Suivez-nous sur les réseaux sociaux ou inscrivez-vous à notre newsletter pour être informé de nos promotions.',
   },
   {
-    question: 'Comment se déroule le click-and-collect ?',
-    answer:
-      "Le click-and-collect est simple : passez votre commande en ligne, choisissez votre créneau horaire, et venez la récupérer à la boucherie à l'heure convenue. Vous pourrez payer directement sur place.",
-  },
-  {
-    question: 'Acceptez-vous les paiements par carte ?',
-    answer:
-      'Oui, nous acceptons les paiements par carte bancaire, espèces et chèques. Pour les commandes importantes ou sur mesure, un acompte peut être demandé.',
-  },
-  {
     question:
       'Puis-je vous contacter pour des conseils sur la préparation ou la cuisson ?',
     answer:
@@ -212,7 +192,7 @@ export const FAQ_DATA_EVENTS: { question: string; answer: string }[] = [
   {
     question: "Livrez-vous à domicile ?",
     answer:
-      "Oui, nous proposons la livraison à domicile ou sur le lieu de votre événement dans un rayon de 50 km.",
+    'Actuellement, nous proposons uniquement un service de click-and-collect. Vous pouvez passer votre commande en ligne et venir la récupérer directement à la boucherie. La livraison à domicile pourrait être disponible prochainement.',
   },
   {
     question: "Quelle quantité commander pour mon événement ?",

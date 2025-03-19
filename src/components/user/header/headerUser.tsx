@@ -6,6 +6,8 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import { BasketButton } from "./basketButton";
 import { MobileMenu } from "./mobileMenu";
+import Image from 'next/image';
+
 
 export function HeaderUser() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,7 +20,15 @@ export function HeaderUser() {
       className="bg-background/80 backdrop-blur-md shadow-sm sticky top-0 z-50"
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-        <div><h1>Logo</h1></div>
+        <div>
+          <Image 
+          src="/images/logo.png"
+          alt="logo"
+          width={75}
+          height={75}
+          className="rounded-full"
+          />
+        </div>
 
         {/* Menu mobile toggle */}
         <div className="md:hidden">

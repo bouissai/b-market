@@ -7,7 +7,7 @@ import { FAQ_DATA } from "@/constants";
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col gap-4 py-6 box-border">
+    <div className="min-h-screen flex flex-col gap-4 py-6 px-4  box-border">
       <div><ButcheryActivity /></div>
       <div id="valeurs"><NosValeurs /></div>
       <div id="click-collect"><ClickAndCollect /></div>
