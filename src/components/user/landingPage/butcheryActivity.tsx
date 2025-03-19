@@ -9,7 +9,9 @@ export function ButcheryActivity() {
     const isInView = useInView(ref, { once: true });
 
     return (
-        <section ref={ref}>
+        <section ref={ref}
+        className="py-16 md:py-24 px-4 md:px-8 max-w-6xl mx-auto overflow-hidden"
+        aria-labelledby="butchery-title">
             <div>
                 {/* Motion container */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -86,13 +88,13 @@ export function ButcheryActivity() {
                 >
                     {/* Texte animé + icône MoveDown */}
                     <motion.div
-                        animate={isInView ? { y: [20, 30, 20] } : {}}
+                        animate={isInView ? { y: [0, 5, 0] } : {}}
                         transition={{ repeat: Infinity, duration: 2 }}
                         className="text-center flex flex-col items-center"
                     >
-                        <p className="text-sm font-semibold uppercase tracking-wider">Découvrir</p>
-                        <MoveDown className="w-6 h-6 mt-2" />
-                    </motion.div>
+          <p className="text-sm font-semibold uppercase tracking-wider text-gray-700">Découvrir</p>
+          <MoveDown className="w-6 h-6 mt-2 text-red-700" aria-hidden="true" />
+                        </motion.div>
                 </motion.div>
             </div>
         </section>

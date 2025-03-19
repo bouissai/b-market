@@ -1,6 +1,5 @@
 'use client';
 
-import { animations } from '@/lib/helpers/animation';
 import { motion, useInView } from 'framer-motion';
 import { ChefHat, ClipboardCheck, Clock, ShoppingBag } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -12,7 +11,7 @@ export default function ClickCollectSteps() {
   const [activeStep, setActiveStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
 
-  const steps = [
+  const clickcollectsteps = [
     {
       icon: <ShoppingBag size={28} />,
       title: 'Commandez en ligne',
@@ -43,7 +42,7 @@ export default function ClickCollectSteps() {
     let timeout: NodeJS.Timeout;
 
     const advanceStep = (currentStep: number) => {
-      if (currentStep < steps.length) {
+      if (currentStep < clickcollectsteps.length) {
         setActiveStep(currentStep);
         setCompletedSteps((prev) => [...prev, currentStep - 1].filter((n) => n >= 0));
 
@@ -66,31 +65,21 @@ export default function ClickCollectSteps() {
     return () => {
       clearTimeout(timeout);
     };
-  }, [isInView, steps.length]);
+  }, [isInView, clickcollectsteps.length]);
 
   return (
     <div ref={ref} className="min-h-10 text-center w-full mx-auto py-12 px-4">
-      <motion.h2
-        variants={animations.withDelay(animations.fadeInDown, 0.2)}
-        initial="hidden"
-        animate={isInView ? 'visible' : 'hidden'}
-        className="text-3xl font-bold mb-6"
-      >
+      <h2 className="text-3xl font-bold mb-6">
         Click & Collect
-      </motion.h2>
+      </h2>
 
-      <motion.p
-        variants={animations.withDelay(animations.fadeIn, 0.4)}
-        initial="hidden"
-        animate="visible"
-        className="mt-4 text-lg text-muted-foreground"
-      >
+      <p className="mt-4 text-lg text-muted-foreground">
         Commandez en ligne et récupérez vos achats directement en magasin.
-      </motion.p>
+      </p>
 
       <div className="relative mt-16 max-w-4xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
-          {steps.map((step, index) => (
+          {clickcollectsteps.map((step, index) => (
             <motion.div
               key={index}
               className={`flex flex-col items-center max-w-[250px] transition-all duration-300 ${activeStep === index ? 'scale-105' : 'opacity-70'
