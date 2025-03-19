@@ -10,7 +10,7 @@ export function ButcheryActivity() {
 
     return (
         <section ref={ref}
-        className="py-16 md:py-24 px-4 md:px-8 max-w-6xl mx-auto overflow-hidden"
+        className="py-8 md:py-2 px-4 md:px-8 max-w-6xl mx-auto overflow-hidden"
         aria-labelledby="butchery-title">
             <div>
                 {/* Motion container */}
@@ -63,7 +63,7 @@ export function ButcheryActivity() {
                     >
                         <div className="relative w-full h-[600px] rounded-2xl overflow-hidden shadow-2xl">
                             <Image
-                                src="https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=800&q=75"
+                                src="https://res.cloudinary.com/ddqrywesr/image/upload/v1742398671/photo-1588168333986-5078d3ae3976_hzlok1.avif"
                                 alt="Boucher professionnel"
                                 fill
                                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 40vw"
