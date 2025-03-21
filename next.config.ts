@@ -1,8 +1,8 @@
-
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone",
-  productionBrowserSourceMaps: true, // Active les source maps en prod
-  compress: true, // Active la compression Gzip/Brotli
+  output: 'standalone',
+  productionBrowserSourceMaps: true,
+  compress: true,
   images: {
     remotePatterns: [
       {
@@ -13,10 +13,10 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
-        pathname: '**',
+        pathname: '/**',
       },
     ],
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;

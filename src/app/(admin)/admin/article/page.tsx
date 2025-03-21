@@ -28,9 +28,7 @@ export default function ArticlePage() {
     selectedArticle,
     mode,
     setSelectedArticle,
-    addArticle,
     fetchArticles,
-    updateArticle,
     deleteArticle,
   } = useArticleStore();
 
@@ -62,8 +60,9 @@ export default function ArticlePage() {
         description: 'Article supprimé avec succès',
       });
     }
-    setSelectedArticle(null, null); // 🔥 Réinitialisation après suppression
+    setSelectedArticle(null, null);
   };
+
 
   return (
     <div className="p-6">
@@ -87,17 +86,7 @@ export default function ArticlePage() {
 
       {/* Formulaire de création / modification */}
       {(mode === "edit" || mode === "new") && (
-        <ArticleForm
-          article={selectedArticle}
-          onCloseAction={() => setSelectedArticle(null, null)}
-          onSaveAction={(newArticle) => {
-            if (selectedArticle) {
-              updateArticle(newArticle);
-            } else {
-              addArticle(newArticle);
-            }
-            setSelectedArticle(null, null);
-          }}
+        <ArticleForm article={selectedArticle}
         />
       )}
 
