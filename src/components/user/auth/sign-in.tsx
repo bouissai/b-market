@@ -18,17 +18,13 @@ import {
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-
-const signInSchema = z.object({
-	email: z.string().email({
-		message: "L'adresse email est pas valide.",
-	}),
-	password: z.string().min(8, {
-		message: 'Le mot de passe doit faire 8 caractères minimum.',
-	}),
-});
+import { signInSchema } from '@/types/user';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 const SignIn = () => {
+	const router = useRouter();
+
 	const form = useForm<z.infer<typeof signInSchema>>({
 		resolver: zodResolver(signInSchema),
 		defaultValues: {
@@ -36,8 +32,26 @@ const SignIn = () => {
 			password: '',
 		},
 	});
-	const handleSubmit = (data: z.infer<typeof signInSchema>) => {
-		console.log('sign-in');
+	const handleSubmit = async (data: z.infer<typeof signInSchema>) => {
+		try {
+			const result = await signIn('credentials', {
+				email: data.email,
+				password: data.password,
+				redirect: false,
+			});
+
+			if (result?.error) {
+				console.error(result?.error);
+				return;
+			}
+
+			if (result?.ok) {
+				router.push('/');
+				router.refresh();
+			}
+		} catch (error) {
+			console.error('Sign in error:', error);
+		}
 	};
 	return (
 		<Card>
