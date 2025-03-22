@@ -160,19 +160,26 @@ export function ArticleForm({ article }: { article: Article | null }) {
     const urlsToDelete = uploadedImageUrls.filter(
       (url) => url !== article?.image && url !== defaultImageUrl
     );
+  
     for (const url of urlsToDelete) {
       const publicId = extractPublicId(url, defaultImageUrl);
       if (publicId) await deleteImage(publicId);
     }
-
+  
     // Supprimer la dernière image si elle n'était pas l'image d'origine
-    if (imageUrl !== article?.image && imageUrl !== defaultImageUrl) {
+    // et si elle n’a pas déjà été supprimée ci-dessus
+    if (
+      imageUrl !== article?.image &&
+      imageUrl !== defaultImageUrl &&
+      !urlsToDelete.includes(imageUrl) // ✅ évite double suppression
+    ) {
       const publicId = extractPublicId(imageUrl, defaultImageUrl);
       if (publicId) await deleteImage(publicId);
     }
-
+  
     setSelectedArticle(null, null);
   }
+  
 
   return (
     <Dialog open onOpenChange={handleCancel}>
