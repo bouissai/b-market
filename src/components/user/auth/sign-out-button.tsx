@@ -1,5 +1,6 @@
 import { signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
+import { LogOutIcon } from 'lucide-react';
 
 const SignOutButton = () => {
 	const handleSignOut = async () => {
@@ -7,8 +8,9 @@ const SignOutButton = () => {
 	};
 	return (
 		<>
-			<Button onClick={() => handleSignOut()} type="submit">
+			<Button variant={'link'} onClick={() => handleSignOut()} type="submit">
 				Déconnexion
+				<LogOutIcon />
 			</Button>
 		</>
 	);
