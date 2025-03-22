@@ -50,7 +50,7 @@ export default function SiteLayout({
 }) {
 	return (
 		<SessionProvider>
-			n<UserNavBar>{children}</UserNavBar>
+			<UserNavBar>{children}</UserNavBar>
 		</SessionProvider>
 	);
 }

@@ -7,9 +7,11 @@ import { useState } from 'react';
 import { BasketButton } from './basketButton';
 import { MobileMenu } from './mobileMenu';
 import SignOutButton from '@/components/user/auth/sign-out-button';
+import { useSession } from 'next-auth/react';
 
 export function HeaderUser() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const { data: session } = useSession();
 
 	return (
 		<motion.header
@@ -52,8 +54,9 @@ export function HeaderUser() {
 				<div className="hidden md:block">
 					<BasketButton />
 				</div>
-
-				<div className="hidden md:block">{<SignOutButton />}</div>
+				{session && (
+					<div className="hidden md:block">{<SignOutButton />}</div>
+				)}
 			</nav>
 
 			<MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
