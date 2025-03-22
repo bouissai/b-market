@@ -1,4 +1,5 @@
 'use client';
+import { Button } from '@/components/ui/button';
 import {
 	Card,
 	CardContent,
@@ -6,8 +7,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import {
 	Form,
 	FormControl,
@@ -16,14 +15,17 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 import { signInSchema, signUpSchema } from '@/types/user';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-const SignUp = () => {
+const SignUp = ({ onSuccess }: { onSuccess: () => void }) => {
+	const { toast } = useToast();
 	const form = useForm<z.infer<typeof signUpSchema>>({
-		resolver: zodResolver(signInSchema),
+		resolver: zodResolver(signUpSchema),
 		defaultValues: {
 			email: '',
 			confirmEmail: '',
@@ -46,10 +48,25 @@ const SignUp = () => {
 				}),
 			});
 			if (!response.ok) {
+				const errorJson = await response.json(); // ⬅️ ici, on récupère un objet
+				const errorMessage = errorJson?.message || 'Une erreur est survenue.';
+				toast({
+					variant: 'destructive',
+					title: 'Inscription échouée',
+					description: errorMessage,
+				});
 				throw new Error('Network response was not ok');
 			}
-			// Process response here
-			console.log('Registration Successful', response);
+
+			toast({
+				title: 'Compte créé avec succès ! 🎉',
+				description: 'Vous pouvez maintenant vous connecter.',
+			});
+			// Réinitialiser les champs
+			form.reset();
+
+			// Basculer sur l'onglet "Connexion"
+			onSuccess?.();
 		} catch (error: any) {
 			console.error('Registration Failed:', error);
 		}

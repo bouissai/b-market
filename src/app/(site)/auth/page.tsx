@@ -5,11 +5,12 @@ import SignIn from '@/components/user/auth/sign-in';
 import SignUp from '@/components/user/auth/sign-up';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const Auth = () => {
 	const { data: session } = useSession();
 	const router = useRouter();
+	const [tab, setTab] = useState('sign-in');
 	useEffect(() => {
 		if (session) {
 			router.replace('/');
@@ -17,7 +18,7 @@ const Auth = () => {
 	}, [session, router]);
 	return (
 		<div className="flex justify-center items-center h-[calc(100vh-249px-80px)]">
-			<Tabs defaultValue="sign-in" className=" w-[400px]">
+			<Tabs value={tab} onValueChange={setTab} defaultValue="sign-in" className=" w-[400px]">
 				<TabsList className="grid w-full grid-cols-2">
 					<TabsTrigger value="sign-in">Connexion</TabsTrigger>
 					<TabsTrigger value="sign-up">Inscription</TabsTrigger>
@@ -26,7 +27,7 @@ const Auth = () => {
 					<SignIn />
 				</TabsContent>
 				<TabsContent value="sign-up">
-					<SignUp />
+				<SignUp onSuccess={() => setTab('sign-in')} />
 				</TabsContent>
 			</Tabs>
 		</div>

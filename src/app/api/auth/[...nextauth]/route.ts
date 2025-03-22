@@ -29,7 +29,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 				});
 
 				if (!user) {
-					throw new Error('Invalid credentials');
+					throw new Error('USER_NOT_FOUND');
 				}
 
 				const passwordCorrect = await compare(
@@ -37,7 +37,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 					user.password,
 				);
 				if (!passwordCorrect) {
-					throw new Error('Invalid credentials');
+					throw new Error('INVALID_PASSWORD');
 				}
 
 				return user;
