@@ -68,7 +68,7 @@ export default function VerifyEmail() {
               <p className="mt-4">{message}</p>
               <Button 
                 className="mt-6" 
-                onClick={() => router.push("/auth/signin")}
+                onClick={() => router.push("/auth")}
               >
                 Se connecter
               </Button>
@@ -81,7 +81,7 @@ export default function VerifyEmail() {
               <p className="mt-4">{message}</p>
               <Button 
                 className="mt-6" 
-                onClick={() => router.push("/auth/signin")}
+                onClick={() => router.push("/auth")}
                 variant="outline"
               >
                 Retour à la connexion
