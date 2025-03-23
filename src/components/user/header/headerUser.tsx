@@ -1,14 +1,22 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import { MENU_ITEMS } from '@/constants';
-import { Menu, X } from 'lucide-react';
+import { useAuthStore } from '@/store/useAuthStore';
+import { LogOutIcon, Menu, X } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { BasketButton } from './basketButton';
 import { MobileMenu } from './mobileMenu';
 
 export function HeaderUser() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const { data: session } = useSession();
+	const router = useRouter();
+	const { signOut } = useAuthStore();
+
 
 	return (
 		<motion.header
@@ -21,18 +29,6 @@ export function HeaderUser() {
 					<h1>Logo</h1>
 				</div>
 
-				{/* Menu mobile toggle */}
-				<div className="md:hidden">
-					<button
-						onClick={() => setIsMenuOpen(!isMenuOpen)}
-						className="text-gray-600 hover:text-red-700">
-						{isMenuOpen ? (
-							<X className="h-6 w-6" />
-						) : (
-							<Menu className="h-6 w-6" />
-						)}
-					</button>
-				</div>
 
 				{/* Menu desktop */}
 				<div className="hidden md:flex space-x-8">
@@ -46,11 +42,36 @@ export function HeaderUser() {
 						</motion.a>
 					))}
 				</div>
-
-				{/* Desktop basket button */}
-				<div className="hidden md:block">
-					<BasketButton />
+				<div className='flex items-center gap-4'>
+					{session ?
+						<Button variant="link" className='hidden md:flex' onClick={signOut}>
+							Déconnexion
+							<LogOutIcon />
+						</Button>
+						:
+						<Button className='hidden md:block' onClick={() => router.push('/auth')}>
+							Se connecter
+						</Button>
+					}
+					{/* Desktop basket button */}
+					<div>
+						<BasketButton />
+					</div>
+					{/* Menu mobile toggle */}
+					<div className="md:hidden">
+						<button
+							onClick={() => setIsMenuOpen(!isMenuOpen)}
+							className="text-gray-600 hover:text-red-700">
+							{isMenuOpen ? (
+								<X className="h-6 w-6" />
+							) : (
+								<Menu className="h-6 w-6" />
+							)}
+						</button>
+					</div>
 				</div>
+
+
 			</nav>
 
 			<MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
