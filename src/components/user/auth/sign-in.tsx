@@ -1,4 +1,5 @@
 'use client';
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -6,8 +7,6 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import {
     Form,
     FormControl,
@@ -16,19 +15,21 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
+import { useAuthStore } from '@/store/useAuthStore';
 import { signInSchema } from '@/types/user';
-import { signIn } from 'next-auth/react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react'; // Add this import
-import { useToast } from '@/hooks/use-toast';
-
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 const SignIn = () => {
     const router = useRouter();
-    const [authError, setAuthError] = useState(''); // Add state for error message
     const { toast } = useToast();
+
+    const { signIn, isSubmitting, error, setError } = useAuthStore();
+
 
     const form = useForm<z.infer<typeof signInSchema>>({
         resolver: zodResolver(signInSchema),
@@ -38,45 +39,29 @@ const SignIn = () => {
         },
     });
 
-    
-    
+
     const handleSubmit = async (data: z.infer<typeof signInSchema>) => {
         try {
-            setAuthError(''); // Clear previous errors
-            
-            const result = await signIn('credentials', {
-                email: data.email,
-                password: data.password,
-                redirect: false,
-            });
+            setError(null);
 
-            if (result?.error) {
-                // Set user-friendly error message
-                setAuthError('Adresse email ou mot de passe incorrect');
-                let errorMessage = 'Erreur inconnue.';
-                if (result.error === 'USER_NOT_FOUND') {
-                    errorMessage = "Aucun compte trouvé avec cet email.";
-                } else if (result.error === 'INVALID_PASSWORD') {
-                    errorMessage = "Mot de passe incorrect.";
-                }
-                toast({
-                    variant: 'destructive',
-                    title: 'Connexion échouée',
-                    description: errorMessage,
-                });
-                return;
-            }
+            const success = await signIn(data);
 
-            if (result?.ok) {
+            if (success) {
+                toast({ title: 'Connecté avec succès' });
                 router.push('/');
-                router.refresh();
+            }else{
+                toast({
+                    title: 'Erreur d\'authentification',
+                    description: error,
+                    variant: 'destructive',
+                });
             }
         } catch (error) {
-            setAuthError('Une erreur est survenue lors de la connexion');
+            setError('Une erreur est survenue lors de la connexion');
             console.error('Sign in error:', error);
         }
     };
-    
+
     return (
         <Card>
             <CardHeader>
@@ -117,14 +102,14 @@ const SignIn = () => {
                                 </FormItem>
                             )}
                         />
-                        
+
                         {/* Display authentication error */}
-                        {authError && (
+                        {error && (
                             <div className="text-destructive text-sm font-medium">
-                                {authError}
+                                {error}
                             </div>
                         )}
-                        
+
                         <Button type="submit" className="w-full">
                             Se connecter
                         </Button>

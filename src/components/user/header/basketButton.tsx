@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import SignOutButton from '@/components/user/auth/sign-out-button';
+import { SignOutButton } from '../auth/sign-out-button';
 
 interface BasketButtonProps {
 	className?: string;

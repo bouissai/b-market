@@ -17,13 +17,17 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { signInSchema, signUpSchema } from '@/types/user';
+import { useAuthStore } from '@/store/useAuthStore';
+import { signUpSchema } from '@/types/user';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const SignUp = ({ onSuccess }: { onSuccess: () => void }) => {
 	const { toast } = useToast();
+	const { signUp, error, isSubmitting, setError } = useAuthStore();
+
+
 	const form = useForm<z.infer<typeof signUpSchema>>({
 		resolver: zodResolver(signUpSchema),
 		defaultValues: {
@@ -33,40 +37,28 @@ const SignUp = ({ onSuccess }: { onSuccess: () => void }) => {
 			confirmPassword: '',
 		},
 	});
-	const handleSubmitSignup = async (data: z.infer<typeof signInSchema>) => {
+	const handleSubmitSignup = async (data: z.infer<typeof signUpSchema>) => {
+		setError(null);
+
 		console.log('data : ------------', data);
 
 		try {
-			const response = await fetch('/api/auth/register', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					email: data.email,
-					password: data.password,
-				}),
-			});
-			if (!response.ok) {
-				const errorJson = await response.json(); // ⬅️ ici, on récupère un objet
-				const errorMessage = errorJson?.message || 'Une erreur est survenue.';
+			const success = await signUp(data);
+
+			if (success) {
+				toast({
+					title: 'Compte créé avec succès ! 🎉',
+					description: 'Vous pouvez maintenant vous connecter.',
+				});
+				form.reset();
+				onSuccess?.();
+			} else if (error) {
 				toast({
 					variant: 'destructive',
 					title: 'Inscription échouée',
-					description: errorMessage,
+					description: error,
 				});
-				throw new Error('Network response was not ok');
 			}
-
-			toast({
-				title: 'Compte créé avec succès ! 🎉',
-				description: 'Vous pouvez maintenant vous connecter.',
-			});
-			// Réinitialiser les champs
-			form.reset();
-
-			// Basculer sur l'onglet "Connexion"
-			onSuccess?.();
 		} catch (error: any) {
 			console.error('Registration Failed:', error);
 		}
@@ -144,8 +136,8 @@ const SignUp = ({ onSuccess }: { onSuccess: () => void }) => {
 								</FormItem>
 							)}
 						/>
-						<Button type="submit" className="w-full">
-							S'inscrire
+						<Button type="submit" className="w-full" disabled={isSubmitting}>
+							{isSubmitting ? 'Création en cours...' : "S'inscrire"}
 						</Button>
 					</form>
 				</Form>
