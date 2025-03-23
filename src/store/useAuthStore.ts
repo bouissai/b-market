@@ -8,18 +8,22 @@ interface AuthState {
   isLoading: boolean;
   isSubmitting: boolean;
   error: string | null;
+  successMessage: string | null;
   signIn: (data: z.infer<typeof signInSchema>) => Promise<boolean>;
   signUp: (data: z.infer<typeof signUpSchema>) => Promise<boolean>;
   signOut: () => Promise<void>;
   setError: (error: string | null) => void;
+  setSuccessMessage: (message: string | null) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   isLoading: false,
   isSubmitting: false,
   error: null,
+  successMessage: null,
 
   setError: (error) => set({ error }),
+  setSuccessMessage: (message) => set({ successMessage: message }),
 
   signIn: async (data) => {
     set({ isSubmitting: true, error: null });
@@ -35,6 +39,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         let message = 'Adresse email ou mot de passe incorrect.';
         if (result.error === 'USER_NOT_FOUND') message = 'Aucun compte trouvé.';
         if (result.error === 'INVALID_PASSWORD') message = 'Mot de passe incorrect.';
+        if (result.error === 'EMAIL_NOT_VERIFIED') message = 'Veuillez vérifier votre email avant de vous connecter.';
 
         set({ error: message });
         return false;
@@ -51,7 +56,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   signUp: async (data) => {
-    set({ isSubmitting: true, error: null });
+    set({ isSubmitting: true, error: null, successMessage: null });
     try {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
@@ -59,19 +64,26 @@ export const useAuthStore = create<AuthState>((set) => ({
         body: JSON.stringify({
           email: data.email,
           password: data.password,
+          name: data.name,
+          phone: data.phone,
         }),
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        const errorJson = await response.json();
-        set({ error: errorJson?.message || 'Erreur lors de la création du compte.' });
+        set({ error: result?.message || 'Erreur lors de la création du compte.' });
         return false;
       }
 
+      set({ 
+        successMessage: "Compte créé avec succès ! Veuillez vérifier votre boîte de réception pour activer votre compte." 
+      });
+      
       return true;
     } catch (err) {
       console.error('Erreur signUp :', err);
-      set({ error: 'Erreur inattendue lors de l’inscription.' });
+      set({ error: 'Erreur inattendue lors de l\'inscription.' });
       return false;
     } finally {
       set({ isSubmitting: false });

@@ -1,6 +1,6 @@
 "use client"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
@@ -9,10 +9,12 @@ import { signUpSchema } from "@/types/user"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import type { z } from "zod"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { CheckCircle2, AlertCircle } from "lucide-react"
 
 const SignUp = ({ onSuccess }: { onSuccess: () => void }) => {
   const { toast } = useToast()
-  const { signUp, error, isSubmitting, setError } = useAuthStore()
+  const { signUp, error, isSubmitting, setError, successMessage } = useAuthStore()
 
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
@@ -21,6 +23,8 @@ const SignUp = ({ onSuccess }: { onSuccess: () => void }) => {
       confirmEmail: "",
       password: "",
       confirmPassword: "",
+      name: "",
+      phone: "",
     },
   })
 
@@ -31,12 +35,8 @@ const SignUp = ({ onSuccess }: { onSuccess: () => void }) => {
       const success = await signUp(data)
 
       if (success) {
-        toast({
-          title: "Compte créé avec succès ! 🎉",
-          description: "Vous pouvez maintenant vous connecter.",
-        })
         form.reset()
-        onSuccess?.()
+        // Ne pas rediriger immédiatement, l'utilisateur doit vérifier son email
       }
     } catch (error: any) {
       console.error("Registration Failed:", error)
@@ -59,8 +59,54 @@ const SignUp = ({ onSuccess }: { onSuccess: () => void }) => {
         <CardDescription>Créez un compte pour accéder à votre panier et vos commandes.</CardDescription>
       </CardHeader>
       <CardContent>
+        {successMessage && (
+          <Alert className="mb-6 bg-green-50 border-green-200">
+            <CheckCircle2 className="h-4 w-4 text-green-600" />
+            <AlertDescription className="text-green-800">
+              {successMessage}
+            </AlertDescription>
+          </Alert>
+        )}
+        
+        {error && (
+          <Alert className="mb-6 bg-red-50 border-red-200">
+            <AlertCircle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="text-red-800">
+              {error}
+            </AlertDescription>
+          </Alert>
+        )}
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmitSignup)} className="space-y-4">
+            {/* Champs optionnels */}
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nom complet (optionnel)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Votre nom" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Téléphone (optionnel)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Votre numéro de téléphone" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {/* Champs obligatoires */}
             <FormField
               control={form.control}
               name="email"
@@ -114,17 +160,22 @@ const SignUp = ({ onSuccess }: { onSuccess: () => void }) => {
               )}
             />
 
-            {error && <div className="text-destructive text-sm font-medium">{error}</div>}
-
-            <Button type="submit" className="w-full mt-2" disabled={isSubmitting}>
+            <Button type="submit" className="w-full mt-2" disabled={isSubmitting || !!successMessage}>
               {isSubmitting ? "Création en cours..." : "S'inscrire"}
             </Button>
           </form>
         </Form>
       </CardContent>
+      {successMessage && (
+        <CardFooter className="bg-gray-50 text-sm text-gray-600 p-4">
+          <p>
+            Un email de confirmation a été envoyé à l'adresse indiquée. 
+            Veuillez vérifier votre boîte de réception et cliquer sur le lien pour activer votre compte.
+          </p>
+        </CardFooter>
+      )}
     </Card>
   )
 }
 
 export default SignUp
-

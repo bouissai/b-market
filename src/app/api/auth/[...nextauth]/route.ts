@@ -14,6 +14,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 		Credentials({
 			// You can specify which fields should be submitted, by adding keys to the `credentials` object.
 			// e.g. domain, username, password, 2FA token, etc.
+			name: "Credentials",
 			credentials: {
 				email: {},
 				password: {},
