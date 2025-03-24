@@ -19,6 +19,21 @@ jobs:
       - name: 🏗️ Build de l image Docker
         run: |
           docker build -t ghcr.io/bouissai/bmarket:latest .
+          
+      - name: 🧠 Upload des sourcemaps à Sentry
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ilyass-tb
+          SENTRY_PROJECT: javascript-nextjs
+          SENTRY_RELEASE: ${{ github.sha }}
+        run: |
+          echo "🔍 Upload des sourcemaps à Sentry..."
+          npx @sentry/cli sourcemaps upload \
+            --auth-token "$SENTRY_AUTH_TOKEN" \
+            --org "$SENTRY_ORG" \
+            --project "$SENTRY_PROJECT" \
+            --release "$SENTRY_RELEASE" \
+            .next
       
       - name: 📤 Push de l image sur GHCR
         run: |
