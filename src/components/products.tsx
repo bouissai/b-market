@@ -24,13 +24,15 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { useArticleStore } from '@/store/useArticleStore';
 import { useCategoryStore } from '@/store/useCategoryStore';
-import { Article } from '@prisma/client';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from './ui/pagination';
+import { ArticleGetDto } from '@/types/article';
 
 type CartItem = {
-  article: Article;
+  article: ArticleGetDto;
   quantity: number;
 };
+
+const MAX_ARTICLES_PER_PAGE = 9;
 
 export default function ProductListing() {
   const { articles, fetchArticles, totalArticles, isLoading, error } = useArticleStore();
@@ -38,7 +40,7 @@ export default function ProductListing() {
   
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 6; // Nombre d'articles par page
+  const pageSize = MAX_ARTICLES_PER_PAGE;
   const totalPages = Math.ceil(totalArticles / pageSize);
 
   // récupération des catégories
@@ -48,7 +50,7 @@ export default function ProductListing() {
 
   // récupération des articles selon la catégorie sélectionnée
   useEffect(() => {
-    fetchArticles(selectedCategory?.name, currentPage, pageSize);
+    fetchArticles(selectedCategory?.id, currentPage, pageSize);
   }, [selectedCategory, currentPage, pageSize, fetchArticles]);
 
   // reset current page quand la catégorie est changée
@@ -66,20 +68,20 @@ export default function ProductListing() {
   };
 
   // ajout d'un article au panier
-  const addToCart = (article: Article, quantity = 1) => {
+  const addToCart = (article: ArticleGetDto, quantity = 1) => {
     const currentQuantity = cartItems.find(item => item.article.id === article.id)?.quantity || 0;
     updateQuantity(article, currentQuantity + quantity);
   };
 
   // suppression d'un article du panier
-  const removeFromCart = (article: Article) => {
+  const removeFromCart = (article: ArticleGetDto) => {
     setCartItems((prevItems) =>
       prevItems.filter((item) => item.article.id !== article.id),
     );
   };
 
   // mise à jour de la quantité d'un article dans le panier
-  const updateQuantity = (article: Article, newQuantity: number) => {
+  const updateQuantity = (article: ArticleGetDto, newQuantity: number) => {
     if (newQuantity < 0) {
       return;
     } 

@@ -1,57 +1,103 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { ArticleGetDto } from '@/types/article';
+import { z } from 'zod';
+
+const MAX_LIMIT = 1000;
+const DEFAULT_LIMIT = 100;
+const DEFAULT_PAGE = 1;
+
+const QueryParamsSchema = z.object({
+  categoryId: z.string().optional(),
+  page: z.coerce.number().positive().optional(),
+  limit: z.coerce.number().positive().max(MAX_LIMIT).optional(),
+});
 
 // 1. Récupérer tous les articles
-export async function GET(req : Request) {
+export async function GET(req: Request) {
   try {
     // Récupération des paramètres de requête
     const { searchParams } = new URL(req.url);
-    const category = searchParams.get('category');
-    const page = parseInt(searchParams.get('page') || '1', 10);
-    const limit = parseInt(searchParams.get('limit') || '10', 10);
-    const skip = (page - 1) * limit;
+    const params = Object.fromEntries(searchParams.entries());
 
-    // vérifier si la catégorie en paramètre existe
-    let whereClause: Record<string, unknown> = {};
-    if(category) {
-      const categoryExists = await prisma.category.findFirst({
-        where: { name: { equals: category, 
-          mode : "insensitive" } }, // Comparaison insensible à la casse
+    // Vérification des paramètres avec Zod
+    const result = QueryParamsSchema.safeParse(params);
+    if (!result.success) {
+      return NextResponse.json(
+        { message: 'Paramètres de requête invalides', errors: result.error.format() },
+        { status: 400 }
+      );
+    }
+    
+    // Initialisation des paramètres validés
+    const { categoryId, page, limit } = result.data;
+    const actualPage = page || DEFAULT_PAGE;
+    const actualLimit = limit || DEFAULT_LIMIT;
+    const skip = (actualPage - 1) * actualLimit;
+
+    // si categoryId est fourni, vérifier si la catégorie existe
+    const whereClause: any = {};
+    if (categoryId) {
+      const categoryExists = await prisma.category.findUnique({
+        where: { id: categoryId },
+        select: { id: true },
       });
 
       if (!categoryExists) {
         return NextResponse.json(
-          { message: `La catégorie '${category}' n'existe pas` },
-          { status: 400 },
+          { message: `La catégorie '${categoryId}' n'existe pas` },
+          { status: 400 }
         );
       }
 
-      whereClause = { categoryName: categoryExists.name }; 
+      whereClause.categoryId = categoryId;
     }
-    
-    // Récupération des articles
-    const articles = await prisma.article.findMany({
-      where: whereClause, 
-      skip,
-      take: limit,});
-    const total = await prisma.article.count({ where: whereClause });
 
-    return NextResponse.json({articles, total}, { status: 200 });
+    // Récupération des articles avec pagination
+    const [articles, total] = await Promise.all([
+      prisma.article.findMany({
+        where: whereClause,
+        skip,
+        take: actualLimit,
+        include: {
+          category: {
+            select: { name: true },
+          },
+        },
+      }),
+      prisma.article.count({ where: whereClause }),
+    ]);
+
+    // Mapper les articles au format DTO
+    const articlesDto: ArticleGetDto[] = articles.map(article => ({
+      id: article.id,
+      name: article.name,
+      unit: article.unit,
+      price: article.price,
+      image: article.image,
+      description: article.description || "",
+      categoryId: article.categoryId,
+      categoryName: article.category.name,
+    }));
+
+    return NextResponse.json({ articles: articlesDto, total }, { status: 200 });
   } catch (error) {
     console.error('Erreur lors de la récupération des articles :', error);
     return NextResponse.json(
       { message: 'Échec de la récupération des articles' },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
+
 
 // 2. Ajouter un article
 export async function POST(req: NextRequest) {
   try {
     // Récupération du JSON
     const body = await req.json();
-    const { name, image, description, price, unit, categoryName } = body;
+    
+    const { name, image, description, price, unit, categoryId } = body;
 
     // Vérification si le corps de la requête est vide
     if (!body) {
@@ -62,8 +108,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Validation des champs obligatoires
-    if (!name || !price || !categoryName || !unit) {
-      console.error(!name, !price, !categoryName, !unit);
+    if (!name || !price || !categoryId || !unit) {
       return NextResponse.json(
         { message: "Le nom, le prix, l'unité et la catégorie sont requis" },
         { status: 400 },
@@ -92,12 +137,12 @@ export async function POST(req: NextRequest) {
 
     // Vérifier si la catégorie existe
     const category = await prisma.category.findUnique({
-      where: { name: categoryName },
+      where: { id: categoryId },
     });
 
     if (!category) {
       return NextResponse.json(
-        { message: `La catégorie '${categoryName}' n'existe pas` },
+        { message: `La catégorie '${categoryId}' n'existe pas` },
         { status: 400 },
       );
     }
@@ -106,20 +151,35 @@ export async function POST(req: NextRequest) {
     const newArticle = await prisma.article.create({
       data: {
         name: name,
-        image: image || '', // Fournir une valeur par défaut pour éviter l'erreur
+        image: image || '',
         price: price,
         unit: unit,
-        description: description || '', // Fournir une valeur par défaut
+        description: description || '',
         category: {
-          connect: { name: categoryName }, // Associer à une catégorie existante
+          connect: { id: category.id },
+        },
+      },
+      include: {
+        category: {
+          select: { name: true },
         },
       },
     });
 
-    return NextResponse.json(newArticle, { status: 201 });
-  } catch (error) {
-    console.error("Échec de la création de l'article :", error);
+    const articleGetDto: ArticleGetDto = {
+      id: newArticle.id,
+      name: newArticle.name,
+      unit: newArticle.unit,
+      price: newArticle.price,
+      image: newArticle.image,
+      description: newArticle.description || "",
+      categoryId: newArticle.categoryId,
+      categoryName: newArticle.category.name,
+    };
 
+    return NextResponse.json(articleGetDto, { status: 201 });
+
+  } catch (error) {
     // Vérification de l'erreur pour un diagnostic plus précis
     if (error instanceof SyntaxError) {
       return NextResponse.json(

@@ -34,8 +34,8 @@ model Article {
   description  String?
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
-  categoryName String
-  category     Category    @relation(fields: [categoryName], references: [name])
+  categoryId   String
+  category     Category    @relation(fields: [categoryId], references: [id])
   cartItems    CartItem[]
   orderItems   OrderItem[]
 }
@@ -83,7 +83,7 @@ model Order {
 model OrderItem {
   id        String  @id @default(cuid())
   orderId   Int
-  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order     Order   @relation(fields: [orderId], references: [id])
   articleId String
   article   Article @relation(fields: [articleId], references: [id])
   quantity  Int     @default(1)

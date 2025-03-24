@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useArticleStore } from "@/store/useArticleStore";
+import { ArticlePostDto, ArticlePutDto } from "@/types/article";
 import { Loader2 } from 'lucide-react';
 import { useEffect } from "react";
 
@@ -35,21 +36,13 @@ export default function ArticlePage() {
   } = useArticleStore();
 
   useEffect(() => {
-    fetchArticles()
+    fetchArticles();
   }, [fetchArticles]);
 
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <p className="text-red-500">{error}</p>
       </div>
     );
   }
@@ -62,7 +55,7 @@ export default function ArticlePage() {
         description: 'Article supprimé avec succès',
       });
     }
-    setSelectedArticle(null, null); // 🔥 Réinitialisation après suppression
+    setSelectedArticle(null, null); // Réinitialisation après suppression
   };
 
   return (
@@ -88,16 +81,7 @@ export default function ArticlePage() {
       {/* Formulaire de création / modification */}
       {(mode === "edit" || mode === "new") && (
         <ArticleForm
-          article={selectedArticle}
-          onCloseAction={() => setSelectedArticle(null, null)}
-          onSaveAction={(newArticle) => {
-            if (selectedArticle) {
-              updateArticle(newArticle);
-            } else {
-              addArticle(newArticle);
-            }
-            setSelectedArticle(null, null);
-          }}
+          article={selectedArticle as ArticlePostDto | ArticlePutDto}
         />
       )}
 

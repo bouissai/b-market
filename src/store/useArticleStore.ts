@@ -1,18 +1,18 @@
 import { toast } from "@/hooks/use-toast";
-import type { Article } from "@/types/article";
+import type { ArticleDeleteDto, ArticleGetDto, ArticlePostDto, ArticlePutDto } from "@/types/article";
 import { create } from "zustand";
 
 type ArticleStore = {
-    articles: Article[];
-    selectedArticle: Article | null;
+    articles: ArticleGetDto[];
+    selectedArticle: ArticlePutDto | ArticlePostDto | ArticleDeleteDto | null;
     mode: "new" | "edit" | "delete" | null;
     isLoading: boolean;
     error: string | null;
     totalArticles: number;
-    fetchArticles: (category?: string, page?: number, limit?: number) => Promise<void>;
-    addArticle: (newArticle: Article) => void;
-    updateArticle: (updatedArticle: Article) => void;
-    setSelectedArticle: (article: Article | null, mode: null | "edit" | "delete" | "new") => void
+    fetchArticles: (categoryId?: string, page?: number, limit?: number) => Promise<void>;
+    addArticle: (newArticle: ArticlePostDto) => Promise<ArticleGetDto | null>;
+    updateArticle: (updatedArticle: ArticlePutDto) => Promise<ArticleGetDto | null>;
+    setSelectedArticle: (article: ArticlePutDto | ArticlePostDto | ArticleDeleteDto | null, mode: null | "edit" | "delete" | "new") => void;
     deleteArticle: () => Promise<boolean>;
 };
 
@@ -25,24 +25,25 @@ export const useArticleStore = create<ArticleStore>((set, get) => ({
     totalArticles: 0,
 
     // Charger les articles depuis l'API
-    fetchArticles: async (category?: string, page = 1, limit = 10) => {
+    fetchArticles: async (categoryId?: string, page?: number, limit?: number) => {
         set({ isLoading: true, error: null });
 
         try {
-            // const url = category ? `/api/article?category=${category}` : "/api/article";
-            // const response = await fetch("/api/article");
-
             const url = new URL('/api/article', window.location.origin);
-            if (category) url.searchParams.append('category', category);
-            url.searchParams.append('page', page.toString());
-            url.searchParams.append('limit', limit.toString());
+            if (categoryId) url.searchParams.append('categoryId', categoryId);
+            if ( page ) url.searchParams.append('page', page.toString());
+            if ( limit ) url.searchParams.append('limit', limit.toString());
 
             const response = await fetch(url);
 
             if (!response.ok) throw new Error("Erreur lors du chargement des articles");
 
             const data = await response.json();
-            set({ articles: data.articles, totalArticles: data.total, isLoading: false });
+
+            set({ 
+                articles: data.articles, 
+                totalArticles: data.total, 
+                isLoading: false });
         } catch (error) {
             set({
                 error: error instanceof Error ? error.message : "Une erreur est survenue",
@@ -51,27 +52,112 @@ export const useArticleStore = create<ArticleStore>((set, get) => ({
         }
     },
 
-    setSelectedArticle: (article, mode = null) => set({ selectedArticle: article, mode }), // 🔥 Mode "edit" ou "delete"
+    setSelectedArticle: (
+        article: ArticlePutDto | ArticlePostDto | ArticleDeleteDto | null,
+        mode: null | "edit" | "delete" | "new"
+    ) => {
+        if (mode === "delete" && article) {
+            const { id, name } = article as ArticleDeleteDto;
+            set({ selectedArticle: { id, name }, mode });
+        } else {
+            set({ selectedArticle: article, mode });
+        }
+    },
+    
+    addArticle: async (articleData: ArticlePostDto) => {
+        set({ isLoading: true, error: null });
+        
+        try {
+            const response = await fetch('/api/article', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(articleData),
+            });
+            
+            if (!response.ok) {
+                const errorResponse = await response.json();
+                throw new Error(errorResponse.message || 'Erreur inconnue');
+            }
+            
+            const newArticle = await response.json();
+            
+            set((state) => ({
+                articles: [...state.articles, newArticle],
+                isLoading: false,
+            }));
+            
+            toast({
+                title: 'Succès',
+                description: 'Article ajouté avec succès',
+            });
+            
+            return newArticle;
+        } catch (error) {
+            set({
+                error: error instanceof Error ? error.message : 'Une erreur est survenue',
+                isLoading: false,
+            });
+            
+            toast({
+                title: 'Erreur',
+                description: error instanceof Error ? error.message : 'Une erreur est survenue',
+                variant: 'destructive',
+            });
+            
+            return null;
+        }
+    },
 
-    // Ajouter un article
-    addArticle: (newArticle) =>
-        set((state) => ({
-            articles: [...state.articles, newArticle],
-        })),
+    updateArticle: async (articleData:ArticlePutDto) => {
+        set({ isLoading: true, error: null });
+        
+        try {
+            const response = await fetch(`/api/article/${articleData.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(articleData),
+            });
+            
+            if (!response.ok) {
+                const errorResponse = await response.json();
+                throw new Error(errorResponse.message || 'Erreur inconnue');
+            }
+            
+            const updatedArticle = await response.json();
+            
+            set((state) => ({
+                articles: state.articles.map((a) =>
+                    a.id === updatedArticle.id ? updatedArticle : a
+                ),
+                isLoading: false,
+            }));
+            
+            toast({
+                title: 'Succès',
+                description: 'Article modifié avec succès',
+            });
+            
+            return updatedArticle;
+        } catch (error) {
+            set({
+                error: error instanceof Error ? error.message : 'Une erreur est survenue',
+                isLoading: false,
+            });
+            
+            toast({
+                title: 'Erreur',
+                description: error instanceof Error ? error.message : 'Une erreur est survenue',
+                variant: 'destructive',
+            });
+            
+            return null;
+        }
+    },
 
-    // Mettre à jour un article
-    updateArticle: (updatedArticle) =>
-        set((state) => ({
-            articles: state.articles.map((a) =>
-                a.id === updatedArticle.id ? updatedArticle : a
-            ),
-        })),
-
-    // Supprimer un article
     deleteArticle: async () => {
         const { selectedArticle } = get();
-        if (!selectedArticle) return false; // ❌ Aucun article sélectionné pour suppression
-
+        if (!selectedArticle || !("id" in selectedArticle)) return false;
+        
         try {
             const response = await fetch(`/api/article/${selectedArticle.id}`, { method: "DELETE" });
             const data = await response.json();
