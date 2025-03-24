@@ -1,20 +1,20 @@
 "use client"
 
-import {Article} from "@/types/article"
+import {Article, ArticleDeleteDto, ArticleGetDto, ArticlePutDto} from "@/types/article"
 import {ColumnDef} from "@tanstack/react-table"
 import {Button} from "@/components/ui/button"
 import {ArrowUpDown, Pencil, Trash} from "lucide-react"
 import { DataTable } from "@/components/admin/table/dataTable"
 
 interface ArticleTableProps {
-    data: Article[]
-    onEdit: (article: Article) => void
-    onDelete: (article: Article) => void
+    data: ArticleGetDto[]
+    onEdit: (article: ArticlePutDto) => void
+    onDelete: (article: ArticleDeleteDto) => void
 }
 
 export function ArticleTable({data, onEdit, onDelete}: ArticleTableProps) {
 
-    const columns: ColumnDef<Article>[] = [
+    const columns: ColumnDef<ArticleGetDto>[] = [
         {
             accessorKey: 'name',
             header: ({column}) => {
@@ -45,7 +45,15 @@ export function ArticleTable({data, onEdit, onDelete}: ArticleTableProps) {
             cell: ({row}) => `${row.getValue<number>('price').toFixed(2)} €`,
         },
         {
-            accessorKey: 'categoryName',
+            id: 'categoryId',
+            cell: ({row}) => {
+                const article = row.original
+                return (
+                    <>
+                        {article.categoryName}
+                    </>
+                )
+            },
             header: ({column}) => {
                 return (
                     <Button

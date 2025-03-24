@@ -1,6 +1,8 @@
 import { prisma } from '@/lib/prisma';
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
+import { ArticleGetDto } from '@/types/article';
+import { Prisma } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 
 // Récupérer un article par ID
@@ -123,11 +125,27 @@ export async function PATCH(
         description: description ?? existingArticle.description,
         price: price ?? existingArticle.price,
         unit: unit ?? existingArticle.unit,
-        category: category ? { connect: { name: categoryName } } : undefined,
+        category: category ? { connect: { id: category.id } } : undefined,
+      },
+      include: {
+        category: {
+          select: { name: true },
+        },
       },
     });
 
-    return NextResponse.json(updatedArticle, { status: 200 });
+    const articleGetDto: ArticleGetDto = {
+      id: updatedArticle.id,
+      name: updatedArticle.name,
+      unit: updatedArticle.unit,
+      price: updatedArticle.price,
+      image: updatedArticle.image,
+      description: updatedArticle.description || "",
+      categoryId: updatedArticle.categoryId,
+      categoryName: updatedArticle.category.name,
+    };
+
+    return NextResponse.json(articleGetDto, { status: 200 });
   } catch (error) {
     console.error("Erreur lors de la mise à jour de l'article:", error);
 

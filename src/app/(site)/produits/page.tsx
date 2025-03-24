@@ -11,7 +11,7 @@ export default function Produits() {
   return (
     <div className=''>
       {/* Hero section */}
-      <section className="bg-muted/30 py-12">
+      <section className="bg-muted/30 md:py-12 py-4">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
