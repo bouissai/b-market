@@ -1,23 +1,35 @@
 'use client';
-
 import Image from 'next/image';
-
-import { Button } from '@/components/ui/button';
-import { MENU_ITEMS } from '@/constants';
-import { useAuthStore } from '@/store/useAuthStore';
-import { LogOutIcon, Menu, X } from 'lucide-react';
-import { motion } from 'motion/react';
+import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Menu, X, LogOut } from 'lucide-react';
+
+import { MENU_ITEMS } from '@/constants';
+import { useAuthStore } from '@/store/useAuthStore';
 import { BasketButton } from './basketButton';
 import { MobileMenu } from './mobileMenu';
+
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 
 export function HeaderUser() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const { data: session } = useSession();
 	const router = useRouter();
 	const { signOut } = useAuthStore();
+
+	const goTo = (path: string) => {
+		router.push(path);
+		setIsMenuOpen(false);
+	};
 
 	return (
 		<motion.header
@@ -26,6 +38,7 @@ export function HeaderUser() {
 			transition={{ type: 'spring', stiffness: 100 }}
 			className="bg-background/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
 			<nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+				{/* Logo */}
 				<div>
 					<Image
 						src="/images/logo.png"
@@ -35,7 +48,6 @@ export function HeaderUser() {
 						className="rounded-full"
 					/>
 				</div>
-
 
 				{/* Menu desktop */}
 				<div className="hidden md:flex space-x-8">
@@ -49,22 +61,49 @@ export function HeaderUser() {
 						</motion.a>
 					))}
 				</div>
-				<div className='flex items-center gap-4'>
-					{session ?
-						<Button variant="link" className='hidden md:flex' onClick={signOut}>
-							Déconnexion
-							<LogOutIcon />
-						</Button>
-						:
-						<Button className='hidden md:block' onClick={() => router.push('/auth')}>
+
+				{/* Right section */}
+				<div className="flex items-center gap-4">
+					<BasketButton />
+
+					{/* Desktop user menu */}
+					{session ? (
+						<DropdownMenu>
+							<DropdownMenuTrigger className="focus:outline-none">
+								<Avatar className="h-9 w-9">
+									<AvatarImage
+										src="/placeholder.svg"
+										alt={session.user?.name || 'U'}
+									/>
+									<AvatarFallback>
+										{session.user?.name?.charAt(0) || 'U'}
+									</AvatarFallback>
+								</Avatar>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end">
+								<DropdownMenuItem
+									onClick={() => goTo('/compte?tab=commandes')}>
+									Mes commandes
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									onClick={() => goTo('/compte?tab=infos')}>
+									Mes informations personnelles
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									className="text-red-600"
+									onClick={() => signOut()}>
+									<LogOut className="mr-2 h-4 w-4" />
+									Se déconnecter
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					) : (
+						<Button onClick={() => router.push('/auth')}>
 							Se connecter
 						</Button>
-					}
-					{/* Desktop basket button */}
-					<div>
-						<BasketButton />
-					</div>
-					{/* Menu mobile toggle */}
+					)}
+
+					{/* Mobile menu toggle */}
 					<div className="md:hidden">
 						<button
 							onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -77,8 +116,6 @@ export function HeaderUser() {
 						</button>
 					</div>
 				</div>
-
-
 			</nav>
 
 			<MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
