@@ -43,7 +43,6 @@ export default function RecipeFilters({
 
       <Accordion
         type="multiple"
-        defaultValue={['meat-type', 'time', 'servings', 'difficulty']}
       >
         <AccordionItem value="meat-type">
           <AccordionTrigger>Type de viande</AccordionTrigger>

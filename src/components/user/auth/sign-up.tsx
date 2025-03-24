@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form"
 import type { z } from "zod"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { CheckCircle2, AlertCircle } from "lucide-react"
+import { PhoneInput } from "@/components/ui/phone-input"
 
 const SignUp = ({ onSuccess }: { onSuccess: () => void }) => {
   const { toast } = useToast()
@@ -67,7 +68,7 @@ const SignUp = ({ onSuccess }: { onSuccess: () => void }) => {
             </AlertDescription>
           </Alert>
         )}
-        
+
         {error && (
           <Alert className="mb-6 bg-red-50 border-red-200">
             <AlertCircle className="h-4 w-4 text-red-600" />
@@ -100,7 +101,12 @@ const SignUp = ({ onSuccess }: { onSuccess: () => void }) => {
                 <FormItem>
                   <FormLabel>Téléphone (optionnel)</FormLabel>
                   <FormControl>
-                    <Input placeholder="Votre numéro de téléphone" {...field} />
+                    <PhoneInput
+                      placeholder="01 23 45 67 89"
+                      international={false}
+                      defaultCountry="FR"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -169,7 +175,7 @@ const SignUp = ({ onSuccess }: { onSuccess: () => void }) => {
       {successMessage && (
         <CardFooter className="bg-gray-50 text-sm text-gray-600 p-4">
           <p>
-            Un email de confirmation a été envoyé à l'adresse indiquée. 
+            Un email de confirmation a été envoyé à l'adresse indiquée.
             Veuillez vérifier votre boîte de réception et cliquer sur le lien pour activer votre compte.
           </p>
         </CardFooter>

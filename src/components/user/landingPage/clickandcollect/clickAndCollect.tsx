@@ -78,7 +78,7 @@ export default function ClickCollectSteps() {
       </p>
 
       <div className="relative mt-16 max-w-4xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+        <div className="grid justify-items-center grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
           {clickcollectsteps.map((step, index) => (
             <motion.div
               key={index}

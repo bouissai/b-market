@@ -64,7 +64,7 @@ export const BasketButton = ({ className = '' }: BasketButtonProps) => {
 											<span>Sous-total</span>
 											<span className="font-medium">29,99 €</span>
 										</div>
-										<Button className="w-full mt-4" onClick={() => router.push("/")}>
+										<Button className="w-full mt-4" onClick={() => router.push("/panier")}>
 											Passer la commande
 										</Button>
 									</div>

@@ -63,7 +63,7 @@ export function ButcheryActivity() {
                     >
                         <div className="relative w-full h-[600px] rounded-2xl overflow-hidden shadow-2xl">
                             <Image
-                                src="https://res.cloudinary.com/ddqrywesr/image/upload/v1742398671/photo-1588168333986-5078d3ae3976_hzlok1.avif"
+                                src="https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=800&q=75"
                                 alt="Boucher professionnel"
                                 fill
                                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 40vw"

@@ -268,7 +268,7 @@ export default function RecipesPage() {
       </section>
 
       {/* Main content */}
-      <section className="py-12">
+      <section className="pb-12">
         <div className="container mx-auto px-4">
           <Tabs defaultValue="general" className="space-y-8">
             <div className="flex justify-between items-center">

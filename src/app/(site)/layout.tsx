@@ -1,8 +1,15 @@
 import '@/app/globals.css';
-import { Metadata } from 'next';
+import { Metadata, Viewport } from 'next';
 import { UserNavBar } from '@/components/user/userNavBar';
 import { SessionProvider } from 'next-auth/react';
 
+export const viewport: Viewport = {
+	width: "device-width",
+	initialScale: 1,
+	maximumScale: 1,
+	userScalable: false,
+  };
+  
 export const metadata: Metadata = {
 	title: 'Boucherie Halal Grenoble - Viandes Fraîches & Qualité | BMarket',
 	description:
