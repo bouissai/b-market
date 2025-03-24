@@ -156,7 +156,7 @@ export default function ProductListing() {
                         <Image
                           // TODO : a modifier quand il y aura les images des articles
                           // src={article.image && article.image.startsWith('http') ? article.image : '/placeholder.svg'}
-                          src={'/images/religieux.webp'}
+                          src={item.article.image}
                           alt={item.article.name}
                           width={50}
                           height={50}
@@ -267,8 +267,10 @@ export default function ProductListing() {
               <Image
                 // TODO : a modifier quand il y aura les images des articles
                 // src={article.image && article.image.startsWith('http') ? article.image : '/placeholder.svg'}
-                src={'/images/religieux.webp'}
+                src={article.image}
                 alt={article.name}
+                loading='lazy'
+                quality={75}
                 fill
                 className="object-cover"
               />

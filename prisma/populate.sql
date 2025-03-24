@@ -20,17 +20,17 @@ VALUES ('cat1', 'Boeuf', NOW(), NOW()),
 INSERT INTO "Article" (id, name, unit, price, image, description, "createdAt", "updatedAt", "categoryId")
 VALUES
   -- Boeuf
-  ('art1', 'Entrecôte de boeuf', 'kg', 39.90, 'entrecote.jpg', 'Entrecôte de boeuf maturée.', NOW(), NOW(), 'cat1'),
-  ('art2', 'Steak haché', 'kg', 15.90, 'steak_hache.jpg', 'Steak haché pur boeuf.', NOW(), NOW(), 'cat1'),
-  ('art3', 'Boeuf à bourguignon', 'kg', 16.90, 'bourguignon.jpg', 'Morceaux de boeuf pour bourguignon.', NOW(), NOW(), 'cat1'),
-  ('art4', 'Côtelettes d''agneau', 'kg', 29.90, 'cotelettes_agneau.jpg', 'Côtelettes d''agneau fraîches.', NOW(), NOW(), 'cat2'),
-  ('art5', 'Gigot d''agneau', 'kg', 24.90, 'gigot.jpg', 'Gigot d''agneau entier.', NOW(), NOW(), 'cat2'),
-  ('art6', 'Poulet entier', 'pièce', 12.90, 'poulet.jpg', 'Poulet fermier entier.', NOW(), NOW(), 'cat3'),
-  ('art7', 'Escalopes de poulet', 'kg', 15.90, 'escalopes.jpg', 'Escalopes de poulet fraîches.', NOW(), NOW(), 'cat3'),
-  ('art8', 'Mélange Ras el hanout', '100g', 3.50, 'ras_el_hanout.jpg', 'Mélange d''épices traditionnel.', NOW(), NOW(), 'cat4'),
-  ('art9', 'Cumin moulu', '100g', 2.50, 'cumin.jpg', 'Cumin moulu de qualité.', NOW(), NOW(), 'cat4'),
-  ('art10', 'Semoule fine', 'kg', 3.90, 'semoule.jpg', 'Semoule fine de qualité supérieure.', NOW(), NOW(), 'cat5'),
-  ('art11', 'Huile d''olive', 'litre', 8.90, 'huile_olive.jpg', 'Huile d''olive extra vierge.', NOW(), NOW(), 'cat5');
+  ('art1', 'Entrecôte de boeuf', 'kg', 39.90, '/images/no-img.png', 'Entrecôte de boeuf maturée.', NOW(), NOW(), 'cat1'),
+  ('art2', 'Steak haché', 'kg', 15.90, '/images/no-img.png', 'Steak haché pur boeuf.', NOW(), NOW(), 'cat1'),
+  ('art3', 'Boeuf à bourguignon', 'kg', 16.90, '/images/no-img.png', 'Morceaux de boeuf pour bourguignon.', NOW(), NOW(), 'cat1'),
+  ('art4', 'Côtelettes d''agneau', 'kg', 29.90, '/images/no-img.png', 'Côtelettes d''agneau fraîches.', NOW(), NOW(), 'cat2'),
+  ('art5', 'Gigot d''agneau', 'kg', 24.90, '/images/no-img.png', 'Gigot d''agneau entier.', NOW(), NOW(), 'cat2'),
+  ('art6', 'Poulet entier', 'pièce', 12.90, '/images/no-img.png', 'Poulet fermier entier.', NOW(), NOW(), 'cat3'),
+  ('art7', 'Escalopes de poulet', 'kg', 15.90, '/images/no-img.png', 'Escalopes de poulet fraîches.', NOW(), NOW(), 'cat3'),
+  ('art8', 'Mélange Ras el hanout', '100g', 3.50, '/images/no-img.png', 'Mélange d''épices traditionnel.', NOW(), NOW(), 'cat4'),
+  ('art9', 'Cumin moulu', '100g', 2.50, '/images/no-img.png', 'Cumin moulu de qualité.', NOW(), NOW(), 'cat4'),
+  ('art10', 'Semoule fine', 'kg', 3.90, '/images/no-img.png', 'Semoule fine de qualité supérieure.', NOW(), NOW(), 'cat5'),
+  ('art11', 'Huile d''olive', 'litre', 8.90, '/images/no-img.png', 'Huile d''olive extra vierge.', NOW(), NOW(), 'cat5');
 
 -- Insérer des utilisateurs
 INSERT INTO "User" (id, name, email, phone, "createdAt", "updatedAt", password, image)
