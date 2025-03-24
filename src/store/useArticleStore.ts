@@ -63,51 +63,52 @@ export const useArticleStore = create<ArticleStore>((set, get) => ({
             set({ selectedArticle: article, mode });
         }
     },
-    
     addArticle: async (articleData: ArticlePostDto) => {
         set({ isLoading: true, error: null });
-        
+      
         try {
-            const response = await fetch('/api/article', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(articleData),
-            });
-            
-            if (!response.ok) {
-                const errorResponse = await response.json();
-                throw new Error(errorResponse.message || 'Erreur inconnue');
-            }
-            
-            const newArticle = await response.json();
-            
-            set((state) => ({
-                articles: [...state.articles, newArticle],
-                isLoading: false,
-            }));
-            
-            toast({
-                title: 'Succès',
-                description: 'Article ajouté avec succès',
-            });
-            
-            return newArticle;
+            console.log(JSON.stringify(articleData))
+          const response = await fetch('/api/article', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(articleData),
+          });
+      
+          if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(errorResponse.message || 'Erreur inconnue');
+          }
+      
+          const newArticle = await response.json();
+      
+          set((state) => ({
+            articles: [...state.articles, newArticle],
+            isLoading: false,
+          }));
+      
+          toast({
+            title: 'Succès',
+            description: 'Article ajouté avec succès',
+          });
+      
+          return newArticle;
+      
         } catch (error) {
-            set({
-                error: error instanceof Error ? error.message : 'Une erreur est survenue',
-                isLoading: false,
-            });
-            
-            toast({
-                title: 'Erreur',
-                description: error instanceof Error ? error.message : 'Une erreur est survenue',
-                variant: 'destructive',
-            });
-            
-            return null;
+          set({
+            error: error instanceof Error ? error.message : 'Une erreur est survenue',
+            isLoading: false,
+          });
+      
+          toast({
+            title: 'Erreur',
+            description: error instanceof Error ? error.message : 'Une erreur est survenue',
+            variant: 'destructive',
+          });
+      
+          return null;
         }
-    },
-
+      },
+      
     updateArticle: async (articleData:ArticlePutDto) => {
         set({ isLoading: true, error: null });
         

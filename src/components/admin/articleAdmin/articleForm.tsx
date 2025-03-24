@@ -89,6 +89,7 @@ export function ArticleForm({
         price: article.price,
         categoryName: article.categoryName,
         unit: article.unit,
+        description: article.description,
       });
 
       setImageUrl(article.image || '');
@@ -99,6 +100,7 @@ export function ArticleForm({
         price: 0,
         categoryName: '',
         unit: '',
+        description: '',
       });
 
       setImageUrl('');
@@ -110,7 +112,6 @@ export function ArticleForm({
     try {
       const isUpdate: boolean | null= article && 'id' in article ? !!article.id : null;
       let articleData: ArticlePostDto | ArticlePutDto;
-
       if (isUpdate && article && 'id' in article) {
         articleData = {
           id: article.id,
@@ -118,13 +119,13 @@ export function ArticleForm({
           unit: values.unit,
           price: values.price,
           image: imageUrl,
-          description: article.description ?? '',
+          description: values.description ?? '',
           categoryName: values.categoryName,
         };
-
+        
         try {
           await updateArticle(articleData);
-
+          
         } catch (error) {
           console.error("Erreur lors de la modification de l'article:", error);
           toast({
@@ -133,7 +134,7 @@ export function ArticleForm({
             variant: 'destructive',
           });
         }
-
+        
       } else {
         // Envoi d’un ArticlePostDto
         const selectedCategory = categories.find(
@@ -144,7 +145,7 @@ export function ArticleForm({
           unit: values.unit,
           price: values.price,
           image: imageUrl,
-          description: '',
+          description: values.description ?? '',
           categoryId: selectedCategory?.id ?? '',
         };
 
@@ -183,12 +184,7 @@ export function ArticleForm({
           if (publicId) await deleteImage(publicId);
         }
 
-        toast({
-          title: 'Succès',
-          description: isUpdate
-            ? 'Article modifié avec succès'
-            : 'Article ajouté avec succès',
-        });
+
 
     } catch (error) {
       console.error("Erreur lors de la sauvegarde de l'article:", error);
@@ -265,7 +261,7 @@ export function ArticleForm({
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input placeholder="Description (facultative)" {...field} />
+                    <Input placeholder="Description (facultative)" {...field} value={field.value || ''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
