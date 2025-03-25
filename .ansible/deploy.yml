@@ -11,6 +11,13 @@
     backup_dir: "/home/deploy/db_backups"
 
   tasks:
+    - name: 🛠 Test affichage dans GitHub Actions
+      debug:
+        msg: "✅ Ansible est bien exécuté dans GitHub Actions"
+
+    - name: 🐛 Vérification du passage dans la tâche de debug
+      debug:
+        msg: "On est bien dans la section debug"
 
     # 📌 Affichage des variables pour le debug
     - name: 🐛 Afficher les valeurs des variables
