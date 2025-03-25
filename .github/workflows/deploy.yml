@@ -10,11 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Installer Ansible sur GitHub Actions
-        run: |
-          sudo apt update
-          sudo apt install -y ansible
-          
       - name: 📥 Cloner le dépôt
         uses: actions/checkout@v4
 
@@ -23,11 +18,11 @@ jobs:
 
       - name: 🏗️ Build de l'image Docker
         run: |
-          docker build -t ghcr.io/bouissai/bmarket:latest .
+          docker build -t ghcr.io/${{ secrets.GHCR_USERNAME }}/bmarket:latest .
 
       - name: 📤 Push de l'image sur GHCR
         run: |
-          docker push ghcr.io/bouissai/bmarket:latest
+          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/bmarket:latest
 
   deploy:
     needs: build-and-push
@@ -44,10 +39,5 @@ jobs:
           username: deploy
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            mkdir -p /home/deploy/ansible
-            cd /home/deploy/ansible
-            echo "[bmarket]" > hosts
-            echo "${{ secrets.SERVER_IP }} ansible_user=deploy" >> hosts
-            echo "${{ secrets.GHCR_USERNAME }}" > ghcr_user
-            echo "${{ secrets.GHCR_TOKEN }}" > ghcr_token
-            ansible-playbook -i hosts /home/deploy/bmarket/.ansible/deploy.yml
+            ansible-playbook -i /home/deploy/ansible/hosts /home/deploy/ansible/deploy.yml \
+              --extra-vars "ghcr_username=${{ secrets.GHCR_USERNAME }} ghcr_token=${{ secrets.GHCR_TOKEN }} domain_name=${{ secrets.DOMAIN_NAME }} database_url=${{ secrets.DATABASE_URL }}"

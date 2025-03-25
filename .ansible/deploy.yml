@@ -1,80 +1,81 @@
----
-- name: Déploiement de Bmarket sur VPS
+- name: Déploiement complet de Bmarket
   hosts: bmarket
-  become: true  # Exécute les commandes avec sudo
+  become: true
   vars:
-    ghcr_username: "{{ lookup('env', 'GHCR_USERNAME') }}"
-    ghcr_token: "{{ lookup('env', 'GHCR_TOKEN') }}"
+    ghcr_username: "{{ ghcr_username }}"
+    ghcr_token: "{{ ghcr_token }}"
+    domain_name: "{{ domain_name }}"
+    database_url: "{{ database_url }}"
+
   tasks:
 
-    - name: 🏗️ Mettre à jour les paquets
+    - name: 📦 Installer les dépendances
       apt:
-        update_cache: yes
-
-    - name: 📦 Installer Docker et Docker Compose
-      apt:
-        name: ["docker.io", "docker-compose"]
+        name:
+          - docker.io
+          - docker-compose
+          - nginx
+          - certbot
+          - python3-certbot-nginx
+          - ufw
+          - fail2ban
         state: present
-
-    - name: 🏗️ Vérifier si l’utilisateur deploy existe
-      command: id deploy
-      register: deploy_user
-      ignore_errors: yes
-
-    - name: 👤 Créer l'utilisateur deploy s'il n'existe pas
-      user:
-        name: deploy
-        groups: docker
-        shell: /bin/bash
-      when: deploy_user.rc != 0
-
-    - name: 🔑 Autoriser deploy à exécuter sudo sans mot de passe
-      copy:
-        dest: /etc/sudoers.d/deploy
-        content: "deploy ALL=(ALL) NOPASSWD:ALL"
-        mode: "0440"
-
-    - name: 📂 S'assurer que le dossier de déploiement existe
-      file:
-        path: /home/deploy/bmarket
-        state: directory
-        owner: deploy
-        group: deploy
-        mode: '0755'
-
-    - name: 📝 Générer le fichier docker-compose.yml
-      copy:
-        dest: /home/deploy/bmarket/docker-compose.yml
-        content: |
-          version: '3.9'
-          services:
-            app:
-              image: ghcr.io/bouissai/bmarket:latest
-              container_name: bmarket
-              restart: always
-              ports:
-                - "3000:3000"
-              env_file:
-                - .env
-        owner: deploy
-        group: deploy
-        mode: '0644'
+        update_cache: true
 
     - name: 🔑 Se connecter à GHCR
-      command: docker login ghcr.io -u {{ ghcr_username }} -p {{ ghcr_token }}
+      shell: echo "{{ ghcr_token }}" | docker login ghcr.io -u "{{ ghcr_username }}" --password-stdin
 
-    - name: 📥 Récupérer la dernière image Docker
-      command: docker-compose pull
-      args:
-        chdir: /home/deploy/bmarket
+    - name: 📦 Télécharger la dernière image Docker
+      shell: docker pull ghcr.io/{{ ghcr_username }}/bmarket:latest
 
-    - name: 🛑 Arrêter et supprimer l’ancien conteneur
-      command: docker-compose down
-      args:
-        chdir: /home/deploy/bmarket
-      ignore_errors: yes
+    - name: 🛑 Arrêter et supprimer l'ancien conteneur (si existant)
+      shell: docker rm -f bmarket || true
 
-    - name: 🚀 Démarrer les nouveaux conteneurs
-      command: docker-compose up -d
-      args:
-        chdir: /home/deploy/bmarket
+    - name: 🚀 Démarrer le conteneur
+      shell: |
+        docker run -d --name bmarket \
+          -p 3000:3000 \
+          -e DATABASE_URL="{{ database_url }}" \
+          ghcr.io/{{ ghcr_username }}/bmarket:latest
+
+    - name: 🔄 Configurer Nginx pour Bmarket
+      copy:
+        dest: "/etc/nginx/sites-available/bmarket"
+        content: |
+          server {
+              listen 80;
+              server_name {{ domain_name }} www.{{ domain_name }};
+
+              location / {
+                  proxy_pass http://localhost:3000;
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+              }
+          }
+
+    - name: 🔗 Activer la configuration Nginx
+      file:
+        src: "/etc/nginx/sites-available/bmarket"
+        dest: "/etc/nginx/sites-enabled/bmarket"
+        state: link
+
+    - name: 🧹 Supprimer la configuration par défaut
+      file:
+        path: "/etc/nginx/sites-enabled/default"
+        state: absent
+
+    - name: 🔄 Redémarrer Nginx
+      systemd:
+        name: nginx
+        state: restarted
+        enabled: true
+
+    - name: 🔒 Générer un certificat SSL avec Certbot
+      shell: certbot --nginx -d {{ domain_name }} -d www.{{ domain_name }} --non-interactive --agree-tos -m contact@{{ domain_name }}
+
+    - name: 🔄 Redémarrer Nginx après Certbot
+      systemd:
+        name: nginx
+        state: restarted
