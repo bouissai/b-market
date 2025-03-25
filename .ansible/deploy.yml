@@ -57,8 +57,16 @@
         state: started
         enabled: true
       when: pg_status.stdout != "active"
+    
+    - name: Debug PostgreSQL User
+      debug:
+        msg: "PostgreSQL User: {{ postgres_user }}, Password: {{ postgres_password }}"
 
-    # 🛢️ Vérifier l'existence de l'utilisateur PostgreSQL
+    - name: 🔥 Supprimer l'utilisateur PostgreSQL s'il existe
+      become_user: postgres
+      command: psql -c "DROP USER IF EXISTS {{ postgres_user }};"
+      ignore_errors: true
+
     - name: 🛢️ Vérifier si l'utilisateur PostgreSQL existe
       become_user: postgres
       command: psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='{{ postgres_user }}'"
@@ -66,31 +74,13 @@
       changed_when: false
       ignore_errors: true
 
-    - name: 🛢️ Afficher le statut de l'utilisateur PostgreSQL
-      debug:
-        msg: "Résultat de la vérification de l'utilisateur PostgreSQL : {{ user_exists.stdout }}"
-
-    # 🔥 Supprimer l'utilisateur PostgreSQL s'il existe
-    - name: 🔥 Supprimer l'utilisateur PostgreSQL s'il existe
-      become_user: postgres
-      command: psql -c "DROP USER IF EXISTS {{ postgres_user }};"
-      ignore_errors: true
-      register: drop_user_result
-
-    - name: 🔥 Afficher le résultat de la suppression de l'utilisateur
-      debug:
-        msg: "Suppression de l'utilisateur PostgreSQL : {{ drop_user_result.stderr if drop_user_result.stderr else 'Succès' }}"
-
-    # 🛢️ Créer un nouvel utilisateur PostgreSQL
     - name: 🛢️ Créer l'utilisateur PostgreSQL
       become_user: postgres
       command: psql -c "CREATE USER {{ postgres_user }} WITH PASSWORD '{{ postgres_password }}'; ALTER USER {{ postgres_user }} CREATEDB;"
+      when: user_exists.stdout != "1"
       register: create_user_result
-      failed_when: create_user_result.rc != 0
+      ignore_errors: true
 
-    - name: 🛢️ Afficher le résultat de la création de l'utilisateur
-      debug:
-        msg: "Création de l'utilisateur PostgreSQL : {{ create_user_result.stderr if create_user_result.stderr else 'Succès' }}"
 
     # 📂 Vérifier l'existence de la base de données
     - name: 📂 Vérifier si la base de données existe
