@@ -57,7 +57,6 @@
         line: "listen_addresses = '*'"
       notify: Redémarrer PostgreSQL
 
-    # 🛢️ Créer l'utilisateur PostgreSQL
     - name: 🛢️ Vérifier si l'utilisateur PostgreSQL existe
       become_user: postgres
       command: psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='{{ postgres_user }}'"
@@ -65,13 +64,19 @@
       changed_when: false
       ignore_errors: true
 
-    - name: 🛢️ Créer l'utilisateur PostgreSQL si inexistant
+    - name: 🛢️ Créer ou mettre à jour l'utilisateur PostgreSQL
       become_user: postgres
-      postgresql_user:
-        name: "{{ postgres_user }}"
-        password: "{{ postgres_password }}"
-        role_attr_flags: CREATEDB
-      when: user_exists.stdout != "1"
+      command: >
+        psql -c "DO $$ 
+        BEGIN 
+          IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '{{ postgres_user }}') THEN 
+            CREATE USER {{ postgres_user }} WITH PASSWORD '{{ postgres_password }}'; 
+            ALTER USER {{ postgres_user }} CREATEDB;
+          ELSE 
+            ALTER USER {{ postgres_user }} WITH PASSWORD '{{ postgres_password }}'; 
+          END IF; 
+        END$$;"
+
 
     # 🛢️ Créer la base de données PostgreSQL
     - name: 📂 Vérifier si la base de données existe
