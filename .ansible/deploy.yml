@@ -1,0 +1,46 @@
+- hosts: bmarket
+  become: no
+  tasks:
+
+    ## 1️⃣ Vérifier et installer Docker si nécessaire
+    - name: Vérifier si Docker est installé
+      shell: command -v docker
+      register: docker_check
+      changed_when: false
+      ignore_errors: true
+
+    - name: Installer Docker et Docker Compose si manquants
+      become: yes
+      apt:
+        name:
+          - docker.io
+          - docker-compose
+        state: present
+      when: docker_check.rc != 0
+
+    ## 2️⃣ Déploiement Bmarket
+    - name: Vérifier si l'image Docker est à jour
+      shell: docker images -q ghcr.io/bouissai/bmarket:latest
+      register: docker_image
+      changed_when: false
+      ignore_errors: true
+
+    - name: Récupérer la nouvelle image Docker uniquement si nécessaire
+      shell: sudo docker pull ghcr.io/bouissai/bmarket:latest
+      when: docker_image.stdout == ""
+
+    - name: Vérifier si le conteneur Bmarket tourne
+      shell: docker ps -q -f name=bmarket
+      register: bmarket_container
+      changed_when: false
+      ignore_errors: true
+
+    - name: Arrêter et supprimer l'ancien conteneur si nécessaire
+      shell: sudo docker stop bmarket && sudo docker rm bmarket
+      when: bmarket_container.stdout != ""
+
+    - name: Lancer Bmarket avec Docker Compose
+      shell: |
+        cd /home/deploy/bmarket
+        sudo docker-compose pull
+        sudo docker-compose up -d

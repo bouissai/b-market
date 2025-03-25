@@ -1,4 +1,4 @@
-name: 🚀 Build, Push & Deploy to VPS
+name: 🚀 Build, Push & Deploy to VPS with Ansible
 
 on:
   push:
@@ -8,53 +8,34 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-
     steps:
       - name: 📥 Cloner le dépôt
         uses: actions/checkout@v4
 
-      - name: 🔑 Se connecter à GitHub Container Registry (GHCR)
+      - name: 🔑 Se connecter à GHCR
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
-      - name: 🏗️ Build de l image Docker
+      - name: 🏗️ Build et push de l’image Docker
         run: |
           docker build -t ghcr.io/bouissai/bmarket:latest .
-      
-      - name: 📤 Push de l image sur GHCR
-        run: |
           docker push ghcr.io/bouissai/bmarket:latest
 
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
-
     steps:
-      - name: 📡 Connexion SSH et déploiement
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: root
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            set -e  # Arrêter le script si une commande échoue
-            
-            echo "📌 Passage au dossier de l'application..."
-            cd /root
+      - name: 📥 Cloner le dépôt
+        uses: actions/checkout@v4
 
-            echo "📦 Vérification de Docker Compose..."
-            if ! command -v docker-compose &> /dev/null; then
-              echo "❌ docker-compose n'est pas installé. Installation en cours..."
-              apt update && apt install -y docker-compose
-            fi
+      - name: 🛠️ Installer Ansible
+        run: sudo apt update && sudo apt install -y ansible
 
-            echo "📦 Récupération de la nouvelle image..."
-            docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password ${{ secrets.GHCR_TOKEN }}
-            docker-compose pull || { echo "❌ Échec du pull"; exit 1; }
+      - name: 🔧 Générer le fichier `hosts`
+        run: |
+          echo "[bmarket]" > hosts
+          echo "${{ secrets.SERVER_IP }} ansible_user=deploy ansible_become=false" >> hosts
 
-            echo "🛑 Arrêt des anciens conteneurs..."
-            docker-compose down || echo "⚠️ Aucun conteneur à stopper."
-
-            echo "🚀 Démarrage des nouveaux conteneurs..."
-            docker-compose up -d || { echo "❌ Erreur lors du démarrage"; exit 1; }
-
-            echo "✅ Déploiement terminé avec succès !"
+      - name: 📡 Déployer Bmarket avec Ansible
+        run: ansible-playbook -i hosts .ansible/deploy.yml
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: False
