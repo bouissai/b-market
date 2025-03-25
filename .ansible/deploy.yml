@@ -39,6 +39,27 @@
       shell: sudo docker stop bmarket && sudo docker rm bmarket
       when: bmarket_container.stdout != ""
 
+      - name: S'assurer que le dossier de déploiement existe
+  file:
+    path: /home/deploy/bmarket
+    state: directory
+    owner: deploy
+    group: deploy
+    mode: '0755'
+
+    - name: Vérifier si le fichier docker-compose.yml est présent
+      stat:
+        path: /home/deploy/bmarket/docker-compose.yml
+      register: compose_file
+
+    - name: Copier le fichier docker-compose.yml si manquant
+      copy:
+        src: ./docker-compose.yml
+        dest: /home/deploy/bmarket/docker-compose.yml
+        owner: deploy
+        group: deploy
+        mode: '0644'
+      when: not compose_file.stat.exists
     - name: Lancer Bmarket avec Docker Compose
       shell: |
         cd /home/deploy/bmarket
