@@ -54,7 +54,7 @@ jobs:
             set -e  # Arrêter le script si une commande échoue
             
             echo "📌 Passage au dossier de l'application..."
-            cd /root
+            cd ~/bmarket
 
             echo "📦 Vérification de Docker Compose..."
             if ! command -v docker-compose &> /dev/null; then
