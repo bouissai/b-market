@@ -57,3 +57,5 @@ jobs:
         run: ansible-playbook -i hosts .ansible/deploy.yml
         env:
           ANSIBLE_HOST_KEY_CHECKING: False
+          SSH_AUTH_SOCK: /dev/null
+
