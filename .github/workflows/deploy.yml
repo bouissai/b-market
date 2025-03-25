@@ -3,7 +3,7 @@ name: 🚀 Build, Push & Deploy with Ansible
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build-and-push:
