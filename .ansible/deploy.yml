@@ -1,72 +1,80 @@
-- hosts: bmarket
-  become: no
+---
+- name: Déploiement de Bmarket sur VPS
+  hosts: bmarket
+  become: true  # Exécute les commandes avec sudo
+  vars:
+    ghcr_username: "{{ lookup('env', 'GHCR_USERNAME') }}"
+    ghcr_token: "{{ lookup('env', 'GHCR_TOKEN') }}"
   tasks:
 
-    ## 1️⃣ Vérifier et installer Docker si nécessaire
-    - name: Vérifier si Docker est installé
-      shell: command -v docker
-      register: docker_check
-      changed_when: false
-      ignore_errors: true
-
-    - name: Installer Docker et Docker Compose si manquants
-      become: yes
+    - name: 🏗️ Mettre à jour les paquets
       apt:
-        name:
-          - docker.io
-          - docker-compose
+        update_cache: yes
+
+    - name: 📦 Installer Docker et Docker Compose
+      apt:
+        name: ["docker.io", "docker-compose"]
         state: present
-      when: docker_check.rc != 0
 
-    ## 2️⃣ Déploiement Bmarket
-    - name: Vérifier si l'image Docker est à jour
-      shell: docker images -q ghcr.io/bouissai/bmarket:latest
-      register: docker_image
-      changed_when: false
-      ignore_errors: true
+    - name: 🏗️ Vérifier si l’utilisateur deploy existe
+      command: id deploy
+      register: deploy_user
+      ignore_errors: yes
 
-    - name: Récupérer la nouvelle image Docker uniquement si nécessaire
-      shell: sudo docker pull ghcr.io/bouissai/bmarket:latest
-      when: docker_image.stdout == ""
+    - name: 👤 Créer l'utilisateur deploy s'il n'existe pas
+      user:
+        name: deploy
+        groups: docker
+        shell: /bin/bash
+      when: deploy_user.rc != 0
 
-    - name: Vérifier si le conteneur Bmarket tourne
-      shell: docker ps -q -f name=bmarket
-      register: bmarket_container
-      changed_when: false
-      ignore_errors: true
+    - name: 🔑 Autoriser deploy à exécuter sudo sans mot de passe
+      copy:
+        dest: /etc/sudoers.d/deploy
+        content: "deploy ALL=(ALL) NOPASSWD:ALL"
+        mode: "0440"
 
-    - name: Arrêter et supprimer l'ancien conteneur si nécessaire
-      shell: sudo docker stop bmarket && sudo docker rm bmarket
-      when: bmarket_container.stdout != ""
-
-    ## 3️⃣ S'assurer que le dossier de déploiement existe
-    - name: S'assurer que le dossier de déploiement existe
+    - name: 📂 S'assurer que le dossier de déploiement existe
       file:
         path: /home/deploy/bmarket
         state: directory
         owner: deploy
         group: deploy
         mode: '0755'
-      become: yes
 
-
-    - name: Vérifier si le fichier docker-compose.yml est présent
-      stat:
-        path: /home/deploy/bmarket/docker-compose.yml
-      register: compose_file
-
-    - name: Copier le fichier docker-compose.yml si manquant
+    - name: 📝 Générer le fichier docker-compose.yml
       copy:
-        src: ./docker-compose.yml
         dest: /home/deploy/bmarket/docker-compose.yml
+        content: |
+          version: '3.9'
+          services:
+            app:
+              image: ghcr.io/bouissai/bmarket:latest
+              container_name: bmarket
+              restart: always
+              ports:
+                - "3000:3000"
+              env_file:
+                - .env
         owner: deploy
         group: deploy
         mode: '0644'
-      when: not compose_file.stat.exists
 
-    ## 4️⃣ Lancer l'application avec Docker Compose
-    - name: Lancer Bmarket avec Docker Compose
-      shell: |
-        cd /home/deploy/bmarket
-        sudo docker-compose pull
-        sudo docker-compose up -d
+    - name: 🔑 Se connecter à GHCR
+      command: docker login ghcr.io -u {{ ghcr_username }} -p {{ ghcr_token }}
+
+    - name: 📥 Récupérer la dernière image Docker
+      command: docker-compose pull
+      args:
+        chdir: /home/deploy/bmarket
+
+    - name: 🛑 Arrêter et supprimer l’ancien conteneur
+      command: docker-compose down
+      args:
+        chdir: /home/deploy/bmarket
+      ignore_errors: yes
+
+    - name: 🚀 Démarrer les nouveaux conteneurs
+      command: docker-compose up -d
+      args:
+        chdir: /home/deploy/bmarket

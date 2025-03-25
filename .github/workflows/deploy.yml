@@ -1,76 +1,48 @@
-name: 🚀 Build, Push & Deploy to VPS with Ansible
+name: 🚀 Build, Push & Deploy with Ansible
 
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
     steps:
       - name: 📥 Cloner le dépôt
         uses: actions/checkout@v4
 
-      - name: 🔑 Se connecter à GHCR
+      - name: 🔑 Se connecter à GitHub Container Registry (GHCR)
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
-      - name: 🏗️ Build et push de l’image Docker
+      - name: 🏗️ Build de l'image Docker
         run: |
           docker build -t ghcr.io/bouissai/bmarket:latest .
-          
-      - name: 🧠 Upload des sourcemaps à Sentry
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ilyass-tb
-          SENTRY_PROJECT: javascript-nextjs
-          SENTRY_RELEASE: ${{ github.sha }}
-        run: |
-          echo "🔍 Upload des sourcemaps à Sentry..."
-          npx @sentry/cli sourcemaps upload \
-            --auth-token "$SENTRY_AUTH_TOKEN" \
-            --org "$SENTRY_ORG" \
-            --project "$SENTRY_PROJECT" \
-            --release "$SENTRY_RELEASE" \
-            .next
-      
-      - name: 📤 Push de l image sur GHCR
+
+      - name: 📤 Push de l'image sur GHCR
         run: |
           docker push ghcr.io/bouissai/bmarket:latest
 
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
+
     steps:
       - name: 📥 Cloner le dépôt
         uses: actions/checkout@v4
 
-      - name: 🛠️ Installer Ansible
-        run: sudo apt update && sudo apt install -y ansible
-
-      - name: 🔧 Générer le fichier `hosts`
-        run: |
-          echo "[bmarket]" > hosts
-          echo "${{ secrets.SERVER_IP }} ansible_user=deploy ansible_become=false" >> hosts
-            
-      - name: 🔑 Afficher la clé privée (debug temporaire)
-        run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | sed 's/./& /g'
-
-      - name: 🔑 Configurer SSH pour Ansible
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-        env:
-          SSH_AUTH_SOCK: /dev/null
-
-      - name: 🐛 Tester la connexion SSH
-        run: ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa deploy@bmarket.fr hostname
-
-      - name: 📡 Déployer Bmarket avec Ansible
-        run: ansible-playbook -i hosts .ansible/deploy.yml
-        env:
-          ANSIBLE_HOST_KEY_CHECKING: False
-          SSH_AUTH_SOCK: /dev/null
+      - name: 📡 Déployer avec Ansible
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: deploy
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            mkdir -p /home/deploy/ansible
+            cd /home/deploy/ansible
+            echo "[bmarket]" > hosts
+            echo "${{ secrets.SERVER_IP }} ansible_user=deploy" >> hosts
+            echo "${{ secrets.GHCR_USERNAME }}" > ghcr_user
+            echo "${{ secrets.GHCR_TOKEN }}" > ghcr_token
+            ansible-playbook -i hosts /home/deploy/bmarket/.ansible/deploy.yml
