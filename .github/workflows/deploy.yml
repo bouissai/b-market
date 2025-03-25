@@ -42,7 +42,7 @@ jobs:
             echo "[bmarket]" > /home/deploy/ansible/hosts
             echo "${{ secrets.SERVER_IP }} ansible_user=deploy" >> /home/deploy/ansible/hosts
             cat /home/deploy/ansible/hosts 
-             ansible-playbook -i /home/deploy/ansible/hosts /home/deploy/ansible/deploy.yml \
+             ansible-playbook -i /home/deploy/ansible/hosts /home/deploy/ansible/deploy.yml -vvvv  \
               --extra-vars "ghcr_username=${{ secrets.GHCR_USERNAME }} ghcr_token=${{ secrets.GHCR_TOKEN }} \
                             domain_name=${{ secrets.DOMAIN_NAME }} \
                             postgres_user=${{ secrets.POSTGRES_USER }} \
