@@ -47,6 +47,8 @@
         owner: deploy
         group: deploy
         mode: '0755'
+      become: yes
+
 
     - name: Vérifier si le fichier docker-compose.yml est présent
       stat:
