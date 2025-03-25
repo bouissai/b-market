@@ -7,7 +7,6 @@ import { NosValeurs } from "@/components/user/landingPage/valeurs";
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col gap-4 py-6 box-border">
-      <h1>Build success</h1>
       <div><ButcheryActivity /></div>
       <div id="valeurs"><NosValeurs /></div>
       <div id="click-collect"><ClickAndCollect /></div>
