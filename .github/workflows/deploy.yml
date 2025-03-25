@@ -10,6 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: 📥 Installer Ansible sur GitHub Actions
+        run: |
+          sudo apt update
+          sudo apt install -y ansible
+          
       - name: 📥 Cloner le dépôt
         uses: actions/checkout@v4
 
