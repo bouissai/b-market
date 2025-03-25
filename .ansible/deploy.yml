@@ -83,10 +83,9 @@
 
     - name: 🛢️ Créer la base de données si elle n'existe pas
       become_user: postgres
-      postgresql_db:
-        name: "{{ postgres_db }}"
-        owner: "{{ postgres_user }}"
+      command: psql -c "CREATE DATABASE {{ postgres_db }} OWNER {{ postgres_user }}"
       when: db_exists.stdout != "1"
+
 
     # 📂 Configurer un dossier de sauvegarde
     - name: 📂 Créer un dossier pour stocker les backups
