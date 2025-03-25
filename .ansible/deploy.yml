@@ -114,14 +114,18 @@
     # 🛑 Arrêter l'ancien conteneur
     - name: 🛑 Arrêter et supprimer l'ancien conteneur (si existant)
       shell: docker rm -f bmarket || true
+    - name: 🚨 Vérification de DATABASE_URL avant le déploiement
+      debug:
+        msg: "DATABASE_URL = postgresql://{{ postgres_user }}:{{ postgres_password }}@127.0.0.1:5432/{{ postgres_db }}"
 
     # 🚀 Démarrer le conteneur avec PostgreSQL
-    - name: 🚀 Démarrer le conteneur Bmarket
+    - name: 🚀 Démarrer le conteneur
       shell: |
         docker run -d --name bmarket \
           -p 3000:3000 \
-          -e DATABASE_URL="postgres://{{ postgres_user }}:{{ postgres_password }}@127.0.0.1:5432/{{ postgres_db }}" \
+          -e DATABASE_URL="postgresql://{{ postgres_user }}:{{ postgres_password }}@127.0.0.1:5432/{{ postgres_db }}" \
           ghcr.io/{{ ghcr_username }}/bmarket:latest
+
 
     # 🔄 Configurer Nginx comme reverse proxy
     - name: 🔄 Configurer Nginx
