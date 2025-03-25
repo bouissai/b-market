@@ -74,6 +74,7 @@
       when: user_exists.stdout == "1"
 
 
+
     # 🛢️ Créer la base de données PostgreSQL
     - name: 📂 Vérifier si la base de données existe
       become_user: postgres
