@@ -12,7 +12,8 @@
 
   tasks:
 
-    - name: 📦 Installer les dépendances
+    # 📦 Installer les dépendances
+    - name: 📦 Installer les paquets nécessaires
       apt:
         name:
           - docker.io
@@ -27,30 +28,52 @@
         state: present
         update_cache: true
 
-    # 🛢️ Vérifier si PostgreSQL est déjà installé et en cours d'exécution
-    - name: 🛢️ Vérifier si PostgreSQL est en cours d'exécution
+    # 🔄 Vérifier et démarrer PostgreSQL
+    - name: 🔄 Vérifier si PostgreSQL est en cours d'exécution
       command: systemctl is-active postgresql
       register: pg_status
       changed_when: false
       ignore_errors: true
 
-    # 🔄 Démarrer PostgreSQL si nécessaire
-    - name: 🔄 Démarrer PostgreSQL
+    - name: 🚀 Démarrer PostgreSQL si nécessaire
       systemd:
         name: postgresql
         state: started
         enabled: true
       when: pg_status.stdout != "active"
 
+    # 🛢️ Configurer PostgreSQL pour les connexions externes
+    - name: 🔧 Modifier pg_hba.conf pour autoriser les connexions externes
+      lineinfile:
+        path: /etc/postgresql/15/main/pg_hba.conf
+        line: "host all all 0.0.0.0/0 md5"
+        create: yes
+      notify: Redémarrer PostgreSQL
+
+    - name: 🔧 Modifier postgresql.conf pour écouter sur toutes les interfaces
+      lineinfile:
+        path: /etc/postgresql/15/main/postgresql.conf
+        regexp: "^#listen_addresses = 'localhost'"
+        line: "listen_addresses = '*'"
+      notify: Redémarrer PostgreSQL
+
     # 🛢️ Créer l'utilisateur PostgreSQL
-    - name: 🛢️ Créer l'utilisateur PostgreSQL
+    - name: 🛢️ Vérifier si l'utilisateur PostgreSQL existe
+      become_user: postgres
+      command: psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='{{ postgres_user }}'"
+      register: user_exists
+      changed_when: false
+      ignore_errors: true
+
+    - name: 🛢️ Créer l'utilisateur PostgreSQL si inexistant
       become_user: postgres
       postgresql_user:
         name: "{{ postgres_user }}"
         password: "{{ postgres_password }}"
         role_attr_flags: CREATEDB
+      when: user_exists.stdout != "1"
 
-    # 📂 Vérifier si la base de données existe
+    # 🛢️ Créer la base de données PostgreSQL
     - name: 📂 Vérifier si la base de données existe
       become_user: postgres
       command: psql -tAc "SELECT 1 FROM pg_database WHERE datname='{{ postgres_db }}'"
@@ -58,15 +81,14 @@
       changed_when: false
       ignore_errors: true
 
-    # 🛢️ Créer la base de données si elle n'existe pas
-    - name: 🛢️ Créer la base de données PostgreSQL
+    - name: 🛢️ Créer la base de données si elle n'existe pas
       become_user: postgres
       postgresql_db:
         name: "{{ postgres_db }}"
         owner: "{{ postgres_user }}"
       when: db_exists.stdout != "1"
 
-    # 📂 Créer un dossier de sauvegarde s'il n'existe pas
+    # 📂 Configurer un dossier de sauvegarde
     - name: 📂 Créer un dossier pour stocker les backups
       file:
         path: "{{ backup_dir }}"
@@ -75,34 +97,34 @@
         group: postgres
         mode: "0700"
 
-    # 🛢️ Backup de la base de données avant chaque déploiement
-    - name: 🛢️ Sauvegarde de la base de données avant déploiement
+    # 🛢️ Sauvegarde de la base de données avant chaque déploiement
+    - name: 🛢️ Sauvegarde de la base de données
       become_user: postgres
       command: pg_dump -U {{ postgres_user }} -F c -b -v -f {{ backup_dir }}/bmarket_backup_$(date +%F_%H-%M-%S).dump {{ postgres_db }}
       ignore_errors: true
 
-    # 🔑 Se connecter à GHCR
+    # 🔑 Se connecter à GitHub Container Registry (GHCR)
     - name: 🔑 Se connecter à GHCR
       shell: echo "{{ ghcr_token }}" | docker login ghcr.io -u "{{ ghcr_username }}" --password-stdin
 
-    # 📦 Télécharger la dernière image Docker
+    # 📦 Télécharger l'image Docker
     - name: 📦 Télécharger la dernière image Docker
       shell: docker pull ghcr.io/{{ ghcr_username }}/bmarket:latest
 
-    # 🛑 Arrêter et supprimer l'ancien conteneur
+    # 🛑 Arrêter l'ancien conteneur
     - name: 🛑 Arrêter et supprimer l'ancien conteneur (si existant)
       shell: docker rm -f bmarket || true
 
-    # 🚀 Démarrer le conteneur
-    - name: 🚀 Démarrer le conteneur
+    # 🚀 Démarrer le conteneur avec PostgreSQL
+    - name: 🚀 Démarrer le conteneur Bmarket
       shell: |
         docker run -d --name bmarket \
           -p 3000:3000 \
-          -e DATABASE_URL="postgres://{{ postgres_user }}:{{ postgres_password }}@localhost/{{ postgres_db }}" \
+          -e DATABASE_URL="postgres://{{ postgres_user }}:{{ postgres_password }}@127.0.0.1:5432/{{ postgres_db }}" \
           ghcr.io/{{ ghcr_username }}/bmarket:latest
 
     # 🔄 Configurer Nginx comme reverse proxy
-    - name: 🔄 Configurer Nginx pour Bmarket
+    - name: 🔄 Configurer Nginx
       copy:
         dest: "/etc/nginx/sites-available/bmarket"
         content: |
@@ -119,20 +141,17 @@
               }
           }
 
-    # 🔗 Activer la configuration Nginx
     - name: 🔗 Activer la configuration Nginx
       file:
         src: "/etc/nginx/sites-available/bmarket"
         dest: "/etc/nginx/sites-enabled/bmarket"
         state: link
 
-    # 🧹 Supprimer la configuration Nginx par défaut
-    - name: 🧹 Supprimer la configuration par défaut
+    - name: 🧹 Supprimer la configuration Nginx par défaut
       file:
         path: "/etc/nginx/sites-enabled/default"
         state: absent
 
-    # 🔄 Redémarrer Nginx
     - name: 🔄 Redémarrer Nginx
       systemd:
         name: nginx
@@ -143,8 +162,13 @@
     - name: 🔒 Générer un certificat SSL avec Certbot
       shell: certbot --nginx -d {{ domain_name }} -d www.{{ domain_name }} --non-interactive --agree-tos -m contact@{{ domain_name }}
 
-    # 🔄 Redémarrer Nginx après Certbot
     - name: 🔄 Redémarrer Nginx après Certbot
       systemd:
         name: nginx
+        state: restarted
+
+  handlers:
+    - name: Redémarrer PostgreSQL
+      systemd:
+        name: postgresql
         state: restarted
