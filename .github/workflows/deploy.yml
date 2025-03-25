@@ -1,4 +1,4 @@
-name: 🚀 Build, Push & Deploy with Ansible
+name: 🚀 Build, Push & Deploy to VPS
 
 on:
   push:
@@ -16,42 +16,60 @@ jobs:
       - name: 🔑 Se connecter à GitHub Container Registry (GHCR)
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
-      - name: 🏗️ Build de l'image Docker
-        run: docker build -t ghcr.io/${{ secrets.GHCR_USERNAME }}/bmarket:latest .
-
-      - name: 📤 Push de l'image sur GHCR
-        run: docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/bmarket:latest
+      - name: 🏗️ Build de l image Docker
+        run: |
+          docker build -t ghcr.io/bouissai/bmarket:latest .
+          
+      - name: 🧠 Upload des sourcemaps à Sentry
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ilyass-tb
+          SENTRY_PROJECT: javascript-nextjs
+          SENTRY_RELEASE: ${{ github.sha }}
+        run: |
+          echo "🔍 Upload des sourcemaps à Sentry..."
+          npx @sentry/cli sourcemaps upload \
+            --auth-token "$SENTRY_AUTH_TOKEN" \
+            --org "$SENTRY_ORG" \
+            --project "$SENTRY_PROJECT" \
+            --release "$SENTRY_RELEASE" \
+            .next
+      
+      - name: 📤 Push de l image sur GHCR
+        run: |
+          docker push ghcr.io/bouissai/bmarket:latest
 
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Cloner le dépôt
-        uses: actions/checkout@v4
-
-      - name: 📥 Télécharger le playbook Ansible depuis GitHub
+      - name: 📡 Connexion SSH et déploiement
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_IP }}
-          username: deploy
+          username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            mkdir -p /home/deploy/ansible/.ansible
-            wget -O /home/deploy/ansible/.ansible/deploy.yml https://raw.githubusercontent.com/${{ secrets.GH_USERNAME }}/bmarket/main/.ansible/deploy.yml
+            set -e  # Arrêter le script si une commande échoue
+            
+            echo "📌 Passage au dossier de l'application..."
+            cd /root
 
-      - name: 📡 Déployer avec Ansible
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: deploy
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            echo "[bmarket]" > /home/deploy/ansible/hosts
-            echo "${{ secrets.SERVER_IP }} ansible_user=deploy" >> /home/deploy/ansible/hosts
-            ansible-playbook -i /home/deploy/ansible/hosts /home/deploy/ansible/.ansible/deploy.yml -vvvv \
-              --extra-vars "ghcr_username=${{ secrets.GHCR_USERNAME }} ghcr_token=${{ secrets.GHCR_TOKEN }} \
-                            domain_name=${{ secrets.DOMAIN_NAME }} \
-                            postgres_user=${{ secrets.POSTGRES_USER }} \
-                            postgres_password=${{ secrets.POSTGRES_PASSWORD }} \
-                            postgres_db=${{ secrets.POSTGRES_DB }}"
+            echo "📦 Vérification de Docker Compose..."
+            if ! command -v docker-compose &> /dev/null; then
+              echo "❌ docker-compose n'est pas installé. Installation en cours..."
+              apt update && apt install -y docker-compose
+            fi
+
+            echo "📦 Récupération de la nouvelle image..."
+            docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password ${{ secrets.GHCR_TOKEN }}
+            docker-compose pull || { echo "❌ Échec du pull"; exit 1; }
+
+            echo "🛑 Arrêt des anciens conteneurs..."
+            docker-compose down || echo "⚠️ Aucun conteneur à stopper."
+
+            echo "🚀 Démarrage des nouveaux conteneurs..."
+            docker-compose up -d || { echo "❌ Erreur lors du démarrage"; exit 1; }
+
+            echo "✅ Déploiement terminé avec succès !"
