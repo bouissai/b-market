@@ -54,17 +54,17 @@ jobs:
           echo "${{ secrets.SERVER_IP }} ansible_user=deploy ansible_become=false" >> hosts
             
       - name: 🔑 Afficher la clé privée (debug temporaire)
-      run: |
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" | sed 's/./& /g'
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | sed 's/./& /g'
 
       - name: 🔑 Configurer SSH pour Ansible
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-      env:
-        SSH_AUTH_SOCK: /dev/null
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+        env:
+          SSH_AUTH_SOCK: /dev/null
 
       - name: 🐛 Tester la connexion SSH
         run: ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa deploy@bmarket.fr hostname
@@ -74,4 +74,3 @@ jobs:
         env:
           ANSIBLE_HOST_KEY_CHECKING: False
           SSH_AUTH_SOCK: /dev/null
-
