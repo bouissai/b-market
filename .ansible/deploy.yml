@@ -12,6 +12,18 @@
 
   tasks:
 
+    # 📌 Affichage des variables pour le debug
+    - name: 🐛 Afficher les valeurs des variables
+      debug:
+        msg:
+          - "PostgreSQL User: {{ postgres_user }}"
+          - "PostgreSQL Password: {{ postgres_password }}"
+          - "PostgreSQL DB: {{ postgres_db }}"
+          - "GHCR Username: {{ ghcr_username }}"
+          - "GHCR Token: {{ ghcr_token }}"
+          - "Domain Name: {{ domain_name }}"
+          - "Backup Directory: {{ backup_dir }}"
+
     # 📦 Installer les dépendances
     - name: 📦 Installer les paquets nécessaires
       apt:
@@ -35,6 +47,10 @@
       changed_when: false
       ignore_errors: true
 
+    - name: 🚀 Afficher l'état de PostgreSQL
+      debug:
+        msg: "État actuel de PostgreSQL : {{ pg_status.stdout }}"
+
     - name: 🚀 Démarrer PostgreSQL si nécessaire
       systemd:
         name: postgresql
@@ -42,20 +58,7 @@
         enabled: true
       when: pg_status.stdout != "active"
 
-    # 🛢️ Configurer PostgreSQL pour les connexions externes
-    - name: 🔧 Modifier pg_hba.conf pour autoriser les connexions externes
-      lineinfile:
-        path: /etc/postgresql/15/main/pg_hba.conf
-        line: "host all all 0.0.0.0/0 md5"
-        create: yes
-      notify: Redémarrer PostgreSQL
-
-    - name: 🔧 Modifier postgresql.conf pour écouter sur toutes les interfaces
-      lineinfile:
-        path: /etc/postgresql/16/main/postgresql.conf
-        line: "listen_addresses = '*'"
-      notify: Redémarrer PostgreSQL
-
+    # 🛢️ Vérifier l'existence de l'utilisateur PostgreSQL
     - name: 🛢️ Vérifier si l'utilisateur PostgreSQL existe
       become_user: postgres
       command: psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='{{ postgres_user }}'"
@@ -63,19 +66,33 @@
       changed_when: false
       ignore_errors: true
 
-    - name: 🛢️ Créer l'utilisateur PostgreSQL s'il n'existe pas
+    - name: 🛢️ Afficher le statut de l'utilisateur PostgreSQL
+      debug:
+        msg: "Résultat de la vérification de l'utilisateur PostgreSQL : {{ user_exists.stdout }}"
+
+    # 🔥 Supprimer l'utilisateur PostgreSQL s'il existe
+    - name: 🔥 Supprimer l'utilisateur PostgreSQL s'il existe
+      become_user: postgres
+      command: psql -c "DROP USER IF EXISTS {{ postgres_user }};"
+      ignore_errors: true
+      register: drop_user_result
+
+    - name: 🔥 Afficher le résultat de la suppression de l'utilisateur
+      debug:
+        msg: "Suppression de l'utilisateur PostgreSQL : {{ drop_user_result.stderr if drop_user_result.stderr else 'Succès' }}"
+
+    # 🛢️ Créer un nouvel utilisateur PostgreSQL
+    - name: 🛢️ Créer l'utilisateur PostgreSQL
       become_user: postgres
       command: psql -c "CREATE USER {{ postgres_user }} WITH PASSWORD '{{ postgres_password }}'; ALTER USER {{ postgres_user }} CREATEDB;"
-      when: user_exists.stdout != "1"
+      register: create_user_result
+      failed_when: create_user_result.rc != 0
 
-    - name: 🔑 Mettre à jour le mot de passe de l'utilisateur PostgreSQL s'il existe
-      become_user: postgres
-      command: psql -c "ALTER USER {{ postgres_user }} WITH PASSWORD '{{ postgres_password }}';"
-      when: user_exists.stdout == "1"
+    - name: 🛢️ Afficher le résultat de la création de l'utilisateur
+      debug:
+        msg: "Création de l'utilisateur PostgreSQL : {{ create_user_result.stderr if create_user_result.stderr else 'Succès' }}"
 
-
-
-    # 🛢️ Créer la base de données PostgreSQL
+    # 📂 Vérifier l'existence de la base de données
     - name: 📂 Vérifier si la base de données existe
       become_user: postgres
       command: psql -tAc "SELECT 1 FROM pg_database WHERE datname='{{ postgres_db }}'"
@@ -83,94 +100,65 @@
       changed_when: false
       ignore_errors: true
 
-    - name: 🛢️ Créer la base de données si elle n'existe pas
+    - name: 🛢️ Afficher le statut de la base de données PostgreSQL
+      debug:
+        msg: "Résultat de la vérification de la base de données PostgreSQL : {{ db_exists.stdout }}"
+
+    # 🛢️ Créer la base de données si elle n'existe pas
+    - name: 🛢️ Créer la base de données PostgreSQL
       become_user: postgres
       command: psql -c "CREATE DATABASE {{ postgres_db }} OWNER {{ postgres_user }}"
       when: db_exists.stdout != "1"
+      register: create_db_result
 
-
-    # 📂 Configurer un dossier de sauvegarde
-    - name: 📂 Créer un dossier pour stocker les backups
-      file:
-        path: "{{ backup_dir }}"
-        state: directory
-        owner: postgres
-        group: postgres
-        mode: "0700"
-
-    # 🛢️ Sauvegarde de la base de données avant chaque déploiement
-    - name: 🛢️ Sauvegarde de la base de données
-      become_user: postgres
-      command: pg_dump -U {{ postgres_user }} -F c -b -v -f {{ backup_dir }}/bmarket_backup_$(date +%F_%H-%M-%S).dump {{ postgres_db }}
-      ignore_errors: true
+    - name: 🛢️ Afficher le résultat de la création de la base de données
+      debug:
+        msg: "Création de la base de données PostgreSQL : {{ create_db_result.stderr if create_db_result.stderr else 'Succès' }}"
 
     # 🔑 Se connecter à GitHub Container Registry (GHCR)
     - name: 🔑 Se connecter à GHCR
-      shell: echo "{{ ghcr_token }}" | docker login ghcr.io -u "{{ ghcr_username }}" --password-stdin
+      shell: |
+        set -x
+        echo "{{ ghcr_token }}" | docker login ghcr.io -u "{{ ghcr_username }}" --password-stdin
+      register: ghcr_login_result
+      ignore_errors: true
+
+    - name: 🔑 Afficher le résultat de la connexion à GHCR
+      debug:
+        msg: "Connexion à GHCR : {{ ghcr_login_result.stderr if ghcr_login_result.stderr else 'Succès' }}"
 
     # 📦 Télécharger l'image Docker
     - name: 📦 Télécharger la dernière image Docker
       shell: docker pull ghcr.io/{{ ghcr_username }}/bmarket:latest
+      register: docker_pull_result
+      ignore_errors: true
+
+    - name: 📦 Afficher le résultat du téléchargement de l'image Docker
+      debug:
+        msg: "Téléchargement de l'image Docker : {{ docker_pull_result.stderr if docker_pull_result.stderr else 'Succès' }}"
 
     # 🛑 Arrêter l'ancien conteneur
     - name: 🛑 Arrêter et supprimer l'ancien conteneur (si existant)
       shell: docker rm -f bmarket || true
+
     - name: 🚨 Vérification de DATABASE_URL avant le déploiement
       debug:
         msg: "DATABASE_URL = postgresql://{{ postgres_user }}:{{ postgres_password }}@127.0.0.1:5432/{{ postgres_db }}"
 
     # 🚀 Démarrer le conteneur avec PostgreSQL
-    - name: 🚀 Démarrer le conteneur
+    - name: 🚀 Démarrer le conteneur Docker
       shell: |
+        set -x
         docker run -d --name bmarket \
           -p 3000:3000 \
           -e DATABASE_URL="postgresql://{{ postgres_user }}:{{ postgres_password }}@127.0.0.1:5432/{{ postgres_db }}" \
           ghcr.io/{{ ghcr_username }}/bmarket:latest
+      register: docker_run_result
+      ignore_errors: true
 
-
-    # 🔄 Configurer Nginx comme reverse proxy
-    - name: 🔄 Configurer Nginx
-      copy:
-        dest: "/etc/nginx/sites-available/bmarket"
-        content: |
-          server {
-              listen 80;
-              server_name {{ domain_name }} www.{{ domain_name }};
-
-              location / {
-                  proxy_pass http://localhost:3000;
-                  proxy_set_header Host $host;
-                  proxy_set_header X-Real-IP $remote_addr;
-                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                  proxy_set_header X-Forwarded-Proto $scheme;
-              }
-          }
-
-    - name: 🔗 Activer la configuration Nginx
-      file:
-        src: "/etc/nginx/sites-available/bmarket"
-        dest: "/etc/nginx/sites-enabled/bmarket"
-        state: link
-
-    - name: 🧹 Supprimer la configuration Nginx par défaut
-      file:
-        path: "/etc/nginx/sites-enabled/default"
-        state: absent
-
-    - name: 🔄 Redémarrer Nginx
-      systemd:
-        name: nginx
-        state: restarted
-        enabled: true
-
-    # 🔒 Générer un certificat SSL avec Let's Encrypt
-    - name: 🔒 Générer un certificat SSL avec Certbot
-      shell: certbot --nginx -d {{ domain_name }} -d www.{{ domain_name }} --non-interactive --agree-tos -m contact@{{ domain_name }}
-
-    - name: 🔄 Redémarrer Nginx après Certbot
-      systemd:
-        name: nginx
-        state: restarted
+    - name: 🚀 Afficher le résultat du démarrage du conteneur Docker
+      debug:
+        msg: "Démarrage du conteneur Docker : {{ docker_run_result.stderr if docker_run_result.stderr else 'Succès' }}"
 
   handlers:
     - name: Redémarrer PostgreSQL
