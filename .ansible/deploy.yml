@@ -63,18 +63,15 @@
       changed_when: false
       ignore_errors: true
 
-    - name: 🛢️ Créer ou mettre à jour l'utilisateur PostgreSQL
+    - name: 🛢️ Créer l'utilisateur PostgreSQL s'il n'existe pas
       become_user: postgres
-      command: >
-        psql -c "DO $$ 
-        BEGIN 
-          IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '{{ postgres_user }}') THEN 
-            CREATE USER {{ postgres_user }} WITH PASSWORD '{{ postgres_password }}'; 
-            ALTER USER {{ postgres_user }} CREATEDB;
-          ELSE 
-            ALTER USER {{ postgres_user }} WITH PASSWORD '{{ postgres_password }}'; 
-          END IF; 
-        END$$;"
+      command: psql -c "CREATE USER {{ postgres_user }} WITH PASSWORD '{{ postgres_password }}'; ALTER USER {{ postgres_user }} CREATEDB;"
+      when: user_exists.stdout != "1"
+
+    - name: 🔑 Mettre à jour le mot de passe de l'utilisateur PostgreSQL s'il existe
+      become_user: postgres
+      command: psql -c "ALTER USER {{ postgres_user }} WITH PASSWORD '{{ postgres_password }}';"
+      when: user_exists.stdout == "1"
 
 
     # 🛢️ Créer la base de données PostgreSQL
