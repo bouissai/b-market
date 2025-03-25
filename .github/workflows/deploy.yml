@@ -17,12 +17,10 @@ jobs:
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
       - name: 🏗️ Build de l'image Docker
-        run: |
-          docker build -t ghcr.io/${{ secrets.GHCR_USERNAME }}/bmarket:latest .
+        run: docker build -t ghcr.io/${{ secrets.GHCR_USERNAME }}/bmarket:latest .
 
       - name: 📤 Push de l'image sur GHCR
-        run: |
-          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/bmarket:latest
+        run: docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/bmarket:latest
 
   deploy:
     needs: build-and-push
@@ -31,6 +29,16 @@ jobs:
     steps:
       - name: 📥 Cloner le dépôt
         uses: actions/checkout@v4
+
+      - name: 📥 Télécharger le playbook Ansible depuis GitHub
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: deploy
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            mkdir -p /home/deploy/ansible/.ansible
+            wget -O /home/deploy/ansible/.ansible/deploy.yml https://raw.githubusercontent.com/${{ secrets.GH_USERNAME }}/bmarket/main/.ansible/deploy.yml
 
       - name: 📡 Déployer avec Ansible
         uses: appleboy/ssh-action@master
@@ -41,8 +49,7 @@ jobs:
           script: |
             echo "[bmarket]" > /home/deploy/ansible/hosts
             echo "${{ secrets.SERVER_IP }} ansible_user=deploy" >> /home/deploy/ansible/hosts
-            cat /home/deploy/ansible/hosts 
-             ansible-playbook -i /home/deploy/ansible/hosts /home/deploy/ansible/deploy.yml -vvvv  \
+            ansible-playbook -i /home/deploy/ansible/hosts /home/deploy/ansible/.ansible/deploy.yml -vvvv \
               --extra-vars "ghcr_username=${{ secrets.GHCR_USERNAME }} ghcr_token=${{ secrets.GHCR_TOKEN }} \
                             domain_name=${{ secrets.DOMAIN_NAME }} \
                             postgres_user=${{ secrets.POSTGRES_USER }} \
