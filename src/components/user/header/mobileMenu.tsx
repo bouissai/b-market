@@ -36,7 +36,7 @@ export const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
 								className="flex text-gray-600 hover:text-red-700"
 								whileTap={{ scale: 0.95 }}
 								onClick={() => {
-									signOut();
+									signOut(false);
 									onClose();
 								}}>
 								Déconnexion
