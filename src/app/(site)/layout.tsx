@@ -1,15 +1,14 @@
 import '@/app/globals.css';
 import { Metadata, Viewport } from 'next';
 import { UserNavBar } from '@/components/user/userNavBar';
-import { SessionProvider } from 'next-auth/react';
 
 export const viewport: Viewport = {
-	width: "device-width",
+	width: 'device-width',
 	initialScale: 1,
 	maximumScale: 1,
 	userScalable: false,
-  };
-  
+};
+
 export const metadata: Metadata = {
 	title: 'Boucherie Halal Grenoble - Viandes Fraîches & Qualité | BMarket',
 	description:
@@ -55,9 +54,5 @@ export default function SiteLayout({
 }: {
 	children: React.ReactNode;
 }) {
-	return (
-		<SessionProvider>
-			<UserNavBar>{children}</UserNavBar>
-		</SessionProvider>
-	);
+	return <UserNavBar>{children}</UserNavBar>;
 }

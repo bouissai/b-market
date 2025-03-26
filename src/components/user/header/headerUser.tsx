@@ -91,7 +91,7 @@ export function HeaderUser() {
 								</DropdownMenuItem>
 								<DropdownMenuItem
 									className="text-red-600"
-									onClick={() => signOut()}>
+									onClick={() => signOut(false)}>
 									<LogOut className="mr-2 h-4 w-4" />
 									Se déconnecter
 								</DropdownMenuItem>

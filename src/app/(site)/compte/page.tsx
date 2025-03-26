@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import InfosPersonnelles from '@/components/user/compte/InfosPersonnelles';
 import Commandes from '@/components/user/compte/commandes';
+import { Loading } from '@/components/loading';
 
 export default function MonComptePage() {
 	const { status } = useSession();
@@ -14,18 +15,7 @@ export default function MonComptePage() {
 		searchParams.get('tab') === 'infos' ? 'infos' : 'commandes';
 
 	if (status === 'loading') {
-		return (
-			<div className="flex min-h-screen flex-col">
-				<main className="flex-1 container py-12">
-					<div className="flex items-center justify-center h-[60vh]">
-						<div className="text-center">
-							<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-							<p className="mt-4 text-muted-foreground">Chargement...</p>
-						</div>
-					</div>
-				</main>
-			</div>
-		);
+		return <Loading />;
 	}
 
 	if (status === 'unauthenticated') {

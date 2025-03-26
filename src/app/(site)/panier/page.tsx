@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ShoppingCart, Clock, MapPin, Phone, ChevronRight, Minus, Plus, User, Lock } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { Loading } from "@/components/loading"
 
 // Types
 interface Product {
@@ -89,18 +90,7 @@ export default function PanierPage() {
 
     // If loading
     if (status === "loading") {
-        return (
-            <div className="flex min-h-screen flex-col">
-                <main className="flex-1 container py-12">
-                    <div className="flex items-center justify-center h-[60vh]">
-                        <div className="text-center">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-                            <p className="mt-4 text-muted-foreground">Chargement...</p>
-                        </div>
-                    </div>
-                </main>
-            </div>
-        )
+      return <Loading />;
     }
 
     // If not authenticated
@@ -569,4 +559,3 @@ export default function PanierPage() {
         </div>
     )
 }
-
