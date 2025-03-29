@@ -2,8 +2,8 @@
 
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import InfosPersonnelles from '@/components/user/compte/InfosPersonnelles';
-import Commandes from '@/components/user/compte/commandes';
+import PersonnalInformations from '@/components/site/compte/personnal-informations';
+import Commandes from '@/components/site/compte/commandes';
 import { Loading } from '@/components/loading';
 
 export default function MonComptePage() {
@@ -26,7 +26,11 @@ export default function MonComptePage() {
 	return (
 		<div className="flex min-h-screen p-4 flex-col items-center justify-start">
 			<main className="flex-1 py-8">
-				{activeTab === 'commandes' ? <Commandes /> : <InfosPersonnelles />}
+				{activeTab === 'commandes' ? (
+					<Commandes />
+				) : (
+					<PersonnalInformations />
+				)}
 			</main>
 		</div>
 	);
