@@ -1,4 +1,3 @@
-// stores/authStore.ts
 import { create } from 'zustand';
 import {
 	signIn as nextAuthSignIn,
@@ -14,7 +13,7 @@ interface AuthState {
 	successMessage: string | null;
 	signIn: (data: z.infer<typeof signInSchema>) => Promise<boolean>;
 	signUp: (data: z.infer<typeof signUpSchema>) => Promise<boolean>;
-	signOut: () => Promise<void>;
+	signOut: (isAdmin: boolean) => Promise<void>;
 	setError: (error: string | null) => void;
 	setSuccessMessage: (message: string | null) => void;
 }
@@ -101,10 +100,18 @@ export const useAuthStore = create<AuthState>(set => ({
 		}
 	},
 
-	signOut: async () => {
+	signOut: async isAdmin => {
 		try {
-			await nextAuthSignOut({ redirect: false });
-			window.location.href = '/';
+			set({
+				isLoading: false,
+				isSubmitting: false,
+				error: null,
+				successMessage: null,
+			});
+
+			await nextAuthSignOut({
+				callbackUrl: isAdmin ? '/admin' : '/',
+			});
 		} catch (err) {
 			console.error('Erreur de déconnexion :', err);
 		}

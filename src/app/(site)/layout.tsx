@@ -1,15 +1,28 @@
 import '@/app/globals.css';
+import { FooterSite } from '@/components/site/footer/footer-site';
+import { HeaderSite } from '@/components/site/header/header-site';
 import { Metadata, Viewport } from 'next';
-import { UserNavBar } from '@/components/user/userNavBar';
-import { SessionProvider } from 'next-auth/react';
+import { Playfair_Display, Montserrat } from 'next/font/google';
 
 export const viewport: Viewport = {
-	width: "device-width",
+	width: 'device-width',
 	initialScale: 1,
 	maximumScale: 1,
 	userScalable: false,
-  };
-  
+};
+
+const playfair = Playfair_Display({
+	subsets: ['latin'],
+	weight: ['400', '500', '600', '700', '900'],
+	variable: '--font-playfair',
+});
+
+const montserrat = Montserrat({
+	subsets: ['latin'],
+	weight: ['300', '400', '500', '600', '700'],
+	variable: '--font-montserrat',
+});
+
 export const metadata: Metadata = {
 	title: 'Boucherie Halal Grenoble - Viandes Fraîches & Qualité | BMarket',
 	description:
@@ -56,8 +69,13 @@ export default function SiteLayout({
 	children: React.ReactNode;
 }) {
 	return (
-		<SessionProvider>
-			<UserNavBar>{children}</UserNavBar>
-		</SessionProvider>
+		<html lang="fr" className="dark">
+			<body
+				className={`${playfair.variable} ${montserrat.variable} font-sans bg-boucherie-black text-white`}>
+				<HeaderSite />
+				<main>{children}</main>
+				<FooterSite />
+			</body>
+		</html>
 	);
 }

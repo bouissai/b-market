@@ -33,13 +33,13 @@ VALUES
   ('art11', 'Huile d''olive', 'litre', 8.90, '/images/no-img.png', 'Huile d''olive extra vierge.', NOW(), NOW(), 'cat5');
 
 -- Insérer des utilisateurs
-INSERT INTO "User" (id, name, email, phone, "createdAt", "updatedAt", password, image)
-VALUES ('user0', 'Test Jule', 'test@example.com', '+33 1 11 11 11 00', NOW(), NOW(), 'hashed_password_0', NULL),
-       ('user1', 'Mohammed Benali', 'mohammed.benali@example.com', '+33 0 00 00 00 00', NOW(), NOW(),
-        'hashed_password_1', NULL),
-       ('user2', 'Sarah Dubois', 'sarah.dubois@example.com', NULL, NOW(), NOW(), 'hashed_password_2', NULL),
-       ('user3', 'Ilyass Bouissa', 'bouissailyass@gmail.com', '+33 6 95 50 90 33', NOW(), NOW(), 'hashed_password_3',
-        NULL);
+INSERT INTO "User" (id, name, email, phone, "createdAt", "updatedAt", password, image, "isAdmin")
+VALUES ('user0', 'Test Jule', 'test@example.com', '+33 1 11 11 11 00', NOW(), NOW(), 'hashed_password_0', NULL, false),
+       ('user1', 'Mohammed Benali', 'mohammed.benali@example.com', '+33 0 00 00 00 00', NOW(), NOW(), 'hashed_password_1', NULL, false),
+       ('user2', 'Sarah Dubois', 'sarah.dubois@example.com', NULL, NOW(), NOW(), 'hashed_password_2', NULL, false),
+       ('user3', 'Ilyass Bouissa', 'bouissailyass@gmail.com', '+33 6 95 50 90 33', NOW(), NOW(), 'hashed_password_3', NULL, true);
+
+
 -- Insérer les paniers
 INSERT INTO "Cart" (id, "userId", "createdAt", "updatedAt")
 VALUES ('cart0', 'user0', NOW(), NOW()),

@@ -21,16 +21,16 @@ model User {
   password      String
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
-  // cartId        String?         @unique
-  // cart          Cart?           @relation
-  // orders        Order[]
+  cartId        String?         @unique
+  cart          Cart?           @relation
+  orders        Order[]
   image         String?
   accounts      Account[]
   sessions      Session[]
   // Optional for WebAuthn support
   Authenticator Authenticator[]
-  Cart          Cart?
-  Order         Order[]
+
+  isAdmin       Boolean         @default(false)
 }
 
 model Article {
