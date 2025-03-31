@@ -4,8 +4,6 @@ import { ArticleGetDto } from '@/types/article';
 import { z } from 'zod';
 
 const MAX_LIMIT = 1000;
-const DEFAULT_LIMIT = 100;
-const DEFAULT_PAGE = 1;
 
 const QueryParamsSchema = z.object({
   categoryId: z.string().optional(),
@@ -31,9 +29,16 @@ export async function GET(req: Request) {
     
     // Initialisation des paramètres validés
     const { categoryId, page, limit } = result.data;
-    const actualPage = page || DEFAULT_PAGE;
-    const actualLimit = limit || DEFAULT_LIMIT;
-    const skip = (actualPage - 1) * actualLimit;
+
+    // Pagination
+    let actualPage = undefined;
+    let actualLimit = undefined;
+    let skip = 0;
+    if(page && limit) {
+      actualPage = page;
+      actualLimit = limit;
+      skip = (actualPage - 1) * actualLimit;
+    }
 
     // si categoryId est fourni, vérifier si la catégorie existe
     const whereClause: any = {};
@@ -58,7 +63,7 @@ export async function GET(req: Request) {
       prisma.article.findMany({
         where: whereClause,
         skip,
-        take: actualLimit,
+        ...(actualLimit? {take: actualLimit} : {}),
         include: {
           category: {
             select: { name: true },
