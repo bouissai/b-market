@@ -7,7 +7,7 @@ const services = [
 		title: 'Click & Collect',
 		description:
 			'Commandez en ligne et récupérez votre commande en boutique à Fontaine.',
-		link: '/produits',
+		link: '/products',
 	},
 	{
 		icon: <Utensils className="h-8 w-8 text-boucherie-red" />,

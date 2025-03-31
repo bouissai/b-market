@@ -7,6 +7,7 @@ import {
 	Facebook,
 	Twitter,
 } from 'lucide-react';
+import { GENERAL_INFO } from '@/constants';
 
 export default function ContactInfo() {
 	return (
@@ -20,13 +21,8 @@ export default function ContactInfo() {
 				<div className="flex items-start">
 					<MapPin className="h-6 w-6 text-boucherie-red shrink-0 mt-0.5 mr-3" />
 					<div>
-						<h3 className="font-semibold mb-1">Adresses</h3>
-						<p className="text-gray-400">
-							Fontaine: 123 Rue de la Boucherie, 38600
-						</p>
-						<p className="text-gray-400">
-							Meylan: 456 Avenue des Viandes, 38240
-						</p>
+						<h3 className="font-semibold mb-1">Adresse</h3>
+						<p className="text-gray-400">{GENERAL_INFO.address}</p>
 					</div>
 				</div>
 
@@ -34,7 +30,7 @@ export default function ContactInfo() {
 					<Phone className="h-6 w-6 text-boucherie-red shrink-0 mt-0.5 mr-3" />
 					<div>
 						<h3 className="font-semibold mb-1">Téléphone</h3>
-						<p className="text-gray-400">04 76 12 34 56</p>
+						<p className="text-gray-400">{GENERAL_INFO.phone}</p>
 					</div>
 				</div>
 
@@ -42,7 +38,7 @@ export default function ContactInfo() {
 					<Mail className="h-6 w-6 text-boucherie-red shrink-0 mt-0.5 mr-3" />
 					<div>
 						<h3 className="font-semibold mb-1">Email</h3>
-						<p className="text-gray-400">contact@bmarket.fr</p>
+						<p className="text-gray-400">{GENERAL_INFO.email}</p>
 					</div>
 				</div>
 
@@ -51,8 +47,14 @@ export default function ContactInfo() {
 					<div>
 						<h3 className="font-semibold mb-1">Horaires d'ouverture</h3>
 						<div className="text-gray-400">
-							<p>Lundi - Samedi: 8h00 - 19h30</p>
-							<p>Dimanche: 8h00 - 13h00</p>
+							{GENERAL_INFO.openingHours.map((item, index) => (
+								<div key={index}>
+									<p>{item.days}:</p>
+									{item.hours.map((hour, i) => (
+										<p key={i}>{hour}</p>
+									))}
+								</div>
+							))}
 						</div>
 					</div>
 				</div>

@@ -1,5 +1,6 @@
 import { ContactForm } from '@/components/site/contact/contact-form';
 import ContactInfo from '@/components/site/contact/contact-info';
+import { MapComponent } from '@/components/site/map-component';
 
 export default function ContactPage() {
 	return (
@@ -22,10 +23,7 @@ export default function ContactPage() {
 				</div>
 				<div className="mt-20">
 					<h2 className="heading-md mb-6">Nous trouver</h2>
-					{/* Rectangle placeholder pour la carte */}
-					<div className="bg-gray-800 h-[400px] w-full flex items-center justify-center text-gray-500 text-lg rounded-lg">
-						Carte des boutiques B Market
-					</div>
+					<MapComponent />
 				</div>
 			</div>
 		</>
