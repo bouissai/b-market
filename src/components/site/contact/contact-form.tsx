@@ -1,17 +1,11 @@
 'use client';
 
-import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { motion } from 'framer-motion';
-import { Send } from 'lucide-react';
 
-import AnimatedButton from '@/components/ui/AnimatedButton';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { animations } from '@/lib/helpers/animation';
+import { Button } from '@/components/ui/button';
 import {
 	Form,
 	FormControl,
@@ -20,7 +14,11 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { PhoneInput } from '@/components/ui/phone-input';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import { useContactStore } from '@/store/useContactStore';
 
 // Schéma de validation avec Zod
 const formSchema = z.object({
@@ -28,6 +26,7 @@ const formSchema = z.object({
 		.string()
 		.min(2, { message: 'Le nom doit contenir au moins 2 caractères' }),
 	email: z.string().email({ message: 'Email invalide' }),
+	phone: z.string().min(8, { message: 'Numéro de téléphone invalide' }),
 	subject: z
 		.string()
 		.min(2, { message: 'Le sujet doit contenir au moins 2 caractères' }),
@@ -41,6 +40,7 @@ type FormValues = z.infer<typeof formSchema>;
 export function ContactForm() {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const { toast } = useToast();
+	const { sendContact } = useContactStore();
 
 	// Initialisation du formulaire avec react-hook-form
 	const form = useForm<FormValues>({
@@ -48,6 +48,7 @@ export function ContactForm() {
 		defaultValues: {
 			name: '',
 			email: '',
+			phone: '',
 			subject: '',
 			message: '',
 		},
@@ -57,28 +58,20 @@ export function ContactForm() {
 		setIsSubmitting(true);
 
 		try {
-			const response = await fetch('/api/contact', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(data),
-			});
+			const { success, message } = await sendContact(data);
 
-			if (!response.ok) {
-				const errorData = await response.json();
+			if (!success) {
 				throw new Error(
-					errorData.message || "Erreur lors de l'envoi du formulaire",
+					message || "Erreur lors de l'envoi du formulaire",
 				);
+			} else {
+				// Affichage du toast de succès
+				toast({
+					title: 'Message envoyé!',
+					description: message,
+					variant: 'default',
+				});
 			}
-
-			// Affichage du toast de succès
-			toast({
-				title: 'Message envoyé!',
-				description:
-					'Merci de nous avoir contacté. Nous vous répondrons dans les plus brefs délais.',
-				variant: 'default',
-			});
 
 			// Réinitialisation du formulaire
 			form.reset();
@@ -97,102 +90,106 @@ export function ContactForm() {
 		}
 	};
 
-	const formFields = [
-		{ id: 'name', label: 'Nom', type: 'text' },
-		{ id: 'email', label: 'Email', type: 'email' },
-		{ id: 'subject', label: 'Sujet', type: 'text' },
-	];
-
 	return (
-		<Card className="p-8">
-			<motion.div variants={animations.formItem}>
-				<h2 className="text-2xl font-bold mb-2">Envoyez-nous un message</h2>
-				<p className="text-muted-foreground">
-					Pour toute question ou autre qui n'ont pas pu être repondu dans
-					la FAQ posez les nous ici.
+		<Form {...form}>
+			<form
+				onSubmit={form.handleSubmit(onSubmit)}
+				className="space-y-6 bg-background p-6 rounded-lg shadow-sm border"
+			>
+				<h3 className="text-xl font-semibold mb-4">Nous contactez</h3>
+
+				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+					<FormField
+						control={form.control}
+						name="name"
+						render={({ field }) => (
+							<FormItem className="space-y-2">
+								<FormLabel>Nom complet</FormLabel>
+								<FormControl>
+									<Input placeholder="Votre nom" {...field} />
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+
+					<FormField
+						control={form.control}
+						name="email"
+						render={({ field }) => (
+							<FormItem className="space-y-2">
+								<FormLabel>Email</FormLabel>
+								<FormControl>
+									<Input type="email" placeholder="votre@email.com" {...field} />
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+
+					<FormField
+						control={form.control}
+						name="phone"
+						render={({ field }) => (
+							<FormItem className="space-y-2">
+								<FormLabel>Téléphone</FormLabel>
+								<FormControl>
+									<PhoneInput
+										placeholder="01 23 45 67 89"
+										international={false}
+										defaultCountry="FR"
+										{...field}
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+
+				</div>
+
+				<FormField
+					control={form.control}
+					name="subject"
+					render={({ field }) => (
+						<FormItem className="space-y-2">
+							<FormLabel>Sujet:</FormLabel>
+							<FormControl>
+								<Input
+									placeholder="Décrivez l'objet de votre demande..."
+									{...field}
+								/>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+				<FormField
+					control={form.control}
+					name="message"
+					render={({ field }) => (
+						<FormItem className="space-y-2">
+							<FormLabel>Votre message</FormLabel>
+							<FormControl>
+								<Textarea
+									placeholder="Décrivez vos besoins spécifiques, quantités, préférences..."
+									className="min-h-[120px]"
+									{...field}
+								/>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				<Button type="submit" className="w-full" disabled={isSubmitting}>
+					{isSubmitting ? 'Envoi en cours...' : 'Envoyer ma demande'}
+				</Button>
+
+				<p className="text-xs text-muted-foreground text-center">
+					Nous vous répondrons dans un délai de 48 heures ouvrables.
 				</p>
-			</motion.div>
-
-			<motion.div
-				variants={animations.withDuration(animations.fadeIn, 1)}
-				className="rounded-xl text-left mt-4">
-				<Form {...form}>
-					<motion.form
-						variants={animations.formContainer}
-						onSubmit={form.handleSubmit(onSubmit)}
-						className="h-full">
-						{formFields.map(field => (
-							<FormField
-								key={field.id}
-								control={form.control}
-								name={field.id as keyof FormValues}
-								render={({ field: fieldProps }) => (
-									<motion.div
-										variants={animations.formItem}
-										className="mb-6">
-										<FormItem className="space-y-2">
-											<FormLabel
-												htmlFor={field.id}
-												className="block mb-2">
-												{field.label}
-											</FormLabel>
-											<FormControl>
-												<Input
-													id={field.id}
-													type={field.type}
-													className="w-full transition-all duration-300 focus:ring-2 focus:ring-primary"
-													{...fieldProps}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									</motion.div>
-								)}
-							/>
-						))}
-
-						<FormField
-							control={form.control}
-							name="message"
-							render={({ field }) => (
-								<motion.div
-									variants={animations.formItem}
-									className="mb-6">
-									<FormItem className="space-y-2">
-										<FormLabel
-											htmlFor="message"
-											className="block mb-2">
-											Message
-										</FormLabel>
-										<FormControl>
-											<Textarea
-												id="message"
-												rows={5}
-												className="w-full transition-all duration-300 focus:ring-2 focus:ring-primary"
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								</motion.div>
-							)}
-						/>
-
-						<motion.div
-							variants={animations.formItem}
-							whileHover={animations.hover.scale}
-							whileTap={animations.hover.tap}>
-							<AnimatedButton
-								type="submit"
-								Icon={Send}
-								className="w-full py-6 text-lg"
-								disabled={isSubmitting}>
-								{isSubmitting ? 'Envoi en cours...' : 'Envoyer'}
-							</AnimatedButton>
-						</motion.div>
-					</motion.form>
-				</Form>
-			</motion.div>
-		</Card>
+			</form>
+		</Form>
 	);
 }

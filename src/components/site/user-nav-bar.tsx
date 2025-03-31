@@ -13,7 +13,7 @@ export function UserNavBar({
 		<div>
 			<HeaderSite />
 			<main>{children}</main>
-			<Toaster />
+			{/* <Toaster /> */}
 			<FooterSite />
 		</div>
 	);

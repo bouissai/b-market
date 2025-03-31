@@ -35,6 +35,7 @@ import {
   FormMessage 
 } from '@/components/ui/form';
 import { PhoneInput } from '@/components/ui/phone-input';
+import { useContactStore } from '@/store/useContactStore';
 
 // Schéma de validation avec Zod
 const formSchema = z.object({
@@ -52,6 +53,8 @@ type FormValues = z.infer<typeof formSchema>;
 export default function ContactFormEvent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { sendContactEvent } = useContactStore();
+
 
   // Initialisation du formulaire avec react-hook-form
   const form = useForm<FormValues>({
@@ -66,29 +69,23 @@ export default function ContactFormEvent() {
       message: '',
     }
   });
-
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     
     try {
-      // Préparation des données avec la date formatée
       const formattedData = {
         ...data,
         date: data.date ? data.date.toISOString() : undefined,
       };
       
-      // Appel à la route d'API unifiée
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formattedData),
-      });
+      console.log('Données envoyées:', formattedData); // Debug
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Erreur lors de l\'envoi du formulaire');
+      const { success, message } = await sendContactEvent(formattedData);
+      
+      console.log('Réponse du serveur:', { success, message }); // Debug
+      
+      if (!success) {
+        throw new Error(message || 'Erreur lors de l\'envoi du formulaire');
       }
       
       toast({
@@ -96,10 +93,9 @@ export default function ContactFormEvent() {
         description: 'Nous vous contacterons dans les plus brefs délais.',
       });
       
-      // Réinitialisation du formulaire
       form.reset();
     } catch (error) {
-      console.error('Erreur:', error);
+      console.error('Erreur détaillée:', error); // Debug plus détaillé
       toast({
         title: 'Erreur',
         description: error instanceof Error ? error.message : 'Une erreur est survenue lors de l\'envoi. Veuillez réessayer.',
@@ -109,7 +105,6 @@ export default function ContactFormEvent() {
       setIsSubmitting(false);
     }
   };
-
   return (
     <Form {...form}>
       <form 
