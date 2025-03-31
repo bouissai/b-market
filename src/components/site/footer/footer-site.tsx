@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Facebook, Instagram, MapPin, Phone, Mail, Clock } from 'lucide-react';
 import Image from 'next/image';
+import { GENERAL_INFO, MENU_ITEMS } from '@/constants';
 
 export function FooterSite() {
 	return (
@@ -49,52 +50,24 @@ export function FooterSite() {
 						</div>
 					</div>
 
-					{/* Quick Links */}
 					<div>
 						<h3 className="text-lg font-semibold mb-6 flex items-center">
 							<span className="w-8 h-0.5 bg-boucherie-red mr-3"></span>
 							Liens Rapides
 						</h3>
 						<ul className="space-y-3">
-							<li>
-								<Link
-									href="/produits"
-									className="text-gray-400 hover:text-boucherie-red transition-colors">
-									Nos Produits
-								</Link>
-							</li>
-							<li>
-								<Link
-									href="/services"
-									className="text-gray-400 hover:text-boucherie-red transition-colors">
-									Nos Services
-								</Link>
-							</li>
-							<li>
-								<Link
-									href="/recettes"
-									className="text-gray-400 hover:text-boucherie-red transition-colors">
-									Recettes
-								</Link>
-							</li>
-							<li>
-								<Link
-									href="/contact"
-									className="text-gray-400 hover:text-boucherie-red transition-colors">
-									Contact
-								</Link>
-							</li>
-							<li>
-								<Link
-									href="/commande"
-									className="text-gray-400 hover:text-boucherie-red transition-colors">
-									Commander en ligne
-								</Link>
-							</li>
+							{MENU_ITEMS.map(item => (
+								<li key={item.href}>
+									<Link
+										href={item.href}
+										className="text-gray-400 hover:text-boucherie-red transition-colors">
+										{item.label}
+									</Link>
+								</li>
+							))}
 						</ul>
 					</div>
 
-					{/* Contact Information */}
 					<div>
 						<h3 className="text-lg font-semibold mb-6 flex items-center">
 							<span className="w-8 h-0.5 bg-boucherie-red mr-3"></span>
@@ -104,48 +77,45 @@ export function FooterSite() {
 							<li className="flex items-start">
 								<MapPin className="h-6 w-6 text-boucherie-red shrink-0 mt-0.5 mr-3" />
 								<span className="text-gray-400">
-									<div>Fontaine: 123 Rue de la Boucherie, 38600</div>
-									<div>Meylan: 456 Avenue des Viandes, 38240</div>
+									<div>{GENERAL_INFO.address}</div>
 								</span>
 							</li>
 							<li className="flex items-center">
 								<Phone className="h-6 w-6 text-boucherie-red mr-3" />
-								<span className="text-gray-400">04 76 12 34 56</span>
+								<span className="text-gray-400">
+									{GENERAL_INFO.phone}
+								</span>
 							</li>
 							<li className="flex items-center">
 								<Mail className="h-6 w-6 text-boucherie-red mr-3" />
 								<span className="text-gray-400">
-									contact@bmarket.fr
+									{GENERAL_INFO.email}
 								</span>
 							</li>
 						</ul>
 					</div>
 
-					{/* Business Hours */}
 					<div>
 						<h3 className="text-lg font-semibold mb-6 flex items-center">
 							<span className="w-8 h-0.5 bg-boucherie-red mr-3"></span>
 							Horaires d'Ouverture
 						</h3>
 						<ul className="space-y-3">
-							<li className="flex items-start">
-								<Clock className="h-6 w-6 text-boucherie-red shrink-0 mt-0.5 mr-3" />
-								<div>
-									<p className="text-gray-400">Lundi - Samedi:</p>
-									<p className="font-semibold text-white">
-										8h00 - 19h30
-									</p>
-								</div>
-							</li>
-							<li className="flex items-start">
-								<Clock className="h-6 w-6 text-boucherie-red shrink-0 mt-0.5 mr-3" />
-								<div>
-									<p className="text-gray-400">Dimanche:</p>
-									<p className="font-semibold text-white">
-										8h00 - 13h00
-									</p>
-								</div>
-							</li>
+							{GENERAL_INFO.openingHours.map((item, index) => (
+								<li key={index} className="flex items-start">
+									<Clock className="h-6 w-6 text-boucherie-red shrink-0 mt-0.5 mr-3" />
+									<div>
+										<p className="text-gray-400">{item.days}:</p>
+										{item.hours.map((hour, i) => (
+											<p
+												key={i}
+												className="font-semibold text-white">
+												{hour}
+											</p>
+										))}
+									</div>
+								</li>
+							))}
 						</ul>
 					</div>
 				</div>

@@ -8,189 +8,193 @@ const DEFAULT_LIMIT = 100;
 const DEFAULT_PAGE = 1;
 
 const QueryParamsSchema = z.object({
-  categoryId: z.string().optional(),
-  page: z.coerce.number().positive().optional(),
-  limit: z.coerce.number().positive().max(MAX_LIMIT).optional(),
+	categoryId: z.string().optional(),
+	page: z.coerce.number().positive().optional(),
+	limit: z.coerce.number().positive().max(MAX_LIMIT).optional(),
 });
 
 // 1. Récupérer tous les articles
 export async function GET(req: Request) {
-  try {
-    // Récupération des paramètres de requête
-    const { searchParams } = new URL(req.url);
-    const params = Object.fromEntries(searchParams.entries());
+	try {
+		// Récupération des paramètres de requête
+		const { searchParams } = new URL(req.url);
+		const params = Object.fromEntries(searchParams.entries());
 
-    // Vérification des paramètres avec Zod
-    const result = QueryParamsSchema.safeParse(params);
-    if (!result.success) {
-      return NextResponse.json(
-        { message: 'Paramètres de requête invalides', errors: result.error.format() },
-        { status: 400 }
-      );
-    }
-    
-    // Initialisation des paramètres validés
-    const { categoryId, page, limit } = result.data;
-    const actualPage = page || DEFAULT_PAGE;
-    const actualLimit = limit || DEFAULT_LIMIT;
-    const skip = (actualPage - 1) * actualLimit;
+		// Vérification des paramètres avec Zod
+		const result = QueryParamsSchema.safeParse(params);
+		if (!result.success) {
+			return NextResponse.json(
+				{
+					message: 'Paramètres de requête invalides',
+					errors: result.error.format(),
+				},
+				{ status: 400 },
+			);
+		}
 
-    // si categoryId est fourni, vérifier si la catégorie existe
-    const whereClause: any = {};
-    if (categoryId) {
-      const categoryExists = await prisma.category.findUnique({
-        where: { id: categoryId },
-        select: { id: true },
-      });
+		// Initialisation des paramètres validés
+		const { categoryId, page, limit } = result.data;
+		const actualPage = page || DEFAULT_PAGE;
+		const actualLimit = limit || DEFAULT_LIMIT;
+		const skip = (actualPage - 1) * actualLimit;
 
-      if (!categoryExists) {
-        return NextResponse.json(
-          { message: `La catégorie '${categoryId}' n'existe pas` },
-          { status: 400 }
-        );
-      }
+		// si categoryId est fourni, vérifier si la catégorie existe
+		const whereClause: any = {};
+		if (categoryId) {
+			const categoryExists = await prisma.category.findUnique({
+				where: { id: categoryId },
+				select: { id: true },
+			});
 
-      whereClause.categoryId = categoryId;
-    }
+			if (!categoryExists) {
+				return NextResponse.json(
+					{ message: `La catégorie '${categoryId}' n'existe pas` },
+					{ status: 400 },
+				);
+			}
 
-    // Récupération des articles avec pagination
-    const [articles, total] = await Promise.all([
-      prisma.article.findMany({
-        where: whereClause,
-        skip,
-        take: actualLimit,
-        include: {
-          category: {
-            select: { name: true },
-          },
-        },
-      }),
-      prisma.article.count({ where: whereClause }),
-    ]);
+			whereClause.categoryId = categoryId;
+		}
 
-    // Mapper les articles au format DTO
-    const articlesDto: ArticleGetDto[] = articles.map(article => ({
-      id: article.id,
-      name: article.name,
-      unit: article.unit,
-      price: article.price,
-      image: article.image,
-      description: article.description || "",
-      categoryId: article.categoryId,
-      categoryName: article.category.name,
-    }));
+		// Récupération des articles avec pagination
+		const [articles, total] = await Promise.all([
+			prisma.article.findMany({
+				where: whereClause,
+				skip,
+				take: actualLimit,
+				include: {
+					category: {
+						select: { name: true },
+					},
+				},
+			}),
+			prisma.article.count({ where: whereClause }),
+		]);
 
-    return NextResponse.json({ articles: articlesDto, total }, { status: 200 });
-  } catch (error) {
-    console.error('Erreur lors de la récupération des articles :', error);
-    return NextResponse.json(
-      { message: 'Échec de la récupération des articles' },
-      { status: 500 }
-    );
-  }
+		// Mapper les articles au format DTO
+		const articlesDto: ArticleGetDto[] = articles.map(article => ({
+			id: article.id,
+			name: article.name,
+			unit: article.unit,
+			price: article.price,
+			image: article.image,
+			description: article.description || '',
+			categoryId: article.categoryId,
+			categoryName: article.category.name,
+		}));
+
+		return NextResponse.json(
+			{ articles: articlesDto, total },
+			{ status: 200 },
+		);
+	} catch (error) {
+		console.error('Erreur lors de la récupération des articles :', error);
+		return NextResponse.json(
+			{ message: 'Échec de la récupération des articles' },
+			{ status: 500 },
+		);
+	}
 }
-
 
 // 2. Ajouter un article
 export async function POST(req: NextRequest) {
-  try {
-    // Récupération du JSON
-    const body = await req.json();
-    
-    const { name, image, description, price, unit, categoryId } = body;
+	try {
+		// Récupération du JSON
+		const body = await req.json();
 
-    // Vérification si le corps de la requête est vide
-    if (!body) {
-      return NextResponse.json(
-        { message: 'Le corps de la requête est vide ou invalide' },
-        { status: 400 },
-      );
-    }
+		const { name, image, description, price, unit, categoryId } = body;
 
-    // Validation des champs obligatoires
-    if (!name || !price || !categoryId || !unit) {
-      return NextResponse.json(
-        { message: "Le nom, le prix, l'unité et la catégorie sont requis" },
-        { status: 400 },
-      );
-    }
+		// Vérification si le corps de la requête est vide
+		if (!body) {
+			return NextResponse.json(
+				{ message: 'Le corps de la requête est vide ou invalide' },
+				{ status: 400 },
+			);
+		}
 
-    // Vérifier que le champ "price" est du type attendu (nombre)
-    if (typeof price !== 'number' || price <= 0) {
-      return NextResponse.json(
-        { message: 'Le prix doit être un nombre positif' },
-        { status: 400 },
-      );
-    }
+		// Validation des champs obligatoires
+		if (!name || !price || !categoryId || !unit) {
+			return NextResponse.json(
+				{ message: "Le nom, le prix, l'unité et la catégorie sont requis" },
+				{ status: 400 },
+			);
+		}
 
-    // Vérifier si un article avec le même nom existe déjà
-    const existingArticle = await prisma.article.findFirst({
-      where: { name },
-    });
+		// Vérifier que le champ "price" est du type attendu (nombre)
+		if (typeof price !== 'number' || price <= 0) {
+			return NextResponse.json(
+				{ message: 'Le prix doit être un nombre positif' },
+				{ status: 400 },
+			);
+		}
 
-    if (existingArticle) {
-      return NextResponse.json(
-        { message: `Un article portant le nom '${name}' existe déjà` },
-        { status: 409 }, // 409 Conflict
-      );
-    }
+		// Vérifier si un article avec le même nom existe déjà
+		const existingArticle = await prisma.article.findFirst({
+			where: { name },
+		});
 
-    // Vérifier si la catégorie existe
-    const category = await prisma.category.findUnique({
-      where: { id: categoryId },
-    });
+		if (existingArticle) {
+			return NextResponse.json(
+				{ message: `Un article portant le nom '${name}' existe déjà` },
+				{ status: 409 }, // 409 Conflict
+			);
+		}
 
-    if (!category) {
-      return NextResponse.json(
-        { message: `La catégorie '${categoryId}' n'existe pas` },
-        { status: 400 },
-      );
-    }
+		// Vérifier si la catégorie existe
+		const category = await prisma.category.findUnique({
+			where: { id: categoryId },
+		});
 
-    // Création de l'article
-    const newArticle = await prisma.article.create({
-      data: {
-        name: name,
-        image: image || '',
-        price: price,
-        unit: unit,
-        description: description || '',
-        category: {
-          connect: { id: category.id },
-        },
-      },
-      include: {
-        category: {
-          select: { name: true },
-        },
-      },
-    });
+		if (!category) {
+			return NextResponse.json(
+				{ message: `La catégorie '${categoryId}' n'existe pas` },
+				{ status: 400 },
+			);
+		}
 
-    const articleGetDto: ArticleGetDto = {
-      id: newArticle.id,
-      name: newArticle.name,
-      unit: newArticle.unit,
-      price: newArticle.price,
-      image: newArticle.image,
-      description: newArticle.description || "",
-      categoryId: newArticle.categoryId,
-      categoryName: newArticle.category.name,
-    };
+		// Création de l'article
+		const newArticle = await prisma.article.create({
+			data: {
+				name: name,
+				image: image || '',
+				price: price,
+				unit: unit,
+				description: description || '',
+				category: {
+					connect: { id: category.id },
+				},
+			},
+			include: {
+				category: {
+					select: { name: true },
+				},
+			},
+		});
 
-    return NextResponse.json(articleGetDto, { status: 201 });
+		const articleGetDto: ArticleGetDto = {
+			id: newArticle.id,
+			name: newArticle.name,
+			unit: newArticle.unit,
+			price: newArticle.price,
+			image: newArticle.image,
+			description: newArticle.description || '',
+			categoryId: newArticle.categoryId,
+			categoryName: newArticle.category.name,
+		};
 
-  } catch (error) {
-    // Vérification de l'erreur pour un diagnostic plus précis
-    if (error instanceof SyntaxError) {
-      return NextResponse.json(
-        { message: 'Format JSON invalide' },
-        { status: 400 },
-      );
-    }
+		return NextResponse.json(articleGetDto, { status: 201 });
+	} catch (error) {
+		// Vérification de l'erreur pour un diagnostic plus précis
+		if (error instanceof SyntaxError) {
+			return NextResponse.json(
+				{ message: 'Format JSON invalide' },
+				{ status: 400 },
+			);
+		}
 
-    return NextResponse.json(
-      { message: "Échec de la création de l'article" },
-      { status: 500 },
-    );
-  }
+		return NextResponse.json(
+			{ message: "Échec de la création de l'article" },
+			{ status: 500 },
+		);
+	}
 }

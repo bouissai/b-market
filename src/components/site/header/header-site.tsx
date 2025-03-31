@@ -1,31 +1,18 @@
 'use client';
+
 import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { MENU_ITEMS } from '@/constants';
-import { Button } from '@/components/ui/button';
-import { LogOut, Menu, X } from 'lucide-react';
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useSession } from 'next-auth/react';
-import { BasketButton } from './basket-button';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/store/useAuthStore';
+import { Menu, X } from 'lucide-react';
 import { MobileMenu } from './mobile-menu';
+import { DesktopMenu } from './desktop-menu';
+import { Button } from '@/components/ui/button';
 
 export function HeaderSite() {
 	const [isScrolled, setIsScrolled] = useState(false);
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-	const pathname = usePathname();
-	const { data: session } = useSession();
 	const router = useRouter();
-	const { signOut } = useAuthStore();
 
 	const goTo = (path: string) => {
 		router.push(path);
@@ -63,61 +50,8 @@ export function HeaderSite() {
 							B Market
 						</span>
 					</Link>
-					<nav className="hidden lg:flex items-center">
-						<div className="space-x-1">
-							{MENU_ITEMS.map(item => (
-								<Link
-									key={item.label}
-									href={item.href}
-									className={`px-4 py-2 rounded-md text-sm font-medium transition-colors hover:scale-105 transform ${
-										pathname === item.href
-											? 'text-boucherie-white bg-boucherie-red shadow-md'
-											: 'text-boucherie-white hover:text-boucherie-black hover:bg-boucherie-red'
-									}`}>
-									{item.label}
-								</Link>
-							))}
-						</div>
 
-						<div className="flex mx-10 space-x-1 gap-4">
-							<BasketButton />
-							{session ? (
-								<DropdownMenu>
-									<DropdownMenuTrigger className="focus:outline-none">
-										<Avatar className="h-9 w-9">
-											<AvatarImage
-												src="/placeholder.svg"
-												alt={session.user?.name || 'U'}
-											/>
-											<AvatarFallback>
-												{session.user?.name?.charAt(0) || 'U'}
-											</AvatarFallback>
-										</Avatar>
-									</DropdownMenuTrigger>
-									<DropdownMenuContent align="end">
-										<DropdownMenuItem
-											onClick={() => goTo('/compte?tab=commandes')}>
-											Mes commandes
-										</DropdownMenuItem>
-										<DropdownMenuItem
-											onClick={() => goTo('/compte?tab=infos')}>
-											Mes informations personnelles
-										</DropdownMenuItem>
-										<DropdownMenuItem
-											className="text-red-600"
-											onClick={() => signOut(false)}>
-											<LogOut className="mr-2 h-4 w-4" />
-											Se dÃ©connecter
-										</DropdownMenuItem>
-									</DropdownMenuContent>
-								</DropdownMenu>
-							) : (
-								<Button onClick={() => router.push('/auth')}>
-									Se connecter
-								</Button>
-							)}
-						</div>
-					</nav>
+					<DesktopMenu goTo={goTo} />
 
 					<Button
 						size="icon"
@@ -131,6 +65,7 @@ export function HeaderSite() {
 			<MobileMenu
 				isOpen={isMobileMenuOpen}
 				onClose={() => setIsMobileMenuOpen(false)}
+				goTo={goTo}
 			/>
 		</header>
 	);

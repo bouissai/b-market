@@ -1,5 +1,8 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { MapComponent } from '../map-component';
+import { Card, CardContent } from '@/components/ui/card';
+import { Clock, MapPin, Phone } from 'lucide-react';
 
 export function CTASection() {
 	return (
@@ -20,35 +23,54 @@ export function CTASection() {
 				</div>
 
 				<div className="mb-12 boucherie-card p-1">
-					<div className="bg-gray-800 h-[400px] w-full flex items-center justify-center text-gray-500 text-lg">
-						Carte de la boutique B Market
-					</div>
+					<MapComponent />
 				</div>
 
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-					<div className="boucherie-card p-6">
-						<h3 className="text-xl font-bold mb-4 text-white">
-							B Market Fontaine
-						</h3>
-						<p className="text-gray-400 mb-2">
-							123 Rue de la Boucherie, 38600 Fontaine
-						</p>
-						<p className="text-gray-400 mb-2">Tél: 04 76 12 34 56</p>
-						<p className="text-gray-400 mb-4">
-							<span className="font-semibold">Horaires:</span> Lun-Sam
-							8h-19h30, Dim 8h-13h
-						</p>
-						<Button asChild variant="outline" className="w-full">
-							<Link
-								href="https://maps.google.com"
-								target="_blank"
-								rel="noopener noreferrer">
-								Voir sur Google Maps
-							</Link>
-						</Button>
-					</div>
-				</div>
+				{/* Section informations avec design amélioré */}
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+					<Card className="bg-gray-900 border-none shadow-lg hover:shadow-xl transition-shadow">
+						<CardContent className="p-6">
+							<div className="flex flex-col items-center text-center">
+								<div className="w-12 h-12 bg-red-700 rounded-full flex items-center justify-center mb-4">
+									<MapPin className="w-6 h-6 text-white" />
+								</div>
+								<h3 className="text-xl font-bold mb-2">
+									B Market Fontaine
+								</h3>
+								<p className="text-gray-300">123 Rue de la Boucherie</p>
+								<p className="text-gray-300">38600 Fontaine</p>
+							</div>
+						</CardContent>
+					</Card>
 
+					<Card className="bg-gray-900 border-none shadow-lg hover:shadow-xl transition-shadow">
+						<CardContent className="p-6">
+							<div className="flex flex-col items-center text-center">
+								<div className="w-12 h-12 bg-red-700 rounded-full flex items-center justify-center mb-4">
+									<Phone className="w-6 h-6 text-white" />
+								</div>
+								<h3 className="text-xl font-bold mb-2">
+									Contactez-nous
+								</h3>
+								<p className="text-gray-300">Tél: 04 76 12 34 56</p>
+								<p className="text-gray-300">contact@bmarket.fr</p>
+							</div>
+						</CardContent>
+					</Card>
+
+					<Card className="bg-gray-900 border-none shadow-lg hover:shadow-xl transition-shadow">
+						<CardContent className="p-6">
+							<div className="flex flex-col items-center text-center">
+								<div className="w-12 h-12 bg-red-700 rounded-full flex items-center justify-center mb-4">
+									<Clock className="w-6 h-6 text-white" />
+								</div>
+								<h3 className="text-xl font-bold mb-2">Horaires</h3>
+								<p className="text-gray-300">Lun-Sam: 8h-19h30</p>
+								<p className="text-gray-300">Dim: 8h-13h</p>
+							</div>
+						</CardContent>
+					</Card>
+				</div>
 				<div className="text-center">
 					<h3 className="text-2xl font-bold mb-4 text-white font-playfair">
 						Prêt à commander ?
@@ -61,7 +83,7 @@ export function CTASection() {
 						asChild
 						size="lg"
 						className="bg-boucherie-red text-white hover:bg-boucherie-red-light rounded-md shadow-md">
-						<Link href="/produits">Commander maintenant</Link>
+						<Link href="/products">Commander maintenant</Link>
 					</Button>
 				</div>
 			</div>

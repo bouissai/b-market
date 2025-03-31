@@ -38,7 +38,7 @@ export function HeroSection() {
                        shadow-[0_0_15px_rgba(139,0,0,0.5)] group transition-all duration-300
                        animate-slow-pulse hover:animate-none">
 							<Link
-								href="/produits"
+								href="/products"
 								className="relative flex items-center justify-center">
 								<span
 									className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent

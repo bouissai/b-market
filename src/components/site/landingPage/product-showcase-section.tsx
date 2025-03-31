@@ -71,7 +71,7 @@ export function ProductsShowcaseSection() {
 									{product.description}
 								</p>
 								<Link
-									href={`/produits#${product.name.toLowerCase()}`}
+									href={`/products#${product.name.toLowerCase()}`}
 									className="text-boucherie-red font-medium hover:text-boucherie-red-light transition-colors inline-flex items-center">
 									Voir les produits
 									<svg
@@ -94,7 +94,7 @@ export function ProductsShowcaseSection() {
 
 				<div className="text-center mt-12">
 					<Button asChild size="lg" className="btn-primary">
-						<Link href="/produits">Voir tous nos produits</Link>
+						<Link href="/products">Voir tous nos produits</Link>
 					</Button>
 				</div>
 			</div>

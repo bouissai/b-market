@@ -1,7 +1,5 @@
 import { FAQItem } from '@/types/faq';
 import {
-	Award,
-	Beef,
 	ChefHat,
 	Clock,
 	HandPlatter,
@@ -9,35 +7,25 @@ import {
 	MapPin,
 	Phone,
 	ShoppingBag,
-	Sparkle,
 	Sparkles,
 	Truck,
 } from 'lucide-react';
 
-// Contact information items
-export const contactItems = [
-	{
-		icon: Mail,
-		title: 'Email',
-		info: 'contact@example.com',
-	},
-	{
-		icon: Phone,
-		title: 'Téléphone',
-		info: '04 38 86 15 65',
-	},
-	{
-		icon: MapPin,
-		title: 'Adresse',
-		info: '39 Av. du Vercors, 38600 Fontaine',
-	},
-];
-
-// Hours information
-export const hoursInfo = [
-	{ day: 'Mardi - Dimanche', hours: '9h00 - 13h00 / 15h00 - 19h30 ' },
-	{ day: 'Lundi', hours: 'Fermé' },
-];
+export const GENERAL_INFO = {
+	address: '39 Avenue du Vercors, 38600 Fontaine',
+	phone: '04 38 86 15 65',
+	email: 'bouissailyass@gmail.com',
+	openingHours: [
+		{
+			days: 'Mardi - Dimanche',
+			hours: ['9h00 - 13h00', '15h00 - 19h30'],
+		},
+		{
+			days: 'Lundi',
+			hours: ['Fermé'],
+		},
+	],
+};
 
 export const LES_VALEURS = [
 	{
@@ -65,7 +53,7 @@ export const LES_VALEURS = [
 
 export const MENU_ITEMS = [
 	{ label: 'Accueil', href: '/' },
-	{ label: 'Nos Produits', href: '/produits' },
+	{ label: 'Nos Produits', href: '/products' },
 	{ label: 'Recettes', href: '/recipes' },
 	{ label: 'Événements', href: '/events' },
 	{ label: 'Contact', href: '/contact' },
@@ -107,7 +95,56 @@ export const CLICK_COLLECT_STEPS = [
 	},
 ];
 
-// Données FAQ en respectant le type défini
+export const eventTypes = [
+	{
+		id: '1',
+		title: 'Mariages',
+		description: 'Viande de qualité supérieure pour votre jour spécial',
+		image: '/images/mariage.webp',
+		features: [
+			'Découpes sur mesure selon vos besoins',
+			"Livraison le jour de l'événement",
+			'Conseils personnalisés sur les quantités',
+			'Viande halal',
+		],
+	},
+	{
+		id: '2',
+		title: 'Fêtes religieuses',
+		description: "Viande halal pour l'Aïd et autres célébrations religieuses",
+		image: '/images/religieux.webp',
+		features: [
+			'Viande halal certifiée',
+			"Découpe de moutons entiers pour l'Aïd al-Adha",
+			'Préparation selon les traditions',
+			"Réservation à l'avance pour garantir la disponibilité",
+		],
+	},
+	{
+		id: '3',
+		title: "Événements d'entreprise",
+		description: 'Solutions pour vos réceptions et événements professionnels',
+		image: '/images/afterwork.webp',
+		features: [
+			'Grandes quantités disponibles',
+			'Options de livraison pour les entreprises',
+			'Facturation simplifiée',
+			'Devis personnalisés selon vos besoins',
+		],
+	},
+	{
+		id: '4',
+		title: 'Célébrations familiales',
+		description: 'Pour vos réunions de famille et fêtes entre amis',
+		image: '/images/famille.webp',
+		features: [
+			"Portions adaptées à votre nombre d'invités",
+			'Préparations spéciales sur demande',
+			'Conseils de cuisson offerts',
+			'Options économiques disponibles',
+		],
+	},
+];
 export const FAQ_DATA: FAQItem[] = [
 	{
 		question: 'Quels modes de paiement acceptez-vous ?',
