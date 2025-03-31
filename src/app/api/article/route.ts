@@ -30,16 +30,6 @@ export async function GET(req: Request) {
     // Initialisation des paramètres validés
     const { categoryId, page, limit } = result.data;
 
-    // Pagination
-    let actualPage = undefined;
-    let actualLimit = undefined;
-    let skip = 0;
-    if(page && limit) {
-      actualPage = page;
-      actualLimit = limit;
-      skip = (actualPage - 1) * actualLimit;
-    }
-
     // si categoryId est fourni, vérifier si la catégorie existe
     const whereClause: any = {};
     if (categoryId) {
@@ -56,6 +46,16 @@ export async function GET(req: Request) {
       }
 
       whereClause.categoryId = categoryId;
+    }
+
+    // si page et limit sont fournis, calculer le nombre d'articles à ignorer
+    let actualPage = undefined;
+    let actualLimit = undefined;
+    let skip = 0;
+    if(page && limit) {
+      actualPage = page;
+      actualLimit = limit;
+      skip = (actualPage - 1) * actualLimit;
     }
 
     // Récupération des articles avec pagination
