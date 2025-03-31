@@ -97,7 +97,7 @@ export default function PanierPage() {
     if (status === "unauthenticated") {
         return (
             <div className="flex min-h-screen flex-col">
-                <main className="flex-1 container py-12">
+                <main className="flex-1 container py-64">
                     <div className="max-w-md mx-auto">
                         <div className="text-center mb-8 space-y-4">
                             <Lock className="h-12 w-12 text-primary mx-auto mb-4" />

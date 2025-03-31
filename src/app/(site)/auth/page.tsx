@@ -21,7 +21,7 @@ const Auth = () => {
 	}, [session, router]);
 
 	return (
-		<div className="flex justify-center items-center py-8 min-h-[50vh]">
+		<div className="flex justify-center items-center py-24 min-h-[50vh]">
 			<Tabs
 				value={tab}
 				onValueChange={newTab => {
