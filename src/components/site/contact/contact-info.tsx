@@ -1,13 +1,13 @@
+import { GENERAL_INFO } from '@/constants';
 import {
+	Clock,
+	Facebook,
+	Instagram,
+	Mail,
 	MapPin,
 	Phone,
-	Mail,
-	Clock,
-	Instagram,
-	Facebook,
 	Twitter,
 } from 'lucide-react';
-import { GENERAL_INFO } from '@/constants';
 
 export default function ContactInfo() {
 	return (
@@ -49,10 +49,9 @@ export default function ContactInfo() {
 						<div className="text-gray-400">
 							{GENERAL_INFO.openingHours.map((item, index) => (
 								<div key={index}>
-									<p>{item.days}:</p>
-									{item.hours.map((hour, i) => (
-										<p key={i}>{hour}</p>
-									))}
+									<p>
+										{item.days}: {item.hours.join(' / ')}
+									</p>
 								</div>
 							))}
 						</div>

@@ -5,9 +5,9 @@ import { MapComponent } from '@/components/site/map-component';
 export default function ContactPage() {
 	return (
 		<>
-			<div className="py-20 mb-12">
+			<div className="py-24">
 				<div className="container-custom">
-					<h1 className="heading-xl text-white text-center mb-4">
+					<h1 className="heading-xl text-white text-center m-4">
 						Contactez-nous
 					</h1>
 					<p className="text-xl text-white/90 text-center max-w-2xl mx-auto">

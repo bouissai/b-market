@@ -268,10 +268,10 @@ export default function RecipesPage() {
 	return (
 		<>
 			{/* Hero section */}
-			<section className="bg-muted/30 py-12">
+			<section className="bg-muted/30 pt-20 py-4 box-border">
 				<div className="container mx-auto px-4">
 					<div className="max-w-3xl">
-						<h1 className="text-3xl md:text-4xl font-bold mb-4">
+						<h1 className="text-3xl md:text-4xl font-bold mb-4  ">
 							Nos Recettes
 						</h1>
 						<p className="text-muted-foreground mb-6">
@@ -298,7 +298,7 @@ export default function RecipesPage() {
 			</section>
 
 			{/* Main content */}
-			<section className="pb-12">
+			<section className="py-12 box-border">
 				<div className="container mx-auto px-4">
 					<Tabs defaultValue="general" className="space-y-8">
 						<div className="flex justify-between items-center">
