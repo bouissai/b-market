@@ -4,8 +4,6 @@ import { ArticleGetDto } from '@/types/article';
 import { z } from 'zod';
 
 const MAX_LIMIT = 1000;
-const DEFAULT_LIMIT = 100;
-const DEFAULT_PAGE = 1;
 
 const QueryParamsSchema = z.object({
 	categoryId: z.string().optional(),
@@ -16,12 +14,10 @@ const QueryParamsSchema = z.object({
 // 1. Récupérer tous les articles
 export async function GET(req: Request) {
 	try {
-		// Récupération des paramètres de requête
 		const { searchParams } = new URL(req.url);
 		const params = Object.fromEntries(searchParams.entries());
-
-		// Vérification des paramètres avec Zod
 		const result = QueryParamsSchema.safeParse(params);
+
 		if (!result.success) {
 			return NextResponse.json(
 				{
@@ -32,14 +28,9 @@ export async function GET(req: Request) {
 			);
 		}
 
-		// Initialisation des paramètres validés
 		const { categoryId, page, limit } = result.data;
-		const actualPage = page || DEFAULT_PAGE;
-		const actualLimit = limit || DEFAULT_LIMIT;
-		const skip = (actualPage - 1) * actualLimit;
-
-		// si categoryId est fourni, vérifier si la catégorie existe
 		const whereClause: any = {};
+
 		if (categoryId) {
 			const categoryExists = await prisma.category.findUnique({
 				where: { id: categoryId },
@@ -56,12 +47,21 @@ export async function GET(req: Request) {
 			whereClause.categoryId = categoryId;
 		}
 
-		// Récupération des articles avec pagination
+		let actualPage = undefined;
+		let actualLimit = undefined;
+		let skip = 0;
+
+		if (page && limit) {
+			actualPage = page;
+			actualLimit = limit;
+			skip = (actualPage - 1) * actualLimit;
+		}
+
 		const [articles, total] = await Promise.all([
 			prisma.article.findMany({
 				where: whereClause,
 				skip,
-				take: actualLimit,
+				...(actualLimit ? { take: actualLimit } : {}),
 				include: {
 					category: {
 						select: { name: true },
@@ -71,7 +71,6 @@ export async function GET(req: Request) {
 			prisma.article.count({ where: whereClause }),
 		]);
 
-		// Mapper les articles au format DTO
 		const articlesDto: ArticleGetDto[] = articles.map(article => ({
 			id: article.id,
 			name: article.name,
@@ -99,12 +98,9 @@ export async function GET(req: Request) {
 // 2. Ajouter un article
 export async function POST(req: NextRequest) {
 	try {
-		// Récupération du JSON
 		const body = await req.json();
-
 		const { name, image, description, price, unit, categoryId } = body;
 
-		// Vérification si le corps de la requête est vide
 		if (!body) {
 			return NextResponse.json(
 				{ message: 'Le corps de la requête est vide ou invalide' },
@@ -112,7 +108,6 @@ export async function POST(req: NextRequest) {
 			);
 		}
 
-		// Validation des champs obligatoires
 		if (!name || !price || !categoryId || !unit) {
 			return NextResponse.json(
 				{ message: "Le nom, le prix, l'unité et la catégorie sont requis" },
@@ -120,7 +115,6 @@ export async function POST(req: NextRequest) {
 			);
 		}
 
-		// Vérifier que le champ "price" est du type attendu (nombre)
 		if (typeof price !== 'number' || price <= 0) {
 			return NextResponse.json(
 				{ message: 'Le prix doit être un nombre positif' },
@@ -128,7 +122,6 @@ export async function POST(req: NextRequest) {
 			);
 		}
 
-		// Vérifier si un article avec le même nom existe déjà
 		const existingArticle = await prisma.article.findFirst({
 			where: { name },
 		});
@@ -136,11 +129,10 @@ export async function POST(req: NextRequest) {
 		if (existingArticle) {
 			return NextResponse.json(
 				{ message: `Un article portant le nom '${name}' existe déjà` },
-				{ status: 409 }, // 409 Conflict
+				{ status: 409 },
 			);
 		}
 
-		// Vérifier si la catégorie existe
 		const category = await prisma.category.findUnique({
 			where: { id: categoryId },
 		});
@@ -152,7 +144,6 @@ export async function POST(req: NextRequest) {
 			);
 		}
 
-		// Création de l'article
 		const newArticle = await prisma.article.create({
 			data: {
 				name: name,
@@ -184,7 +175,6 @@ export async function POST(req: NextRequest) {
 
 		return NextResponse.json(articleGetDto, { status: 201 });
 	} catch (error) {
-		// Vérification de l'erreur pour un diagnostic plus précis
 		if (error instanceof SyntaxError) {
 			return NextResponse.json(
 				{ message: 'Format JSON invalide' },
