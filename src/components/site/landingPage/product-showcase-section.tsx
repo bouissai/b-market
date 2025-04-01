@@ -57,9 +57,9 @@ export function ProductsShowcaseSection() {
 									src={product.image || '/placeholder.svg'}
 									alt={product.name}
 									fill
-									className="object-cover transition-transform duration-300 group-hover:scale-105"
+									className="object-cover transition-transform duration-300 group-hover:scale-105  border border-boucherie-black "
 								/>
-								<div className="absolute inset-0 bg-gradient-to-t from-boucherie-black/90 to-transparent"></div>
+								<div className="absolute inset-0 bg-gradient-to-t from-boucherie-black/90 to-transparent transition-transform duration-300 group-hover:scale-105"></div>
 								<div className="absolute bottom-4 left-4 right-4">
 									<h3 className="text-xl font-bold text-white">
 										{product.name}

@@ -1,5 +1,5 @@
+import { Award, Clock, ThumbsUp } from 'lucide-react';
 import Image from 'next/image';
-import { Award, ThumbsUp, Clock } from 'lucide-react';
 
 const features = [
 	{
@@ -45,13 +45,15 @@ export function WhyChooseUsSection() {
 							key={index}
 							className="boucherie-card overflow-hidden group hover-lift">
 							<div className="relative h-48">
-								<Image
-									src={feature.image || '/placeholder.svg'}
-									alt={feature.title}
-									fill
-									className="object-cover transition-transform duration-300 group-hover:scale-105"
-								/>
-								<div className="absolute inset-0 bg-gradient-to-t from-boucherie-black/90 to-transparent"></div>
+
+
+									<Image
+										src={feature.image || '/placeholder.svg'}
+										alt={feature.title}
+										fill
+										className="object-cover transition-transform duration-300 group-hover:scale-105  border border-boucherie-black "
+									/>
+									<div className="absolute inset-0 bg-gradient-to-t from-boucherie-black/90 to-transparent transition-transform duration-300 group-hover:scale-105"></div>
 								<div className="absolute bottom-4 left-4 right-4">
 									<div className="flex items-center">
 										<div className="p-2 bg-boucherie-black/90 border border-boucherie-red/30 rounded-full mr-3">
