@@ -47,7 +47,7 @@ export default function PersonnalInformations() {
 
 	return (
 		<Card>
-			<CardContent className="p-6">
+			<CardContent className="p-6 ">
 				<h1 className="text-2xl font-bold mb-4">
 					Mes informations personnelles
 				</h1>

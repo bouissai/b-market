@@ -216,13 +216,20 @@ export default function Commandes() {
 	};
 
 	return (
-		<div>
-			<div className="mb-6">
-				<h1 className="text-3xl font-bold tracking-tight">Mes commandes</h1>
-				<p className="text-muted-foreground mt-1">
-					Consultez l'historique et le statut de vos commandes
-				</p>
-			</div>
+		<>
+			<section>
+				<div>
+					<div className="max-w-3xl">
+						<h1 className="text-3xl md:text-4xl font-bold mb-4  ">
+						Mes commandes
+						</h1>
+						<p className="text-muted-foreground mb-6">
+						Consultez l'historique et le statut de vos commandes
+						</p>
+
+					</div>
+				</div>
+			</section>
 
 			<div className="mb-6 relative">
 				<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -271,6 +278,6 @@ export default function Commandes() {
 					</div>
 				</TabsContent>
 			</Tabs>
-		</div>
+		</>
 	);
 }

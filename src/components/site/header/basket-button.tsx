@@ -2,6 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
 	Sheet,
+	SheetClose,
 	SheetContent,
 	SheetHeader,
 	SheetTitle,
@@ -80,11 +81,14 @@ export const BasketButton = ({ className = '' }: BasketButtonProps) => {
 											<span>Sous-total</span>
 											<span className="font-medium">29,99 €</span>
 										</div>
-										<Button
-											className="w-full mt-4"
-											onClick={() => router.push('/panier')}>
-											Passer la commande
-										</Button>
+										<SheetClose asChild>
+
+											<Button
+												className="w-full mt-4"
+												onClick={() => router.push('/panier')}>
+												Passer la commande
+											</Button>
+										</SheetClose>
 									</div>
 								</div>
 							)}

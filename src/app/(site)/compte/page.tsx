@@ -25,7 +25,7 @@ export default function MonComptePage() {
 
 	return (
 		<div className="flex min-h-screen p-4 flex-col items-center justify-start">
-			<main className="flex-1 py-8">
+			<main className="flex-1 py-8   pt-24">
 				{activeTab === 'commandes' ? (
 					<Commandes />
 				) : (
