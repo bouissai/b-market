@@ -9,12 +9,13 @@ TRUNCATE "User" CASCADE;
 
 -- Active: 1739726328662@@127.0.0.1@5433@bmarket
 -- Insérer des catégories de produits
-INSERT INTO "Category" (id, name, "createdAt", "updatedAt")
-VALUES ('cat1', 'Boeuf', NOW(), NOW()),
-       ('cat2', 'Agneau', NOW(), NOW()),
-       ('cat3', 'Volaille', NOW(), NOW()),
-       ('cat4', 'Épices', NOW(), NOW()),
-       ('cat5', 'Épicerie', NOW(), NOW());
+INSERT INTO "Category" (id, name, image, featured, description, "createdAt", "updatedAt")
+VALUES 
+  ('cat1', 'Boeuf', 'https://res.cloudinary.com/ddqrywesr/image/upload/v1743627027/eg5ec1vc9bscz1gimopj.png', true, 'Côtes, entrecôtes, bavettes, filets et autres morceaux nobles de bœuf, toujours frais et halal.', NOW(), NOW()),
+  ('cat2', 'Agneau', 'https://res.cloudinary.com/ddqrywesr/image/upload/v1743626541/hcutdkicydtpwwt5epcj.png', true, 'Gigots savoureux, côtelettes tendres et épaule d’agneau pour vos plats mijotés.', NOW(), NOW()),
+  ('cat3', 'Volaille', 'https://res.cloudinary.com/ddqrywesr/image/upload/v1743627357/bq5g4kl4eka5b7s9gcih.png', true, 'Poulet fermier, dinde, pintade et canard pour des recettes traditionnelles ou festives.', NOW(), NOW()),
+  ('cat4', 'Épices', 'https://res.cloudinary.com/ddqrywesr/image/upload/v1743632470/rn3bmgelf47dbfvm8mcn.png', true, 'Un assortiment d’épices authentiques pour relever vos viandes et plats maison.', NOW(), NOW());
+
 
 -- Insérer des articles
 INSERT INTO "Article" (id, name, unit, price, image, description, "createdAt", "updatedAt", "categoryId")
@@ -29,8 +30,8 @@ VALUES
   ('art7', 'Escalopes de poulet', 'kg', 15.90, '/images/no-img.png', 'Escalopes de poulet fraîches.', NOW(), NOW(), 'cat3'),
   ('art8', 'Mélange Ras el hanout', '100g', 3.50, '/images/no-img.png', 'Mélange d''épices traditionnel.', NOW(), NOW(), 'cat4'),
   ('art9', 'Cumin moulu', '100g', 2.50, '/images/no-img.png', 'Cumin moulu de qualité.', NOW(), NOW(), 'cat4'),
-  ('art10', 'Semoule fine', 'kg', 3.90, '/images/no-img.png', 'Semoule fine de qualité supérieure.', NOW(), NOW(), 'cat5'),
-  ('art11', 'Huile d''olive', 'litre', 8.90, '/images/no-img.png', 'Huile d''olive extra vierge.', NOW(), NOW(), 'cat5');
+  ('art10', 'Semoule fine', 'kg', 3.90, '/images/no-img.png', 'Semoule fine de qualité supérieure.', NOW(), NOW(), 'cat4'),
+  ('art11', 'Huile d''olive', 'litre', 8.90, '/images/no-img.png', 'Huile d''olive extra vierge.', NOW(), NOW(), 'cat4');
 
 -- Insérer des utilisateurs
 INSERT INTO "User" (id, name, email, phone, "createdAt", "updatedAt", password, image, "isAdmin")

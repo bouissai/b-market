@@ -51,6 +51,9 @@ model Article {
 model Category {
   id        String    @id @default(cuid())
   name      String    @unique
+  image     String?   // URL de l'image
+  description  String?
+  featured  Boolean   @default(false)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   articles  Article[]

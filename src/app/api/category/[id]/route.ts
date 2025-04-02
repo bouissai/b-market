@@ -63,12 +63,12 @@ export async function PUT(
 ) {
   try {
     const id = (await params).id;
-    const { name } = await req.json();
-
+    const body = await req.json();
+    const { name, image, featured, description } = body;
     // Validation : vérifier si le champ "name" est fourni
-    if (!name) {
+    if (!name && !image && !description && typeof featured !== 'boolean') {
       return NextResponse.json(
-        { message: 'Le nom est requis.' },
+        { message: 'Aucune donnée fournie pour la mise à jour.' },
         { status: 400 },
       );
     }
@@ -85,22 +85,29 @@ export async function PUT(
       );
     }
 
-    // Vérifier si une autre catégorie a déjà ce nom
-    const duplicateCategory = await prisma.category.findFirst({
-      where: { name, NOT: { id } }, // Exclure l'ID de la catégorie actuelle
-    });
+    // Vérifier les doublons uniquement si le nom est modifié
+    if (name && name !== existingCategory.name) {
+      const duplicateCategory = await prisma.category.findFirst({
+        where: { name, NOT: { id } },
+      });
 
-    if (duplicateCategory) {
-      return NextResponse.json(
-        { message: 'Une catégorie avec ce nom existe déjà.' },
-        { status: 409 },
-      );
+      if (duplicateCategory) {
+        return NextResponse.json(
+          { message: 'Une catégorie avec ce nom existe déjà.' },
+          { status: 409 },
+        );
+      }
     }
 
     // Mise à jour de la catégorie
     const updatedCategory = await prisma.category.update({
       where: { id },
-      data: { name },
+      data: {
+        ...(name && { name }),
+        ...(image !== undefined && { image }),
+        ...(description !== undefined && { description }),
+        ...(typeof featured === 'boolean' && { featured }),
+      },
     });
 
     return NextResponse.json(updatedCategory, { status: 200 });
