@@ -1,9 +1,6 @@
 'use client';
-
 import { MENU_ITEMS } from '@/constants';
-import { useAuthStore } from '@/store/useAuthStore';
-import { usePathname, useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { usePathname } from 'next/navigation';
 
 interface MobileMenuProps {
 	isOpen: boolean;
@@ -12,10 +9,7 @@ interface MobileMenuProps {
 }
 
 export const MobileMenu = ({ isOpen, onClose, goTo }: MobileMenuProps) => {
-	const { data: session } = useSession();
-	const { signOut } = useAuthStore();
 	const pathname = usePathname();
-	const router = useRouter();
 
 	if (!isOpen) return null;
 
@@ -33,23 +27,6 @@ export const MobileMenu = ({ isOpen, onClose, goTo }: MobileMenuProps) => {
 					{item.label}
 				</button>
 			))}
-
-			{session ? (
-				<button
-					onClick={() => {
-						signOut(false);
-						onClose();
-					}}
-					className="flex text-gray-600 hover:text-red-700 mt-4">
-					Déconnexion
-				</button>
-			) : (
-				<button
-					onClick={() => goTo('/auth')}
-					className="flex text-gray-600 hover:text-red-700 mt-4">
-					Se connecter
-				</button>
-			)}
 		</div>
 	);
 };

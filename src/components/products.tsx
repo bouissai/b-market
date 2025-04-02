@@ -1,5 +1,4 @@
 'use client';
-
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { ShoppingCart, Plus, Minus, Trash } from 'lucide-react';
@@ -34,11 +33,7 @@ import {
 } from './ui/pagination';
 import { ArticleGetDto } from '@/types/article';
 import { Loading } from './loading';
-
-type CartItem = {
-	article: ArticleGetDto;
-	quantity: number;
-};
+import { useCartStore } from '@/store/useCartStore';
 
 const MAX_ARTICLES_PER_PAGE = 9;
 
@@ -52,7 +47,9 @@ export default function ProductListing() {
 		setSelectedCategory,
 	} = useCategoryStore();
 
-	const [cartItems, setCartItems] = useState<CartItem[]>([]);
+	const { cartItems } = useCartStore();
+
+	// const [cartItems, setCartItems] = useState<CartItem[]>([]);
 	const [currentPage, setCurrentPage] = useState(1);
 	const pageSize = MAX_ARTICLES_PER_PAGE;
 	const totalPages = Math.ceil(totalArticles / pageSize);
