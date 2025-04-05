@@ -72,4 +72,6 @@ export const OrderStatus = {
   CONFIRMED: { status: 'Confirmée', color: 'success', order:4 },
   CANCELLED: { status: 'Annulée', color: 'destructive', order:5 },
 };
+export type OrderStatusKey = keyof typeof OrderStatus;
+
 
