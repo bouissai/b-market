@@ -76,6 +76,9 @@ module.exports = {
 					cream: '#FFF8E1',
 					green: '#2E7D32',
 				},
+				disabled: "hsl(var(--disabled))",
+				'disabled-foreground': "hsl(var(--disabled-foreground))",
+				'disabled-border': "hsl(var(--disabled-border))",
 			},
 			backgroundImage: {
 				'red-gradient':
