@@ -41,6 +41,7 @@ interface OrderItemDTO {
   name: string;
   quantity: number;
   price: number;
+  articleId?: string;
 }
 
 export interface orderDTO {

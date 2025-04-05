@@ -227,7 +227,7 @@ export default function OrderEditForm({ order }: Props) {
 
             <div>
               <label className="block text-sm font-medium mb-2">Quantité des articles</label>
-              <ScrollArea className="max-h-72">
+              <ScrollArea className="h-64 overflow-y-auto">
                 <div className="space-y-2">
                   {items.map((item) => (
                     <div
