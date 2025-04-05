@@ -5,6 +5,7 @@ import { Ban, FileX2, Plus, Table } from "lucide-react";
 import router from "next/router";
 import { NoSalesStates } from "../statsFallBackUI/NoSalesStates";
 import { RevenueGrowth } from "./revenuegrowth";
+import { useRouter } from "next/navigation";
 
 interface StatsProps {
   stats: StatsResponse | null,
@@ -12,7 +13,7 @@ interface StatsProps {
 }
 
 export function RevenueDistibutionByCategory({ stats, totalCatRevenue }: StatsProps) {
-
+  const router = useRouter()
   if (!stats?.totalOrders) {
     return (
       <Card className="col-span-1">

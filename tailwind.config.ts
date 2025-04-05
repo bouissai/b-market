@@ -27,6 +27,22 @@ module.exports = {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))',
 				},
+				warning: {
+					DEFAULT: '#FFA500',
+					foreground: '#FFFFFF'
+				},
+				pending: {
+					DEFAULT: '#FFA500',
+					foreground: '#FFFFFF'
+				},
+				success: {
+					DEFAULT: '#10B981',
+					foreground: '#FFFFFF'
+				},
+				info: {
+					DEFAULT: '#3B82F6',
+					foreground: '#FFFFFF'
+				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
 					foreground: 'hsl(var(--secondary-foreground))',

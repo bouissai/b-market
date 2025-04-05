@@ -13,7 +13,7 @@ const OrderStatusBadge: React.FC<OrderProps> = ({ status }) => {
     <Badge
       variant={
         statusInfo.color as
-          | 'secondary'
+          | 'pending'
           | 'info'
           | 'success'
           | 'destructive'

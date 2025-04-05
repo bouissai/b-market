@@ -66,7 +66,7 @@ interface OrderItemSaveDTO {
 }
 
 export const OrderStatus = {
-  PENDING: { status: 'En attente', color: 'secondary', order:1 },
+  PENDING: { status: 'En attente', color: 'pending', order:1 },
   PREPARING: { status: 'En préparation', color: 'state', order:2 },
   PENDING_PAYMENT: { status: 'En attente de paiement', color: 'info', order:3 },
   CONFIRMED: { status: 'Confirmée', color: 'success', order:4 },
