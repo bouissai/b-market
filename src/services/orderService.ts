@@ -132,7 +132,7 @@ export async function createOrder(
 
   return {
     id: newOrder.id,
-    customerName: newOrder.user.name,
+    customerName: newOrder.user.name ?? "Nom inconnu",
     customerEmail: newOrder.user.email,
     customerPhone: '+33 6 95 50 90 33',
     date: newOrder.createdAt,
