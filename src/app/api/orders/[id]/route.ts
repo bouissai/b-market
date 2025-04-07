@@ -231,7 +231,7 @@ export async function PATCH(
 			select: { price: true, quantity: true },
 		});
 
-		const newTotal = orderItems.reduce((sum, item) => {
+		const newTotal = orderItems.reduce((sum: number, item: { price: number; quantity: number }) => {
 			return sum + item.price * item.quantity;
 		}, 0);
 
