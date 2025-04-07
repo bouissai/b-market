@@ -1,19 +1,21 @@
-import { OrderStatus } from '@/types/order';
+import { OrderStatus, OrderStatusKey } from '@/types/order';
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 
 interface OrderProps {
-  status: keyof typeof OrderStatus;
+  status: OrderStatusKey;
 }
 
 const OrderStatusBadge: React.FC<OrderProps> = ({ status }) => {
   const statusInfo = OrderStatus[status];
-
+  if (!statusInfo) {
+    return <Badge variant="default">Inconnu</Badge>;
+  }
   return (
     <Badge
       variant={
         statusInfo.color as
-          | 'secondary'
+          | 'pending'
           | 'info'
           | 'success'
           | 'destructive'

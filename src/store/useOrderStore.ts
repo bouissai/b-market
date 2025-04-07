@@ -15,6 +15,18 @@ type OrderStore = {
     updateOrder: (updatedOrder: orderDTO) => void;
     saveOrder: (order: OrderSaveDTO, method: "POST" | "PUT", url: string) => Promise<orderDTO | void>;
     deleteOrder: (id: number) => Promise<boolean>;
+    updateOrderDetails: (
+        id: number,
+        payload: {
+          status?: string;
+          note?: string;
+          updates?: {
+            action: 'add' | 'update' | 'delete';
+            articleId: string;
+            quantity?: number;
+          }[];
+        }
+      ) => Promise<boolean>;
 };
 
 export const useOrderStore = create<OrderStore>((set, get) => ({
@@ -123,4 +135,50 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
             return false;
         }
     },
+    updateOrderDetails: async (id, payload) => {
+        set({ isSubmitting: true });
+        try {
+            const response = await fetch(`/api/orders/${id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+            console.log (JSON.stringify(payload))
+            if (!response.ok) {
+                const data = await response.json();
+                toast({
+                    title: "Erreur",
+                    description: data.message || "Échec de la mise à jour de la commande",
+                    variant: "destructive",
+                });
+                return false;
+            }
+    
+            const updated = await response.json();
+    
+            set((state) => ({
+                orders: state.orders.map((o) => (o.id === updated.id ? updated : o)),
+                orderDetails: updated,
+            }));
+    
+            toast({
+                title: "Commande mise à jour",
+                description: "La commande a été modifiée avec succès",
+            });
+    
+            return true;
+        } catch (error) {
+            toast({
+                title: "Erreur",
+                description: "Impossible de mettre à jour la commande",
+                variant: "destructive",
+            });
+            return false;
+        } finally {
+            set({ isSubmitting: false });
+        }
+    }
+    
 }));

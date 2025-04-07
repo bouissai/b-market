@@ -1,6 +1,9 @@
-import Image from 'next/image';
+"use client"
 import { Button } from '@/components/ui/button';
+import { useCategoryStore } from '@/store/useCategoryStore';
+import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 const products = [
 	{
@@ -30,6 +33,12 @@ const products = [
 ];
 
 export function ProductsShowcaseSection() {
+	const { categories, fetchCategories } = useCategoryStore();
+	const featuredCategories = categories.filter(c => c.featured);
+
+	useEffect(() => {
+		fetchCategories();
+	}, [fetchCategories]);
 	return (
 		<section className="section-padding bg-boucherie-black relative overflow-hidden">
 			<div className="absolute inset-0 pointer-events-none opacity-5">
@@ -48,30 +57,28 @@ export function ProductsShowcaseSection() {
 				</div>
 
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-					{products.map((product, index) => (
+					{featuredCategories.map((category, index) => (
 						<div
-							key={index}
+							key={category.id}
 							className="boucherie-card overflow-hidden group hover-lift">
 							<div className="relative h-48">
 								<Image
-									src={product.image || '/placeholder.svg'}
-									alt={product.name}
+									src={category.image || '/placeholder.svg'}
+									alt={category.name}
 									fill
-									className="object-cover transition-transform duration-300 group-hover:scale-105  border border-boucherie-black "
+									className="object-cover transition-transform duration-300 group-hover:scale-105 border border-boucherie-black"
 								/>
 								<div className="absolute inset-0 bg-gradient-to-t from-boucherie-black/90 to-transparent transition-transform duration-300 group-hover:scale-105"></div>
 								<div className="absolute bottom-4 left-4 right-4">
-									<h3 className="text-xl font-bold text-white">
-										{product.name}
-									</h3>
+									<h3 className="text-xl font-bold text-white">{category.name}</h3>
 								</div>
 							</div>
 							<div className="p-6">
 								<p className="text-gray-400 mb-4">
-									{product.description}
+									{category.description || 'Découvrez notre sélection.'}
 								</p>
 								<Link
-									href={`/products#${product.name.toLowerCase()}`}
+									href={`/products#${category.name.toLowerCase()}`}
 									className="text-boucherie-red font-medium hover:text-boucherie-red-light transition-colors inline-flex items-center">
 									Voir les produits
 									<svg
@@ -90,6 +97,7 @@ export function ProductsShowcaseSection() {
 							</div>
 						</div>
 					))}
+
 				</div>
 
 				<div className="text-center mt-12">

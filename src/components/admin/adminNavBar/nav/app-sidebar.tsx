@@ -19,6 +19,7 @@ import {
 	SidebarHeader,
 	SidebarRail,
 } from '@/components/ui/sidebar';
+import { Separator } from '@/components/ui/separator';
 
 export function AppSidebar({ ...props }) {
 	const { data: session } = useSession();
@@ -66,6 +67,8 @@ export function AppSidebar({ ...props }) {
 			<SidebarHeader>
 				<NavUser user={user} />
 			</SidebarHeader>
+			<Separator />
+
 			<SidebarContent>
 				<NavMain items={navItems} />
 			</SidebarContent>

@@ -37,36 +37,41 @@ html {
 
 		--radius: 0.5rem;
 	}
-
 	.dark {
-		--background: 0 0% 0%;
-		--foreground: 350 70% 25%;
-
-		--card: 0 0% 0%;
-		--card-foreground: 350 70% 25%;
-
-		--popover: 0 0% 0%;
-		--popover-foreground: 350 70% 25%;
-
-		--primary: 350 70% 25%;
+		--background: 0 0% 8%;
+		--foreground: 0 0% 95%;
+	  
+		--card: 0 0% 12%;
+		--card-foreground: 0 0% 95%;
+	  
+		--popover: 0 0% 12%;
+		--popover-foreground: 4 75% 40%;
+	  
+		--primary: 4 75% 40%;
 		--primary-foreground: 0 0% 100%;
+	  
+		--secondary: 0 0% 16%;
+		--secondary-foreground: 4 75% 45%;
+	  
+		--accent: 4 100% 20%;
+		--accent-foreground: 0 0% 100%;
+	  
+		--muted: 0 0% 20%;
+		--muted-foreground: 0 0% 60%;
+	  
+		--destructive: 0 75% 35%;
+		--destructive-foreground: 0 0% 100%;
+	  
+		--border: 0 0% 25%;
+		--input: 0 0% 15%;
+		--ring: 4 75% 40%;
 
-		--secondary: 0 0% 0%;
-		--secondary-foreground: 350 70% 25%;
+		--disabled: 210 10% 18%;
+		--disabled-foreground: 0 0% 50%;
+		--disabled-border: 0 0% 25%;
 
-		--muted: 0 0% 14.9%;
-		--muted-foreground: 0 0% 63.9%;
-
-		--accent: 0 0% 14.9%;
-		--accent-foreground: 350 70% 25%;
-
-		--destructive: 0 62.8% 30.6%;
-		--destructive-foreground: 0 0% 98%;
-
-		--border: 0 0% 14.9%;
-		--input: 0 0% 14.9%;
-		--ring: 350 70% 25%;
-	}
+	  }
+	  
 }
 
 @layer base {
@@ -82,6 +87,9 @@ html {
 }
 
 @layer components {
+	.select-item {
+		@apply text-foreground bg-background hover:bg-accent hover:text-accent-foreground cursor-pointer;
+	}
 	.container-custom {
 		@apply container mx-auto px-4 sm:px-6 lg:px-8;
 	}

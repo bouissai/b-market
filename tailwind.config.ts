@@ -27,6 +27,22 @@ module.exports = {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))',
 				},
+				warning: {
+					DEFAULT: '#FFA500',
+					foreground: '#FFFFFF'
+				},
+				pending: {
+					DEFAULT: '#FFA500',
+					foreground: '#FFFFFF'
+				},
+				success: {
+					DEFAULT: '#10B981',
+					foreground: '#FFFFFF'
+				},
+				info: {
+					DEFAULT: '#3B82F6',
+					foreground: '#FFFFFF'
+				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
 					foreground: 'hsl(var(--secondary-foreground))',
@@ -60,6 +76,9 @@ module.exports = {
 					cream: '#FFF8E1',
 					green: '#2E7D32',
 				},
+				disabled: "hsl(var(--disabled))",
+				'disabled-foreground': "hsl(var(--disabled-foreground))",
+				'disabled-border': "hsl(var(--disabled-border))",
 			},
 			backgroundImage: {
 				'red-gradient':
