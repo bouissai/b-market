@@ -43,3 +43,8 @@ next-env.d.ts
 .idea/*
 # Sentry Config File
 .env.sentry-build-plugin
+
+.env
+docker-compose.yml
+deploy_key
+deploy_key.pub

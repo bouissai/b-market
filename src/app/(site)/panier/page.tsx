@@ -97,7 +97,7 @@ export default function PanierPage() {
     if (status === "unauthenticated") {
         return (
             <div className="flex min-h-screen flex-col">
-                <main className="flex-1 container py-12">
+                <main className="flex-1 container py-64">
                     <div className="max-w-md mx-auto">
                         <div className="text-center mb-8 space-y-4">
                             <Lock className="h-12 w-12 text-primary mx-auto mb-4" />
@@ -114,9 +114,23 @@ export default function PanierPage() {
     // If authenticated - Order process
     return (
         <div className="flex min-h-screen flex-col">
+            <section className="bg-muted/30 pt-20 py-4 box-border">
+				<div className="container mx-auto px-4">
+					<div className="max-w-3xl">
+						<h1 className="text-3xl md:text-4xl font-bold mb-4  ">
+                            Commander en ligne
+						</h1>
+						<p className="text-muted-foreground mb-6">
+							Passer votre commande pour la récuperer en magasin dès qu'elle est prête
+						</p>
+
+					</div>
+				</div>
+			</section>
             <main className="flex-1 container p-8">
+
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold tracking-tight">Commander en ligne</h1>
+                    <h1 className="text-3xl font-bold tracking-tight"></h1>
                     <div className="flex items-center mt-4 text-sm text-muted-foreground">
                         <div className={`flex items-center ${step >= 1 ? "text-primary" : ""}`}>
                             <div
