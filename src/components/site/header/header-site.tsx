@@ -7,7 +7,7 @@ import { Menu, X } from 'lucide-react';
 import { MobileMenu } from './mobile-menu';
 import { DesktopMenu } from './desktop-menu';
 import { Button } from '@/components/ui/button';
-import { BasketButton } from './basket-button';
+import { Cart } from './cart';
 import { ProfileButton } from './profile-button';
 
 export function HeaderSite() {
@@ -57,7 +57,7 @@ export function HeaderSite() {
 					<div className="flex flex-row gap-x-3">
 						<div className="flex flex-row gap-x-1">
 							<ProfileButton goTo={goTo} />
-							<BasketButton />
+							<Cart />
 						</div>
 						<Button
 							size="icon"
