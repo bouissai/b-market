@@ -4,6 +4,7 @@ import { hash } from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { randomUUID } from 'crypto';
 import { sendVerificationEmail } from '@/lib/email';
+import { Prisma } from '@prisma/client';
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest) {
     expires.setHours(expires.getHours() + 24);
 
     // Transaction pour créer l'utilisateur et le token de vérification
-    const { user, verificationToken } = await prisma.$transaction(async (tx) => {
+    const { user, verificationToken } = await prisma.$transaction(async (tx : Prisma.TransactionClient) => {
       // Créer l'utilisateur avec emailVerified null
       const user = await tx.user.create({
         data: {

@@ -103,7 +103,7 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
         <CardContent className="p-4">
           <div className="flex flex-wrap gap-2 mb-2">
             {recipe.tags.slice(0, 3).map((tag, index) => (
-              <Badge key={index} variant="secondary" className="text-xs">
+              <Badge key={index} variant="pending" className="text-xs">
                 {tag}
               </Badge>
             ))}

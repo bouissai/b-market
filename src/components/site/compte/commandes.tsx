@@ -99,7 +99,7 @@ const formatDate = (dateString: string) => {
 const StatusBadge = ({ status }: { status: Order['status'] }) => {
 	const statusConfig = {
 		pending: { label: 'En attente', variant: 'outline' as const },
-		processing: { label: 'En préparation', variant: 'secondary' as const },
+		processing: { label: 'En préparation', variant: 'pending' as const },
 		ready: { label: 'Prêt à retirer', variant: 'default' as const },
 		completed: { label: 'Terminée', variant: 'success' as const },
 		cancelled: { label: 'Annulée', variant: 'destructive' as const },

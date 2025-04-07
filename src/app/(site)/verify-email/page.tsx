@@ -1,7 +1,6 @@
-// app/verify-email/page.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
 	Card,
@@ -14,7 +13,8 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle, XCircle } from 'lucide-react';
 import { Loading } from '@/components/loading';
 
-export default function VerifyEmail() {
+// Component that uses useSearchParams
+function VerifyEmailContent() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const token = searchParams.get('token');
@@ -57,49 +57,57 @@ export default function VerifyEmail() {
 	}, [token]);
 
 	return (
+		<Card className="w-full max-w-md border shadow-sm">
+			<CardHeader className="pb-4">
+				<CardTitle className="text-xl">
+					Vérification de l'email
+				</CardTitle>
+				<CardDescription>
+					{status === 'loading' &&
+						'Nous vérifions votre adresse email...'}
+					{status === 'success' &&
+						'Votre email a été vérifié avec succès !'}
+					{status === 'error' && 'La vérification a échoué.'}
+				</CardDescription>
+			</CardHeader>
+			<CardContent className="space-y-4 text-center">
+				{status === 'loading' && <Loading />}
+
+				{status === 'success' && (
+					<div className="flex flex-col items-center">
+						<CheckCircle className="h-16 w-16 text-green-500" />
+						<p className="mt-4">{message}</p>
+						<Button
+							className="mt-6"
+							onClick={() => router.push('/auth')}>
+							Se connecter
+						</Button>
+					</div>
+				)}
+
+				{status === 'error' && (
+					<div className="flex flex-col items-center">
+						<XCircle className="h-16 w-16 text-red-500" />
+						<p className="mt-4">{message}</p>
+						<Button
+							className="mt-6"
+							onClick={() => router.push('/auth')}
+							variant="outline">
+							Retour à la connexion
+						</Button>
+					</div>
+				)}
+			</CardContent>
+		</Card>
+	);
+}
+
+export default function VerifyEmail() {
+	return (
 		<div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-			<Card className="w-full max-w-md border shadow-sm">
-				<CardHeader className="pb-4">
-					<CardTitle className="text-xl">
-						Vérification de l'email
-					</CardTitle>
-					<CardDescription>
-						{status === 'loading' &&
-							'Nous vérifions votre adresse email...'}
-						{status === 'success' &&
-							'Votre email a été vérifié avec succès !'}
-						{status === 'error' && 'La vérification a échoué.'}
-					</CardDescription>
-				</CardHeader>
-				<CardContent className="space-y-4 text-center">
-					{status === 'loading' && <Loading />}
-
-					{status === 'success' && (
-						<div className="flex flex-col items-center">
-							<CheckCircle className="h-16 w-16 text-green-500" />
-							<p className="mt-4">{message}</p>
-							<Button
-								className="mt-6"
-								onClick={() => router.push('/auth')}>
-								Se connecter
-							</Button>
-						</div>
-					)}
-
-					{status === 'error' && (
-						<div className="flex flex-col items-center">
-							<XCircle className="h-16 w-16 text-red-500" />
-							<p className="mt-4">{message}</p>
-							<Button
-								className="mt-6"
-								onClick={() => router.push('/auth')}
-								variant="outline">
-								Retour à la connexion
-							</Button>
-						</div>
-					)}
-				</CardContent>
-			</Card>
+			<Suspense fallback={<Loading />}>
+				<VerifyEmailContent />
+			</Suspense>
 		</div>
 	);
 }
