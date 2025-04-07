@@ -1,32 +1,47 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { AdminNavBar } from '@/components/admin/adminNavBar/adminNavBar';
 import { ThemeProvider } from '@/components/theme-provider';
+import { Loading } from '@/components/loading';
 
 export default function AdminLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  // Empêche le rendu SSR jusqu'à ce que le client soit monté
-  const [mounted, setMounted] = useState(false);
+	const [mounted, setMounted] = useState(false);
+	const { data: session, status } = useSession();
+	const router = useRouter();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+	useEffect(() => {
+		setMounted(true);
 
-  // Si non monté, éviter d'afficher du contenu problématique
-  if (!mounted) return <div />;
+		if (status === 'loading') return;
+		if (!session) {
+			router.push('/auth/signin');
+		} else if (!session.user?.isAdmin) {
+			router.push('/');
+		}
+	}, [session, status, router]);
 
-  return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
-      <AdminNavBar>{children}</AdminNavBar>
-    </ThemeProvider>
-  );
+	if (!mounted || status === 'loading') {
+		return <Loading />;
+	}
+
+	if (!session?.user?.isAdmin) {
+		return null;
+	}
+
+	return (
+		<ThemeProvider
+			attribute="class"
+			defaultTheme="system"
+			enableSystem
+			disableTransitionOnChange>
+			<AdminNavBar>{children}</AdminNavBar>
+		</ThemeProvider>
+	);
 }
