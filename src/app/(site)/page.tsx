@@ -1,17 +1,19 @@
-import { Faq } from "@/components/user/landingPage/faq/faq";
-import { ButcheryActivity } from "@/components/user/landingPage/butcheryActivity";
-import ClickAndCollect from "@/components/user/landingPage/clickandcollect/clickAndCollect";
-import { ContactLandingPage } from "@/components/user/landingPage/contact/contactLandingPage";
-import { NosValeurs } from "@/components/user/landingPage/valeurs";
+import { CTASection } from '@/components/site/landingPage/cta-section';
+import { HeroSection } from '@/components/site/landingPage/hero-section';
+import { ProductsShowcaseSection } from '@/components/site/landingPage/product-showcase-section';
+import { ServicesOverviewSection } from '@/components/site/landingPage/services-overview-section';
+import { TestimonialsSection } from '@/components/site/testimonials-section';
+import { WhyChooseUsSection } from '@/components/site/landingPage/why-choose-us-section';
 
 export default function Home() {
-  return (
-    <div className="min-h-screen flex flex-col gap-4 py-6 box-border">
-      <div><ButcheryActivity /></div>
-      <div id="valeurs"><NosValeurs /></div>
-      <div id="click-collect"><ClickAndCollect /></div>
-      <div id="faq"><Faq /></div>
-      <div id="contact"><ContactLandingPage /></div>
-    </div>
-  );
+	return (
+		<>
+			<HeroSection />
+			<ServicesOverviewSection />
+			<WhyChooseUsSection />
+			<ProductsShowcaseSection />
+			<TestimonialsSection />
+			<CTASection />
+		</>
+	);
 }

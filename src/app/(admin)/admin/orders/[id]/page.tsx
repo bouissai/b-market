@@ -1,6 +1,7 @@
 "use client"
 
 import OrderStatusBadge from "@/components/admin/orderAdmin/badge"
+import OrderEditForm from "@/components/admin/orderAdmin/OrderEditForm"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,6 +15,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
@@ -21,7 +23,7 @@ import { getStatusStep } from "@/lib/helpers/orderHelpers"
 import { useOrderStore } from "@/store/useOrderStore"
 import { ArrowLeft, Calendar, Clock, Euro, Pen, ShoppingBasket, SquareX, Trash, User } from "lucide-react"
 import { useParams, useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 
 export default function OrderDetailPage() {
@@ -29,6 +31,8 @@ export default function OrderDetailPage() {
   const { orderDetails, fetchOrderDetails, deleteOrder, isLoading, error } = useOrderStore()
   const router = useRouter()
   const { toast } = useToast()
+  const [open, setOpen] = useState(false);
+
 
   useEffect(() => {
     fetchOrderDetails(Number(id));
@@ -110,9 +114,9 @@ export default function OrderDetailPage() {
           <OrderStatusBadge status={orderDetails.status as "PENDING" | "PENDING_PAYMENT" | "CONFIRMED" | "CANCELLED"} />
         </div>
         <div className="flex gap-2">
-          <Button onClick={() => console.log("TODO edit")} variant="outline" size="sm">
-            <Pen className="mr-2 h-4 w-4" /> Modifier
-          </Button>
+          <OrderEditForm order={orderDetails} />
+
+          
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button

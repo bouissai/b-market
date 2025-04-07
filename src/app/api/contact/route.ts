@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Vérifier les variables d'environnement
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    if (!process.env.EMAIL_SERVER_USER || !process.env.EMAIL_SERVER_PASSWORD) {
       console.error('Configuration d\'email manquante');
       return NextResponse.json({ 
         error: 'Configuration du serveur incorrecte'
@@ -79,8 +79,8 @@ export async function POST(req: NextRequest) {
       port: 465,
       secure: true,
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        user: process.env.EMAIL_SERVER_USER,
+        pass: process.env.EMAIL_SERVER_PASSWORD,
       },
     });
     
@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
 
     // Options d'e-mail
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: process.env.EMAIL_SERVER_USER,
       to: process.env.RECIPIENT_EMAIL || 'bouissailyass@gmail.com',
       subjectMessage,
       html: htmlContent,

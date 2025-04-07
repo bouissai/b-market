@@ -1,9 +1,12 @@
 import { Article } from './article';
 
 export interface Category {
-  id: string;
-  name: string;
-  createdAt: Date;
-  updatedAt: Date;
-  articles?: Article[]; // Optionnel si vous ne chargez pas cette relation
+	id: string;
+	name: string;
+	image: string;
+	description?: string;
+	featured: boolean;
+	createdAt: Date;
+	updatedAt: Date;
+	articles?: Article[];
 }

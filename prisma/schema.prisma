@@ -13,16 +13,24 @@ datasource prisma {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  phone     String?
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  cartId    String?  @unique
-  cart      Cart?    @relation
-  orders    Order[]
+  id            String          @id @default(cuid())
+  name          String?
+  phone         String?
+  email         String          @unique
+  emailVerified DateTime?
+  password      String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  cartId        String?         @unique
+  cart          Cart?           @relation
+  orders        Order[]
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  // Optional for WebAuthn support
+  Authenticator Authenticator[]
+
+  isAdmin       Boolean         @default(false)
 }
 
 model Article {
@@ -34,8 +42,8 @@ model Article {
   description  String?
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
-  categoryName String
-  category     Category    @relation(fields: [categoryName], references: [name])
+  categoryId   String
+  category     Category    @relation(fields: [categoryId], references: [id])
   cartItems    CartItem[]
   orderItems   OrderItem[]
 }
@@ -43,6 +51,9 @@ model Article {
 model Category {
   id        String    @id @default(cuid())
   name      String    @unique
+  image     String?   // URL de l'image
+  description  String?
+  featured  Boolean   @default(false)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   articles  Article[]
@@ -83,11 +94,66 @@ model Order {
 model OrderItem {
   id        String  @id @default(cuid())
   orderId   Int
-  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order     Order   @relation(fields: [orderId], references: [id])
   articleId String
   article   Article @relation(fields: [articleId], references: [id])
   quantity  Int     @default(1)
   price     Float
 
   @@unique([orderId, articleId])
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
 }
