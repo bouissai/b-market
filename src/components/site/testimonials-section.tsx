@@ -3,69 +3,40 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { useReviewsStore } from '@/store/useReviewStore';
 
-const testimonials = [
-	{
-		id: 1,
-		name: 'Mohammed Benali',
-		role: 'Client fidèle',
-		image: '',
-		quote: 'Je suis client de B Market depuis plus de 10 ans. La qualité de la viande est toujours au rendez-vous et le service est impeccable. Je recommande particulièrement leurs merguez maison !',
-		rating: 5,
-	},
-	{
-		id: 2,
-		name: 'Samira Hadj',
-		role: 'Cliente régulière',
-		image: '',
-		quote: "Pour l'Aïd, je commande toujours mon agneau chez B Market. La viande est tendre, savoureuse et la découpe est parfaite. Un grand merci à toute l'équipe pour leur professionnalisme.",
-		rating: 5,
-	},
-	{
-		id: 3,
-		name: 'Thomas Dubois',
-		role: 'Nouveau client',
-		image: '',
-		quote: "J'ai découvert cette boucherie récemment et je suis impressionné par la qualité des produits. Les conseils du boucher sont précieux et les préparations marinées sont délicieuses.",
-		rating: 4,
-	},
-	{
-		id: 4,
-		name: 'Fatima Lahmidi',
-		role: 'Cliente pour événements',
-		image: '',
-		quote: 'Pour le mariage de ma fille, nous avons commandé un méchoui complet. Le service était parfait, la viande excellente et tous nos invités ont adoré. Merci B Market !',
-		rating: 5,
-	},
-];
 
 export function TestimonialsSection() {
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [autoplay, setAutoplay] = useState(true);
+	const { reviews, fetchReviews, loading } = useReviewsStore();
+
+	useEffect(() => {
+		fetchReviews();
+	}, []);
 
 	useEffect(() => {
 		let interval: NodeJS.Timeout;
-
-		if (autoplay) {
+		if (autoplay && reviews.length > 0) {
 			interval = setInterval(() => {
-				setCurrentIndex(prevIndex => (prevIndex + 1) % testimonials.length);
+				setCurrentIndex((prev) => (prev + 1) % reviews.length);
 			}, 5000);
 		}
-
 		return () => clearInterval(interval);
-	}, [autoplay]);
+	}, [autoplay, reviews]);
+	if (loading || reviews.length === 0) return null;
 
 	const handlePrev = () => {
 		setAutoplay(false);
 		setCurrentIndex(
 			prevIndex =>
-				(prevIndex - 1 + testimonials.length) % testimonials.length,
+				(prevIndex - 1 + reviews.length) % reviews.length,
 		);
 	};
 
 	const handleNext = () => {
 		setAutoplay(false);
-		setCurrentIndex(prevIndex => (prevIndex + 1) % testimonials.length);
+		setCurrentIndex(prevIndex => (prevIndex + 1) % reviews.length);
 	};
 
 	return (
@@ -92,13 +63,13 @@ export function TestimonialsSection() {
 							style={{
 								transform: `translateX(-${currentIndex * 100}%)`,
 							}}>
-							{testimonials.map(testimonial => (
+							{reviews.map(testimonial => (
 								<div
 									key={testimonial.id}
 									className="w-full flex-shrink-0 px-4">
 									<div className="boucherie-card p-8 shadow-md">
 										<div className="flex flex-col md:flex-row md:items-center mb-6">
-											<div className="relative w-16 h-16 rounded-full overflow-hidden mb-4 md:mb-0 md:mr-4 border border-boucherie-red/30">
+											<div className="relative w-16 h-16 overflow-hidden mb-4 md:mb-0 md:mr-4 border border-boucherie-red/30">
 												<Image
 													src={
 														testimonial.image ||
@@ -117,7 +88,7 @@ export function TestimonialsSection() {
 													{testimonial.role}
 												</p>
 												<div className="flex text-boucherie-red mt-1">
-													{[...Array(5)].map((_, i) => (
+													{[...Array(testimonial.rating)].map((_, i) => (
 														<Star
 															key={i}
 															className="w-4 h-4"
@@ -163,7 +134,7 @@ export function TestimonialsSection() {
 					</button>
 
 					<div className="flex justify-center mt-6 space-x-2">
-						{testimonials.map((_, index) => (
+						{reviews.map((_, index) => (
 							<button
 								key={index}
 								onClick={() => {
