@@ -72,13 +72,6 @@ jobs:
             echo "⏳ Attente que Postgres démarre (15s)..."
             sleep 15
 
-            echo "🛠️ Création base de données si elle n'existe pas..."
-            export POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-            export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-            export POSTGRES_DB=${{ secrets.POSTGRES_DB }}
-
-            docker exec bmarket-postgres-1 bash -c "PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -tc \"SELECT 1 FROM pg_database WHERE datname = '$POSTGRES_DB'\" | grep -q 1 || psql -U $POSTGRES_USER -c \"CREATE DATABASE $POSTGRES_DB;\""
-
             echo "📂 Copie finale du .env.production dans l'app..."
             docker cp .env.production bmarket-votre-app-1:/app/.env.production
 
