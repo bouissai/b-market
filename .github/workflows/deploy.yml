@@ -34,7 +34,7 @@ jobs:
       - name: 📡 Connexion SSH et déploiement
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.SERVER_IP}}
+          host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
@@ -42,6 +42,14 @@ jobs:
 
             echo "📌 Passage au dossier..."
             cd ~/bmarket
+
+            echo "📄 Génération de .env.production..."
+            echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > .env.production
+            echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env.production
+            echo "NEXTAUTH_URL=https://bmarket.fr" >> .env.production
+
+            echo "📂 Injection du .env.production dans le container..."
+            docker cp .env.production bmarket-votre-app-1:/app/.env.production || true
 
             echo "📦 Vérification de Docker Compose..."
             if ! command -v docker-compose &> /dev/null; then
@@ -63,14 +71,6 @@ jobs:
 
             echo "🛠️ Création base de données si elle n'existe pas..."
             docker exec bmarket-postgres-1 bash -c "PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -tc \"SELECT 1 FROM pg_database WHERE datname = '$POSTGRES_DB'\" | grep -q 1 || psql -U $POSTGRES_USER -c \"CREATE DATABASE $POSTGRES_DB;\""
-
-            echo "📄 Génération de .env.production..."
-            echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > .env.production
-            echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env.production
-            echo "NEXTAUTH_URL=https://bmarket.fr" >> .env.production
-
-            echo "📂 Injection du .env.production dans le container..."
-            docker cp .env.production bmarket-votre-app-1:/app/.env.production
 
             echo "📦 Prisma migrate deploy..."
             docker exec bmarket-votre-app-1 npx prisma migrate deploy || echo "⚠️ Prisma migration skipped"
