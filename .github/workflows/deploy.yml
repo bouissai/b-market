@@ -34,7 +34,7 @@ jobs:
       - name: 📡 Connexion SSH et déploiement
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.VPS_HOST }}
+          host: ${{ secrets.SERVER_IP}}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
