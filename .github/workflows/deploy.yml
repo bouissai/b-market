@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/setup-node@v3
+      - name: 🧱 Installer Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: 18
 
@@ -48,7 +49,7 @@ jobs:
             echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env.production
             echo "NEXTAUTH_URL=https://bmarket.fr" >> .env.production
 
-            echo "📂 Injection du .env.production dans le container..."
+            echo "📂 Injection du .env.production dans le container (si déjà existant)..."
             docker cp .env.production bmarket-votre-app-1:/app/.env.production || true
 
             echo "📦 Vérification de Docker Compose..."
@@ -56,8 +57,10 @@ jobs:
               apt update && apt install -y docker-compose
             fi
 
-            echo "📦 Pull de la nouvelle image..."
+            echo "🔐 Login GHCR depuis le serveur..."
             docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password ${{ secrets.GHCR_TOKEN }}
+
+            echo "📦 Pull de la nouvelle image..."
             docker-compose pull || { echo "❌ Pull échoué"; exit 1; }
 
             echo "🛑 Arrêt des anciens conteneurs..."
@@ -70,7 +73,14 @@ jobs:
             sleep 15
 
             echo "🛠️ Création base de données si elle n'existe pas..."
+            export POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            export POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+
             docker exec bmarket-postgres-1 bash -c "PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -tc \"SELECT 1 FROM pg_database WHERE datname = '$POSTGRES_DB'\" | grep -q 1 || psql -U $POSTGRES_USER -c \"CREATE DATABASE $POSTGRES_DB;\""
+
+            echo "📂 Copie finale du .env.production dans l'app..."
+            docker cp .env.production bmarket-votre-app-1:/app/.env.production
 
             echo "📦 Prisma migrate deploy..."
             docker exec bmarket-votre-app-1 npx prisma migrate deploy || echo "⚠️ Prisma migration skipped"
