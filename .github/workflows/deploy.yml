@@ -27,7 +27,7 @@ jobs:
           SENTRY_RELEASE: ${{ github.sha }}
         run: |
           echo "🔍 Upload des sourcemaps à Sentry..."
-          npx @sentry/cli sourcemaps upload \
+          npx @sentry/cli -- sourcemaps upload \
             --auth-token "$SENTRY_AUTH_TOKEN" \
             --org "$SENTRY_ORG" \
             --project "$SENTRY_PROJECT" \
