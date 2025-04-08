@@ -13,13 +13,12 @@ jobs:
       - name: 📥 Cloner le dépôt
         uses: actions/checkout@v4
 
-      - name: 🔑 Se connecter à GitHub Container Registry (GHCR)
+      - name: 🔑 Connexion à GHCR
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
-      - name: 🏗️ Build de l image Docker
-        run: |
-          docker build -t ghcr.io/bouissai/bmarket:latest .
-          
+      - name: 🏗️ Build de l'image Docker avec Prisma
+        run: docker build -t ghcr.io/bouissai/bmarket:latest .
+
       - name: 🧠 Upload des sourcemaps à Sentry
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
@@ -33,11 +32,12 @@ jobs:
             --org "$SENTRY_ORG" \
             --project "$SENTRY_PROJECT" \
             --release "$SENTRY_RELEASE" \
-            .next
-      
-      - name: 📤 Push de l image sur GHCR
-        run: |
-          docker push ghcr.io/bouissai/bmarket:latest
+            --include .next \
+            --url-prefix "~/_next" \
+            --validate
+
+      - name: 📤 Push de l'image sur GHCR
+        run: docker push ghcr.io/bouissai/bmarket:latest
 
   deploy:
     needs: build-and-push
@@ -51,25 +51,25 @@ jobs:
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            set -e  # Arrêter le script si une commande échoue
-            
-            echo "📌 Passage au dossier de l'application..."
+            set -e
+
+            echo "📌 Passage au dossier..."
             cd ~/bmarket
 
             echo "📦 Vérification de Docker Compose..."
             if ! command -v docker-compose &> /dev/null; then
-              echo "❌ docker-compose n'est pas installé. Installation en cours..."
+              echo "❌ docker-compose absent. Installation..."
               apt update && apt install -y docker-compose
             fi
 
-            echo "📦 Récupération de la nouvelle image..."
+            echo "📦 Pull de la nouvelle image..."
             docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password ${{ secrets.GHCR_TOKEN }}
-            docker-compose pull || { echo "❌ Échec du pull"; exit 1; }
+            docker-compose pull || { echo "❌ Pull échoué"; exit 1; }
 
             echo "🛑 Arrêt des anciens conteneurs..."
-            docker-compose down || echo "⚠️ Aucun conteneur à stopper."
+            docker-compose down || echo "⚠️ Aucun conteneur à stopper"
 
             echo "🚀 Démarrage des nouveaux conteneurs..."
-            docker-compose up -d || { echo "❌ Erreur lors du démarrage"; exit 1; }
+            docker-compose up -d || { echo "❌ Démarrage échoué"; exit 1; }
 
-            echo "✅ Déploiement terminé avec succès !"
+            echo "✅ Déploiement terminé !"
