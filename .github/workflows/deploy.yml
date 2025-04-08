@@ -65,11 +65,9 @@ jobs:
             docker exec bmarket-postgres-1 bash -c "PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -tc \"SELECT 1 FROM pg_database WHERE datname = '$POSTGRES_DB'\" | grep -q 1 || psql -U $POSTGRES_USER -c \"CREATE DATABASE $POSTGRES_DB;\""
 
             echo "📄 Génération de .env.production..."
-            cat > .env.production <<EOF
-DATABASE_URL=${{ secrets.DATABASE_URL }}
-NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
-NEXTAUTH_URL=https://bmarket.fr
-EOF
+            echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > .env.production
+            echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env.production
+            echo "NEXTAUTH_URL=https://bmarket.fr" >> .env.production
 
             echo "📂 Injection du .env.production dans le container..."
             docker cp .env.production bmarket-votre-app-1:/app/.env.production
