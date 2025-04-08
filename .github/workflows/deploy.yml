@@ -15,6 +15,11 @@ jobs:
 
       - name: 🔑 Connexion à GHCR
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+      
+      - name: 📦 Vérification de la cohérence du lockfile
+        run: |
+          npm install --package-lock-only
+          git diff --exit-code || (echo "❌ Le package-lock.json n'est pas à jour !" && exit 1)
 
       - name: 🏗️ Build de l'image Docker avec Prisma
         run: docker build -t ghcr.io/bouissai/bmarket:latest .
