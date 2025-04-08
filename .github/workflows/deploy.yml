@@ -1,3 +1,36 @@
+name: 🚀 Build, Push & Deploy to VPS
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: 📥 Cloner le dépôt
+        uses: actions/checkout@v4
+
+      - name: 🔑 Connexion à GHCR
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+
+      - name: 🏗️ Build de l'image Docker avec Prisma
+        run: docker build -t ghcr.io/bouissai/bmarket:latest .
+
+      - name: 📤 Push de l'image sur GHCR
+        run: docker push ghcr.io/bouissai/bmarket:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
       - name: 📡 Connexion SSH et déploiement
         uses: appleboy/ssh-action@master
         with:
@@ -32,7 +65,7 @@
             docker exec bmarket-postgres-1 bash -c "PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -tc \"SELECT 1 FROM pg_database WHERE datname = '$POSTGRES_DB'\" | grep -q 1 || psql -U $POSTGRES_USER -c \"CREATE DATABASE $POSTGRES_DB;\""
 
             echo "📄 Génération de .env.production..."
-            cat <<EOF > .env.production
+            cat > .env.production <<EOF
 DATABASE_URL=${{ secrets.DATABASE_URL }}
 NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
 NEXTAUTH_URL=https://bmarket.fr
