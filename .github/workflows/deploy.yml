@@ -1,41 +1,8 @@
-name: 🚀 Build, Push & Deploy to VPS
-
-on:
-  push:
-    branches:
-      - master
-
-jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: 📥 Cloner le dépôt
-        uses: actions/checkout@v4
-
-      - name: 🔑 Connexion à GHCR
-        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
-      
-
-      - name: 🏗️ Build de l'image Docker avec Prisma
-        run: docker build -t ghcr.io/bouissai/bmarket:latest .
-
-      - name: 📤 Push de l'image sur GHCR
-        run: docker push ghcr.io/bouissai/bmarket:latest
-
-  deploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-
-    steps:
       - name: 📡 Connexion SSH et déploiement
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.SERVER_IP }}
-          username: root
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
@@ -45,7 +12,6 @@ jobs:
 
             echo "📦 Vérification de Docker Compose..."
             if ! command -v docker-compose &> /dev/null; then
-              echo "❌ docker-compose absent. Installation..."
               apt update && apt install -y docker-compose
             fi
 
@@ -58,5 +24,24 @@ jobs:
 
             echo "🚀 Démarrage des nouveaux conteneurs..."
             docker-compose up -d || { echo "❌ Démarrage échoué"; exit 1; }
+
+            echo "⏳ Attente que Postgres démarre (15s)..."
+            sleep 15
+
+            echo "🛠️ Création base de données si elle n'existe pas..."
+            docker exec bmarket-postgres-1 bash -c "PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -tc \"SELECT 1 FROM pg_database WHERE datname = '$POSTGRES_DB'\" | grep -q 1 || psql -U $POSTGRES_USER -c \"CREATE DATABASE $POSTGRES_DB;\""
+
+            echo "📄 Génération de .env.production..."
+            cat <<EOF > .env.production
+DATABASE_URL=${{ secrets.DATABASE_URL }}
+NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+NEXTAUTH_URL=https://bmarket.fr
+EOF
+
+            echo "📂 Injection du .env.production dans le container..."
+            docker cp .env.production bmarket-votre-app-1:/app/.env.production
+
+            echo "📦 Prisma migrate deploy..."
+            docker exec bmarket-votre-app-1 npx prisma migrate deploy || echo "⚠️ Prisma migration skipped"
 
             echo "✅ Déploiement terminé !"
