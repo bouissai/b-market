@@ -31,6 +31,7 @@ COPY --from=deps /app/node_modules ./node_modules
 
 # Copie tout le reste du code source dans l’image
 COPY . .
+COPY prisma ./prisma
 
 # 🧬 Génère le client Prisma (obligatoire pour que le build fonctionne avec `standalone`)
 RUN npx prisma generate
