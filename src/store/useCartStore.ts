@@ -1,15 +1,18 @@
 import { CartItem } from '@/types/cart';
 import { create } from 'zustand';
+import { ArticleGetDto } from '@/types/article';
+import { getSession } from 'next-auth/react';
 
 type CartStore = {
 	cartItems: CartItem[];
 	isLoading: boolean;
 	error: string | null;
 	totalCartItems: number;
+	totalPrice: number;
 	fetchCartItems: () => Promise<void>;
-	addCartItem: (newItem: CartItem) => Promise<void>;
-	removeCartItem: (itemId: string) => Promise<void>;
-	updateQuantity: (itemId: string, quantity: number) => Promise<void>;
+	addCartItem: (newItem: ArticleGetDto) => Promise<void>;
+	removeFromCart: (item: ArticleGetDto) => Promise<void>;
+	updateQuantity: (item: ArticleGetDto, quantity: number) => Promise<void>;
 	clearCart: () => Promise<void>;
 };
 
@@ -18,113 +21,173 @@ export const useCartStore = create<CartStore>((set, get) => ({
 	isLoading: false,
 	error: null,
 	totalCartItems: 0,
+	totalPrice: 0,
 
 	// Fetch cart items from the API
 	fetchCartItems: async () => {
-		console.log('Fetching cart items...');
+		const session = await getSession();
+		if (session) {
+			console.log('User is logged in, fetching cart items from API...');
 
-		// set({ isLoading: true, error: null });
+			// Utilisateur connecté : récupérer les articles depuis l'API
+			// try {
+			// 	const response = await fetch('/api/cart');
+			// 	if (!response.ok) throw new Error('Failed to fetch cart items');
+			// 	const data = await response.json();
+			// 	set({
+			// 		cartItems: data,
+			// 		totalCartItems: data.reduce((sum, item) => sum + item.quantity, 0),
+			// 	});
+			// } catch (error) {
+			// 	console.error('Error fetching cart items:', error);
+			// }
+		} else {
+			console.log(
+				'User is NOT logged in, fetching cart items from localStorage...',
+			);
 
-		// try {
-		// 	const response = await fetch('/api/cart');
-
-		// 	if (!response.ok) throw new Error('Failed to fetch cart items');
-
-		// 	const data = await response.json();
-
-		// 	set({
-		// 		cartItems: data.cartItems,
-		// 		totalCartItems: data.total,
-		// 		isLoading: false,
-		// 	});
-		// } catch (error) {
-		// 	set({
-		// 		error: error instanceof Error ? error.message : 'An error occurred',
-		// 		isLoading: false,
-		// 	});
-		// }
+			// Utilisateur non connecté : récupérer les articles depuis le localStorage
+			const localCart = JSON.parse(localStorage.getItem('cart') || '[]');
+			set({
+				cartItems: localCart,
+				totalCartItems: localCart.reduce(
+					(sum: number, item: CartItem) => sum + item.quantity,
+					0,
+				),
+				totalPrice: localCart.reduce(
+					(sum: number, item: CartItem) =>
+						sum + item.article.price * item.quantity,
+					0,
+				),
+			});
+		}
 	},
 
-	addCartItem: async (newItem: CartItem) => {
-		console.log('Adding item to cart...');
-		// set({ isLoading: true, error: null });
-
-		// try {
-		//     const response = await fetch('/api/cart', {
-		//         method: 'POST',
-		//         headers: {
-		//             'Content-Type': 'application/json',
-		//         },
-		//         body: JSON.stringify(newItem),
-		//     });
-
-		//     if (!response.ok) throw new Error('Failed to add item to cart');
-
-		//     const data = await response.json();
-
-		//     set({
-		//         cartItems: [...get().cartItems, data.cartItem],
-		//         totalCartItems: get().totalCartItems + 1,
-		//         isLoading: false,
-		//     });
-		// } catch (error) {
-		//     set({
-		//         error: error instanceof Error ? error.message : 'An error occurred',
-		//         isLoading: false,
-		//     });
-		// }
+	addCartItem: async (newItem: ArticleGetDto) => {
+		const session = await getSession();
+		if (session) {
+			console.log('User is logged in, adding item to API cart...');
+			// Utilisateur connecté : ajouter à la base de données
+			// try {
+			// 	const response = await fetch('/api/cart', {
+			// 		method: 'POST',
+			// 		headers: {
+			// 			'Content-Type': 'application/json',
+			// 		},
+			// 		body: JSON.stringify({ articleId: newItem.id }),
+			// 	});
+			// 	if (!response.ok) throw new Error('Failed to add item to cart');
+			// 	await get().fetchCartItems(); // Rafraîchir le panier
+			// } catch (error) {
+			// 	console.error('Error adding item to cart:', error);
+			// }
+		} else {
+			console.log(
+				'User is NOT logged in, adding item to localStorage cart...',
+			);
+			// Utilisateur non connecté : ajouter au localStorage
+			const localCart = JSON.parse(localStorage.getItem('cart') || '[]');
+			const existingItem = localCart.find(
+				(item: CartItem) => item.article.id === newItem.id,
+			);
+			if (existingItem) {
+				existingItem.quantity += 1;
+			} else {
+				localCart.push({ article: newItem, quantity: 1 });
+			}
+			localStorage.setItem('cart', JSON.stringify(localCart));
+			set({
+				cartItems: localCart,
+				totalCartItems: localCart.reduce(
+					(sum: number, item: CartItem) => sum + item.quantity,
+					0,
+				),
+				totalPrice: localCart.reduce(
+					(sum: number, item: CartItem) =>
+						sum + item.article.price * item.quantity,
+					0,
+				),
+			});
+		}
 	},
 
-	removeCartItem: async (itemId: string) => {
+	removeFromCart: async (item: ArticleGetDto) => {
 		console.log('Deleting item from cart...');
-		// set({ isLoading: true, error: null });
 
-		// try {
-		//     const response = await fetch(`/api/cart/${itemId}`, {
-		//         method: 'DELETE',
-		//     });
-
-		//     if (!response.ok) throw new Error('Failed to delete item from cart');
-
-		//     set({
-		//         cartItems: get().cartItems.filter(item => item.id !== itemId),
-		//         totalCartItems: get().totalCartItems - 1,
-		//         isLoading: false,
-		//     });
-		// } catch (error) {
-		//     set({
-		//         error: error instanceof Error ? error.message : 'An error occurred',
-		//         isLoading: false,
-		//     });
-		// }
+		const session = await getSession();
+		if (session) {
+			console.log('User is logged in, deleting item from API cart...');
+			// Utilisateur connecté : supprimer de la base de données
+		} else {
+			console.log(
+				'User is NOT logged in, deleting item from localStorage cart...',
+			);
+			// Utilisateur non connecté : supprimer du localStorage
+			const localCart = JSON.parse(localStorage.getItem('cart') || '[]');
+			const existingItem = localCart.find(
+				(cartItem: CartItem) => cartItem.article.id === item.id,
+			);
+			if (existingItem) {
+				localCart.splice(localCart.indexOf(existingItem), 1);
+			}
+			localStorage.setItem('cart', JSON.stringify(localCart));
+			set({
+				cartItems: localCart,
+				totalCartItems: localCart.reduce(
+					(sum: number, item: CartItem) => sum + item.quantity,
+					0,
+				),
+				totalPrice: localCart.reduce(
+					(sum: number, item: CartItem) =>
+						sum + item.article.price * item.quantity,
+					0,
+				),
+			});
+		}
 	},
 
-	updateQuantity: async (itemId: string, quantity: number) => {
+	updateQuantity: async (item: ArticleGetDto, quantity: number) => {
 		console.log('Updating item quantity in cart...');
-		// set({ isLoading: true, error: null });
+
+		const session = await getSession();
+		if (session) {
+			console.log(
+				'User is logged in, updating item quantity in API cart...',
+			);
+			// Utilisateur connecté : mettre à jour la quantité dans la base de données
+		} else {
+			console.log(
+				'User is NOT logged in, updating item quantity in localStorage cart...',
+			);
+			// Utilisateur non connecté : mettre à jour la quantité dans le localStorage
+			const localCart = JSON.parse(localStorage.getItem('cart') || '[]');
+			const existingItem = localCart.find(
+				(cartItem: CartItem) => cartItem.article.id === item.id,
+			);
+			if (existingItem) {
+				if (quantity <= 0) {
+					localCart.splice(localCart.indexOf(existingItem), 1);
+				} else {
+					existingItem.quantity = quantity;
+				}
+			}
+			localStorage.setItem('cart', JSON.stringify(localCart));
+			set({
+				cartItems: localCart,
+				totalCartItems: localCart.reduce(
+					(sum: number, item: CartItem) => sum + item.quantity,
+					0,
+				),
+				totalPrice: localCart.reduce(
+					(sum: number, item: CartItem) =>
+						sum + item.article.price * item.quantity,
+					0,
+				),
+			});
+		}
 	},
 
 	clearCart: async () => {
 		console.log('Clearing cart...');
-		// set({ isLoading: true, error: null });
-
-		// try {
-		//     const response = await fetch('/api/cart/clear', {
-		//         method: 'DELETE',
-		//     });
-
-		//     if (!response.ok) throw new Error('Failed to clear cart');
-
-		//     set({
-		//         cartItems: [],
-		//         totalCartItems: 0,
-		//         isLoading: false,
-		//     });
-		// } catch (error) {
-		//     set({
-		//         error: error instanceof Error ? error.message : 'An error occurred',
-		//         isLoading: false,
-		//     });
-		// }
 	},
 }));

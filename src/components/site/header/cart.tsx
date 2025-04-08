@@ -11,7 +11,7 @@ import {
 import { motion } from 'framer-motion';
 import { Minus, Plus, ShoppingBag, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useCartStore } from '@/store/useCartStore';
 
@@ -20,17 +20,21 @@ interface CartProps {
 }
 
 export const Cart = ({ className = '' }: CartProps) => {
-	const { cartItems } = useCartStore();
+	const {
+		cartItems,
+		updateQuantity,
+		removeFromCart: removeCartItem,
+		totalCartItems,
+		totalPrice,
+		fetchCartItems,
+	} = useCartStore();
 
 	const router = useRouter();
 	const [open, setOpen] = useState(false);
 
-	const totalPrice = cartItems.reduce(
-		(sum, item) => sum + item.article.price * item.quantity,
-		0,
-	);
-
-	const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+	useEffect(() => {
+		fetchCartItems();
+	}, []);
 
 	return (
 		<div>
@@ -45,7 +49,7 @@ export const Cart = ({ className = '' }: CartProps) => {
 							<Badge
 								variant="destructive"
 								className="absolute -top-2 -right-2 px-2 py-1 text-xs min-w-5 h-5 flex items-center justify-center">
-								{totalItems}
+								{totalCartItems}
 							</Badge>
 							<span className="sr-only">Panier</span>
 						</Button>
@@ -56,7 +60,7 @@ export const Cart = ({ className = '' }: CartProps) => {
 						</SheetHeader>
 
 						<div className="mt-8 flex flex-col h-[calc(100vh-10rem)]">
-							{totalItems === 0 ? (
+							{totalCartItems === 0 ? (
 								<div className="flex flex-col items-center justify-center h-full text-center space-y-4">
 									<ShoppingBag className="h-12 w-12 text-muted-foreground" />
 									<p className="text-muted-foreground">
@@ -148,7 +152,7 @@ export const Cart = ({ className = '' }: CartProps) => {
 													size="icon"
 													className="h-8 w-8 ml-2"
 													onClick={() =>
-														removeFromCart(item.article)
+														removeCartItem(item.article)
 													}>
 													<Trash className="h-4 w-4 text-red-500" />
 												</Button>
