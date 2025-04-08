@@ -35,17 +35,11 @@ export default function ProductListing() {
 		selectedCategory,
 		setSelectedCategory,
 	} = useCategoryStore();
-
-	const { updateQuantity, addCartItem, removeFromCart } = useCartStore();
-
-	const { cartItems } = useCartStore();
-
-	// const [cartItems, setCartItems] = useState<CartItem[]>([]);
+	const { addCartItem } = useCartStore();
 	const [currentPage, setCurrentPage] = useState(1);
 	const pageSize = MAX_ARTICLES_PER_PAGE;
 	const totalPages = Math.ceil(totalArticles / pageSize);
 
-	// récupération des catégories
 	useEffect(() => {
 		fetchCategories();
 	}, []);
@@ -62,65 +56,11 @@ export default function ProductListing() {
 		}
 	}, [selectedCategory]);
 
-	// gestion de la navigation entre les pages
 	const handlePageChange = (newPage: number) => {
 		if (newPage >= 1 && newPage <= totalPages) {
 			setCurrentPage(newPage);
 		}
 	};
-
-	// ajout d'un article au panier
-	// const addToCart = (article: ArticleGetDto, quantity = 1) => {
-	// 	const currentQuantity =
-	// 		cartItems.find(item => item.article.id === article.id)?.quantity || 0;
-	// 	updateQuantity(article, currentQuantity + quantity);
-	// };
-
-	// suppression d'un article du panier
-	// const removeFromCart = (article: ArticleGetDto) => {
-	// 	setCartItems(prevItems =>
-	// 		prevItems.filter(item => item.article.id !== article.id),
-	// 	);
-	// };
-
-	// mise à jour de la quantité d'un article dans le panier
-	// const updateQuantity = (article: ArticleGetDto, newQuantity: number) => {
-	// 	if (newQuantity < 0) {
-	// 		return;
-	// 	}
-
-	// 	setCartItems(prevItems => {
-	// 		if (newQuantity === 0) {
-	// 			// supprimer l'article si la quantité est 0
-	// 			return prevItems.filter(item => item.article.id !== article.id);
-	// 		}
-
-	// 		const existingItem = prevItems.find(
-	// 			item => item.article.id === article.id,
-	// 		);
-
-	// 		if (existingItem) {
-	// 			// mettre à jour la quantité si l'article existe déjà
-	// 			return prevItems.map(item =>
-	// 				item.article.id === article.id
-	// 					? { ...item, quantity: newQuantity }
-	// 					: item,
-	// 			);
-	// 		} else {
-	// 			// ajouter l'article s'il n'existe pas encore
-	// 			return [...prevItems, { article, quantity: newQuantity }];
-	// 		}
-	// 	});
-	// };
-
-	// calcul du prix total
-	const totalPrice = cartItems.reduce(
-		(sum, item) => sum + item.article.price * item.quantity,
-		0,
-	);
-
-	// calcul du nombre total d'articles
-	const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
 	return (
 		<div>
@@ -158,8 +98,6 @@ export default function ProductListing() {
 						<Card key={article.id} className="overflow-hidden">
 							<div className="aspect-video relative">
 								<Image
-									// TODO : a modifier quand il y aura les images des articles
-									// src={article.image && article.image.startsWith('http') ? article.image : '/placeholder.svg'}
 									src={article.image}
 									alt={article.name}
 									loading="lazy"

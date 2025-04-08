@@ -46,11 +46,11 @@ export const Cart = ({ className = '' }: CartProps) => {
 					<SheetTrigger asChild>
 						<Button variant="ghost" size="icon" className="relative">
 							<ShoppingBag className="h-5 w-5" />
-							<Badge
-								variant="destructive"
-								className="absolute -top-2 -right-2 px-2 py-1 text-xs min-w-5 h-5 flex items-center justify-center">
-								{totalCartItems}
-							</Badge>
+							{totalCartItems > 0 && (
+								<Badge className="absolute -top-2 -right-2 px-2 py-1 text-xs min-w-5 h-5 flex items-center justify-center">
+									{totalCartItems}
+								</Badge>
+							)}
 							<span className="sr-only">Panier</span>
 						</Button>
 					</SheetTrigger>
