@@ -1,10 +1,10 @@
 services:
-  votre-app:
+  bmarket:
     image: ghcr.io/bouissai/bmarket:latest
     ports:
       - "3000:3000"
     env_file:
-      - .env.production
+      - .env
     depends_on:
       - postgres
 
