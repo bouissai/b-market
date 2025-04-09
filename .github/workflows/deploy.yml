@@ -21,9 +21,13 @@ jobs:
       - name: 🔑 Connexion à GHCR
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
+      - name: 📄 Copier le docker-compose.yml sur le serveur
+        run: |
+          scp docker-compose.yml root@${{ secrets.VPS_HOST }}:/root/bmarket/
+
       - name: 🏗️ Build de l'image Docker avec Prisma
         run: docker build -t ghcr.io/bouissai/bmarket:latest .
-
+      
       - name: 📤 Push de l'image sur GHCR
         run: docker push ghcr.io/bouissai/bmarket:latest
 
@@ -40,42 +44,29 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
-
             echo "📌 Passage au dossier..."
             cd ~/bmarket
-
-            echo "📄 Génération de .env.production..."
-            echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > .env.production
-            echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env.production
-            echo "NEXTAUTH_URL=https://bmarket.fr" >> .env.production
-
-            echo "📂 Injection du .env.production dans le container (si déjà existant)..."
-            docker cp .env.production bmarket-votre-app-1:/app/.env.production || true
-
-            echo "📦 Vérification de Docker Compose..."
-            if ! command -v docker-compose &> /dev/null; then
-              apt update && apt install -y docker-compose
-            fi
 
             echo "🔐 Login GHCR depuis le serveur..."
             docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password ${{ secrets.GHCR_TOKEN }}
 
             echo "📦 Pull de la nouvelle image..."
-            docker-compose pull || { echo "❌ Pull échoué"; exit 1; }
+            docker-compose pull
 
             echo "🛑 Arrêt des anciens conteneurs..."
             docker-compose down || echo "⚠️ Aucun conteneur à stopper"
 
             echo "🚀 Démarrage des nouveaux conteneurs..."
-            docker-compose up -d || { echo "❌ Démarrage échoué"; exit 1; }
+            docker-compose up -d
 
             echo "⏳ Attente que Postgres démarre (15s)..."
             sleep 15
 
-            echo "📂 Copie finale du .env.production dans l'app..."
-            docker cp .env.production bmarket-votre-app-1:/app/.env.production
+            echo "📂 Copie finale du .env dans l'app..."
+            APP_ID=$(docker-compose ps -q votre-app)
+            docker cp .env $APP_ID:/app/.env
 
             echo "📦 Prisma migrate deploy..."
-            docker exec bmarket-votre-app-1 npx prisma migrate deploy || echo "⚠️ Prisma migration skipped"
+            docker exec $APP_ID npx prisma migrate deploy || echo "⚠️ Prisma migration skipped"
 
             echo "✅ Déploiement terminé !"
