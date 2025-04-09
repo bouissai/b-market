@@ -27,6 +27,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: 📥 Cloner le dépôt
+        uses: actions/checkout@v4
+        
       - name: 📄 Copier le docker-compose.yml sur le serveur
         run: |
           scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USER }}@${{ secrets.SERVER_IP }}:/root/bmarket/docker-compose.yml
