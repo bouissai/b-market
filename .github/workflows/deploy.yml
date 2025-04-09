@@ -23,7 +23,7 @@ jobs:
 
       - name: 📄 Copier le docker-compose.yml sur le serveur
         run: |
-          scp docker-compose.yml root@${{ secrets.VPS_HOST }}:/root/bmarket/
+          scp docker-compose.yml root@${{ secrets.SERVER_IP }}:/root/bmarket/
 
       - name: 🏗️ Build de l'image Docker avec Prisma
         run: docker build -t ghcr.io/bouissai/bmarket:latest .
