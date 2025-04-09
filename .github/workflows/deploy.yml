@@ -68,7 +68,7 @@ jobs:
             sleep 15
 
             echo "📂 Prisma migrate deploy"
-            APP_ID=$(docker-compose ps -q votre-app)
+            APP_ID=$(docker-compose ps -q bmarket)
             docker exec $APP_ID npx prisma migrate deploy || echo "⚠️ Prisma migration skipped"
 
             echo "✅ Déploiement terminé !"
