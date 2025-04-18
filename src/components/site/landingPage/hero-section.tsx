@@ -12,6 +12,7 @@ export function HeroSection() {
 					alt="Viande de qualité"
 					fill
 					className="object-cover"
+					unoptimized
 					priority
 				/>
 				<div className="absolute inset-0 bg-gradient-to-r from-boucherie-black/95 via-boucherie-black/80 to-boucherie-black/60"></div>
@@ -46,7 +47,7 @@ export function HeroSection() {
 								/>
 
 								<span className="relative z-10 flex items-center">
-									Commander en ligne
+									Commander en ligne (En cours)
 									<ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
 								</span>
 							</Link>

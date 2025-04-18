@@ -6,7 +6,7 @@ export function HeroEvent() {
 
     return (
         <>
-            <div className="relative h-[400px] md:h-[500px]">
+            <div className="relative h-[480px] md:h-[500px]">
                 <Image
                     src="/images/events.webp"
                     alt="Viande de qualité pour événements"
