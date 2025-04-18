@@ -27,7 +27,7 @@ import { useCartStore } from '@/store/useCartStore';
 const MAX_ARTICLES_PER_PAGE = 9;
 
 export default function ProductListing() {
-	const { articles, fetchArticles, totalArticles, isLoading, error } =
+	const { articles, fetchArticles, totalArticles, isLoading } =
 		useArticleStore();
 	const {
 		categories,

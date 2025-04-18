@@ -4,6 +4,7 @@ import { ProductsShowcaseSection } from '@/components/site/landingPage/product-s
 import { ServicesOverviewSection } from '@/components/site/landingPage/services-overview-section';
 import { TestimonialsSection } from '@/components/site/testimonials-section';
 import { WhyChooseUsSection } from '@/components/site/landingPage/why-choose-us-section';
+import { CartMergeDialog } from '@/components/site/landingPage/cart-merge-dialog';
 
 export default function Home() {
 	return (
@@ -14,6 +15,7 @@ export default function Home() {
 			<ProductsShowcaseSection />
 			<TestimonialsSection />
 			<CTASection />
+			<CartMergeDialog />
 		</>
 	);
 }
