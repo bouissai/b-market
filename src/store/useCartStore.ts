@@ -160,7 +160,11 @@ export const useCartStore = create<CartStore>((set, get) => ({
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ articleId: item.id, quantity, userId: session.user?.id }),
+				body: JSON.stringify({
+					articleId: item.id,
+					quantity,
+					userId: session.user?.id,
+				}),
 			});
 			switch (response.status) {
 				case 200:
@@ -213,16 +217,46 @@ export const useCartStore = create<CartStore>((set, get) => ({
 		const session = await getSession();
 
 		if (session) {
-			try {
-				const response = await fetch(`/api/cart/${item.id}`, {
-					method: 'DELETE',
-				});
-				if (!response.ok)
-					throw new Error('Failed to remove item from cart');
-				await get().fetchCartItems();
-			} catch (error) {
-				console.error('Error removing from cart:', error);
+			const response = await fetch(`/api/carts/items`, {
+				method: 'DELETE',
+				body: JSON.stringify({
+					articleId: item.id,
+					userId: session.user?.id,
+				}),
+			});
+			switch (response.status) {
+				case 200:
+					toast({
+						title: 'Article supprimé',
+						description: 'Article supprimé du panier avec succès',
+					});
+					break;
+				case 400:
+					toast({
+						title: 'Erreur lors de la suppression',
+						description: 'Article introuvable ou erreur de session',
+						variant: 'destructive',
+					});
+					break;
+				case 403:
+					toast({
+						title: 'Erreur de session',
+						description: 'Action pas autorisée pour cet utilisateur',
+						variant: 'destructive',
+					});
+					break;
+				case 500:
+					toast({
+						title: 'Erreur serveur',
+						description:
+							"Une erreur est survenue lors de la suppression de l'article",
+						variant: 'destructive',
+					});
+					break;
+				default:
+					break;
 			}
+			await get().fetchCartItems();
 		} else {
 			const updatedCart = getLocalCart().filter(
 				cartItem => cartItem.article.id !== item.id,
