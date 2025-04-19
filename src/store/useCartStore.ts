@@ -2,6 +2,7 @@ import { CartGetDto, CartItem } from '@/types/cart';
 import { create } from 'zustand';
 import { ArticleGetDto } from '@/types/article';
 import { getSession } from 'next-auth/react';
+import { toast } from '@/hooks/use-toast';
 
 type CartMergeOption = 'merge' | 'keep-db' | 'keep-local';
 
@@ -92,22 +93,51 @@ export const useCartStore = create<CartStore>((set, get) => ({
 		}
 
 		if (session) {
-			try {
-				// Ajoute l'article au panier de l'utilisateur
-				const response = await fetch(`/api/carts`, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						articleId: newItem.id,
-						quantity: 1,
-						userId: session.user?.id,
-					}),
-				});
-				if (!response.ok) throw new Error('Failed to add item to cart');
-				await get().fetchCartItems(); // Rafraîchit le panier
-			} catch (error) {
-				console.error('Error adding to cart:', error);
+			const response = await fetch('/api/carts/items', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					articleId: newItem.id,
+					quantity: 1,
+					userId: session.user?.id,
+				}),
+			});
+			switch (response.status) {
+				case 200:
+					// TODO : remplacer toast par une animation
+					toast({
+						title: 'Article ajouté',
+						description: 'Article ajouté au panier avec succès',
+					});
+					break;
+				case 400:
+					toast({
+						title: "Erreur lors de l'ajout au panier",
+						description: 'Quantité invalide ou article introuvable',
+						variant: 'destructive',
+					});
+					break;
+				case 403:
+					toast({
+						title: 'Erreur de session',
+						description: 'Action pas autorisée pour cet utilisateur',
+						variant: 'destructive',
+					});
+					break;
+				case 500:
+					toast({
+						title: 'Erreur serveur',
+						description:
+							'Une erreur est survenue lors de la mise à jour du panier',
+						variant: 'destructive',
+					});
+					break;
+				default:
+					break;
 			}
+			await get().fetchCartItems();
 		} else {
 			const localCart = getLocalCart();
 			localCart.push({ article: newItem, quantity: 1 });
@@ -125,19 +155,47 @@ export const useCartStore = create<CartStore>((set, get) => ({
 		}
 
 		if (session) {
-			try {
-				const response = await fetch('/api/carts', {
-					method: 'PATCH',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({ articleId: item.id, quantity }),
-				});
-				if (!response.ok) throw new Error('Failed to update item quantity');
-				await get().fetchCartItems();
-			} catch (error) {
-				console.error('Error updating cart item:', error);
+			const response = await fetch('/api/carts/items', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ articleId: item.id, quantity, userId: session.user?.id }),
+			});
+			switch (response.status) {
+				case 200:
+					// TODO : remplacer toast par une animation
+					toast({
+						title: 'Article ajouté',
+						description: 'Article ajouté au panier avec succès',
+					});
+					break;
+				case 400:
+					toast({
+						title: "Erreur lors de l'ajout au panier",
+						description: 'Quantité invalide ou article introuvable',
+						variant: 'destructive',
+					});
+					break;
+				case 403:
+					toast({
+						title: 'Erreur de session',
+						description: 'Action pas autorisée pour cet utilisateur',
+						variant: 'destructive',
+					});
+					break;
+				case 500:
+					toast({
+						title: 'Erreur serveur',
+						description:
+							'Une erreur est survenue lors de la mise à jour du panier',
+						variant: 'destructive',
+					});
+					break;
+				default:
+					break;
 			}
+			await get().fetchCartItems();
 		} else {
 			const updatedCart = getLocalCart().map(cartItem => {
 				if (cartItem.article.id === item.id) {
