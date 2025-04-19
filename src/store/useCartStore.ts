@@ -78,7 +78,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
 	},
 
 	addCartItem: async newItem => {
-		const session = await getSession();
 		const { cartItems, updateQuantity } = get();
 
 		// Vérifie si l'article est déjà dans le panier
@@ -90,60 +89,11 @@ export const useCartStore = create<CartStore>((set, get) => ({
 			// 🔁 L'article est déjà là → on incrémente la quantité
 			await updateQuantity(newItem, existingItem.quantity + 1);
 			return;
-		}
-
-		if (session) {
-			const response = await fetch('/api/carts/items', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					articleId: newItem.id,
-					quantity: 1,
-					userId: session.user?.id,
-				}),
-			});
-			switch (response.status) {
-				case 200:
-					// TODO : remplacer toast par une animation
-					toast({
-						title: 'Article ajouté',
-						description: 'Article ajouté au panier avec succès',
-					});
-					break;
-				case 400:
-					toast({
-						title: "Erreur lors de l'ajout au panier",
-						description: 'Quantité invalide ou article introuvable',
-						variant: 'destructive',
-					});
-					break;
-				case 403:
-					toast({
-						title: 'Erreur de session',
-						description: 'Action pas autorisée pour cet utilisateur',
-						variant: 'destructive',
-					});
-					break;
-				case 500:
-					toast({
-						title: 'Erreur serveur',
-						description:
-							'Une erreur est survenue lors de la mise à jour du panier',
-						variant: 'destructive',
-					});
-					break;
-				default:
-					break;
-			}
-			await get().fetchCartItems();
 		} else {
-			const localCart = getLocalCart();
-			localCart.push({ article: newItem, quantity: 1 });
-			syncCartToLocalStorage(localCart);
+			console.log('Article non trouvé dans le panier, ajout en cours...');
+			await updateQuantity(newItem, 1);
+			return;
 		}
-		await get().fetchCartItems();
 	},
 
 	updateQuantity: async (item, quantity) => {
@@ -201,14 +151,26 @@ export const useCartStore = create<CartStore>((set, get) => ({
 			}
 			await get().fetchCartItems();
 		} else {
-			const updatedCart = getLocalCart().map(cartItem => {
-				if (cartItem.article.id === item.id) {
-					return { ...cartItem, quantity };
-				}
-				return cartItem;
-			});
+			// Traitement local (pas de session)
+			const localCart = getLocalCart();
 
-			syncCartToLocalStorage(updatedCart);
+			// Trouver l'article dans le panier
+			const existingItemIndex = localCart.findIndex(
+				cartItem => cartItem.article.id === item.id,
+			);
+
+			if (existingItemIndex !== -1) {
+				// Si l'article existe, mettre à jour sa quantité
+				localCart[existingItemIndex].quantity = quantity;
+			} else {
+				// Si l'article n'existe pas, l'ajouter avec une quantité de 1
+				localCart.push({
+					article: item,
+					quantity: 1,
+				});
+			}
+
+			syncCartToLocalStorage(localCart);
 		}
 		await get().fetchCartItems();
 	},
