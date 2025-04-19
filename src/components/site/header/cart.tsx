@@ -9,7 +9,7 @@ import {
 	SheetTrigger,
 } from '@/components/ui/sheet';
 import { motion } from 'framer-motion';
-import { Minus, Plus, ShoppingBag, Trash } from 'lucide-react';
+import { Minus, Plus, ShoppingBag, Trash, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -27,6 +27,7 @@ export const Cart = ({ className = '' }: CartProps) => {
 		totalCartItems,
 		totalPrice,
 		fetchCartItems,
+		clearCart,
 	} = useCartStore();
 
 	const router = useRouter();
@@ -159,7 +160,15 @@ export const Cart = ({ className = '' }: CartProps) => {
 											</div>
 										</div>
 									))}
-
+									<Button
+										onClick={() => {
+											clearCart();
+										}}
+										variant="ghost"
+										className="text-red-500 hover:text-red-400 hover:bg-red-950 flex items-center gap-2 mt-2 box-border">
+										<Trash2 className="h-4 w-4" />
+										Vider le panier
+									</Button>
 									<div className="border-t pt-4 mt-auto">
 										<div className="flex justify-between py-2">
 											<span>Sous-total</span>

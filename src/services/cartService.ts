@@ -50,3 +50,47 @@ export async function getCartByUserId(
 		throw new Error('Impossible de récupérer le panier.');
 	}
 }
+
+export async function clearCartByUserId(
+	userId: string,
+): Promise<CartGetDto | null> {
+	try {
+		const cart = await prisma.cart.findUnique({
+			where: { userId },
+		});
+
+		if (!cart) {
+			return null;
+		}
+
+		return await prisma.cart.update({
+			where: { id: cart.id }, // Utilisez l'ID unique du panier
+			data: {
+				cartItems: {
+					deleteMany: {}, // Supprime tous les articles du panier
+				},
+			},
+			include: {
+				cartItems: {
+					include: {
+						article: {
+							select: {
+								id: true,
+								name: true,
+								price: true,
+								image: true,
+								unit: true,
+							},
+						},
+					},
+				},
+			},
+		});
+	} catch (error) {
+		console.error(
+			`[clearCartByUserId] Erreur lors de la suppression du panier avec user ID ${userId}`,
+			error,
+		);
+		throw new Error('Impossible de vider le panier.');
+	}
+}

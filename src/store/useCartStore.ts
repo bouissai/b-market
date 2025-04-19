@@ -276,15 +276,47 @@ export const useCartStore = create<CartStore>((set, get) => ({
 		const session = await getSession();
 
 		if (session) {
-			try {
-				const response = await fetch(`/api/carts/${session.user?.id}`, {
-					method: 'DELETE',
-				});
-				if (!response.ok) throw new Error('Failed to clear cart');
-				await get().fetchCartItems();
-			} catch (error) {
-				console.error('Error clearing cart:', error);
+			const response = await fetch(`/api/carts`, {
+				method: 'DELETE',
+				body: JSON.stringify({
+					userId: session.user?.id,
+				}),
+			});
+
+			switch (response.status) {
+				case 200:
+					toast({
+						title: 'Panier vidé',
+						description: 'Le panier a été vidé avec succès',
+					});
+					break;
+				case 400:
+					toast({
+						title: 'Erreur lors de la suppression',
+						description: 'Panier introuvable',
+						variant: 'destructive',
+					});
+					break;
+				case 403:
+					toast({
+						title: 'Erreur de session',
+						description: 'Action pas autorisée pour cet utilisateur',
+						variant: 'destructive',
+					});
+					break;
+				case 500:
+					toast({
+						title: 'Erreur serveur',
+						description:
+							'Une erreur est survenue lors de la suppression du panier',
+						variant: 'destructive',
+					});
+					break;
+				default:
+					break;
 			}
+
+			await get().fetchCartItems();
 		} else {
 			localStorage.removeItem('cart');
 		}
