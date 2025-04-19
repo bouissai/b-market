@@ -8,6 +8,8 @@ type CartMergeOption = 'merge' | 'keep-db' | 'keep-local';
 
 type CartStore = {
 	cartItems: CartItem[];
+	localCart: CartItem[];
+	remoteCart: CartItem[];
 	isLoading: boolean;
 	error: string | null;
 	totalCartItems: number;
@@ -45,8 +47,28 @@ const calculateTotals = (cartItems: CartItem[]) => {
 	return { totalCartItems, totalPrice };
 };
 
+// services/cartService.ts - Ajouter cette fonction
+export const resolveCartConflict = (
+	localCart: CartItem[],
+	remoteCart: CartItem[],
+	setStoreState: (state: any) => void,
+): boolean => {
+	if (localCart.length > 0 && remoteCart.length > 0) {
+		console.log('modal merge popup');
+		setStoreState({
+			showMergePopup: true,
+			localCart,
+			remoteCart,
+		});
+		return true; // Conflit détecté
+	}
+	return false; // Pas de conflit
+};
+
 export const useCartStore = create<CartStore>((set, get) => ({
 	cartItems: [],
+	localCart: [],
+	remoteCart: [],
 	isLoading: false,
 	error: null,
 	totalCartItems: 0,
@@ -56,11 +78,15 @@ export const useCartStore = create<CartStore>((set, get) => ({
 	setShowMergePopup: show => set({ showMergePopup: show }),
 
 	fetchCartItems: async () => {
-		let cartItems: CartItem[] = [];
+		const setStoreState = set;
 		const session = await getSession();
+
+		// Chargement du panier local une seule fois
+		const localCart = getLocalCart();
 
 		if (session) {
 			const response = await fetch(`/api/carts/${session.user?.id}`);
+			const remoteCart: CartGetDto = await response.json();
 
 			switch (response.status) {
 				case 401:
@@ -69,14 +95,14 @@ export const useCartStore = create<CartStore>((set, get) => ({
 						description: 'Accès non autorisé pour cet utilisateur',
 						variant: 'destructive',
 					});
-					break;
+					return;
 				case 404:
 					toast({
 						title: 'Panier introuvable',
 						description: 'Panier introuvable pour cet utilisateur',
 						variant: 'destructive',
 					});
-					break;
+					return;
 				case 500:
 					toast({
 						title: 'Erreur serveur',
@@ -84,16 +110,34 @@ export const useCartStore = create<CartStore>((set, get) => ({
 							'Erreur serveur lors de la récupération du panier',
 						variant: 'destructive',
 					});
+					return;
 			}
 
-			const cart: CartGetDto = await response.json();
-			cartItems = cart.cartItems;
-		} else {
-			cartItems = getLocalCart();
-		}
+			// Vérification et gestion des conflits
+			const conflictDetected = resolveCartConflict(
+				localCart,
+				remoteCart.cartItems,
+				setStoreState,
+			);
 
-		const { totalCartItems, totalPrice } = calculateTotals(cartItems);
-		set({ cartItems, totalCartItems, totalPrice });
+			if (conflictDetected) {
+				return; // Gestion des conflits terminée
+			}
+
+			// Aucun conflit détecté, mise à jour avec le panier distant
+			const { totalCartItems, totalPrice } = calculateTotals(
+				remoteCart.cartItems,
+			);
+			setStoreState({
+				cartItems: remoteCart.cartItems,
+				totalCartItems,
+				totalPrice,
+			});
+		} else {
+			// Aucun utilisateur connecté, utilisation du panier local
+			const { totalCartItems, totalPrice } = calculateTotals(localCart);
+			setStoreState({ cartItems: localCart, totalCartItems, totalPrice });
+		}
 	},
 
 	addCartItem: async newItem => {
@@ -247,12 +291,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
 		await get().fetchCartItems();
 	},
 
-	handleMergeOption: async option => {
-		console.log(`Handling merge option: ${option}`);
-		// TODO: implement merge logic
-		set({ showMergePopup: false });
-	},
-
 	clearCart: async () => {
 		const session = await getSession();
 
@@ -302,5 +340,11 @@ export const useCartStore = create<CartStore>((set, get) => ({
 			localStorage.removeItem('cart');
 		}
 		await get().fetchCartItems();
+	},
+
+	handleMergeOption: async option => {
+		console.log(`Handling merge option: ${option}`);
+		// TODO: implement merge logic
+		set({ showMergePopup: false });
 	},
 }));

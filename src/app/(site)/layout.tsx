@@ -2,7 +2,8 @@ import '@/app/globals.css';
 import { FooterSite } from '@/components/site/footer/footer-site';
 import { HeaderSite } from '@/components/site/header/header-site';
 import { Metadata, Viewport } from 'next';
-import { Playfair_Display, Montserrat } from 'next/font/google';
+import { Montserrat, Playfair_Display } from 'next/font/google';
+import { CartMergeDialog } from '@/components/site/landingPage/cart-merge-dialog';
 
 export const viewport: Viewport = {
 	width: 'device-width',
@@ -74,6 +75,8 @@ export default function SiteLayout({
 				className={`${playfair.variable} ${montserrat.variable} font-sans bg-boucherie-black text-white`}>
 				<HeaderSite />
 				<main>{children}</main>
+				<CartMergeDialog />
+
 				<FooterSite />
 			</body>
 		</html>
