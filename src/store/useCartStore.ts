@@ -60,15 +60,34 @@ export const useCartStore = create<CartStore>((set, get) => ({
 		const session = await getSession();
 
 		if (session) {
-			try {
-				const response = await fetch(`/api/carts/${session.user?.id}`);
-				if (!response.ok)
-					throw new Error('Failed to fetch cart items from API');
-				const cart: CartGetDto = await response.json();
-				cartItems = cart.cartItems;
-			} catch (error) {
-				console.error('Error fetching cart items:', error);
+			const response = await fetch(`/api/carts/${session.user?.id}`);
+
+			switch (response.status) {
+				case 401:
+					toast({
+						title: 'Accès non autorisé',
+						description: 'Accès non autorisé pour cet utilisateur',
+						variant: 'destructive',
+					});
+					break;
+				case 404:
+					toast({
+						title: 'Panier introuvable',
+						description: 'Panier introuvable pour cet utilisateur',
+						variant: 'destructive',
+					});
+					break;
+				case 500:
+					toast({
+						title: 'Erreur serveur',
+						description:
+							'Erreur serveur lors de la récupération du panier',
+						variant: 'destructive',
+					});
 			}
+
+			const cart: CartGetDto = await response.json();
+			cartItems = cart.cartItems;
 		} else {
 			cartItems = getLocalCart();
 		}
