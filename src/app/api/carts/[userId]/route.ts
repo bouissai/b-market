@@ -1,20 +1,40 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@/lib/auth';
+import { getCartByUserId } from '@/services/cartService';
 
 export async function GET(
 	request: Request,
 	{ params }: { params: Promise<{ userId: string }> },
 ) {
-	console.log('carts get');
 	try {
+		const session = await auth();
 		const userId = (await params).userId;
-		const cartClient = await prisma?.cart.findUnique({
-			where: { userId },
-		});
-		return NextResponse.json(cartClient, { status: 200 });
+
+		if (!session || session.user.id !== userId) {
+			return NextResponse.json(
+				{ error: 'Accès non autorisé' },
+				{ status: 401 },
+			);
+		}
+
+		const cart = await getCartByUserId(userId);
+
+		if (!cart) {
+			return NextResponse.json(
+				{ message: 'Aucun panier trouvé pour cet utilisateur' },
+				{ status: 404 },
+			);
+		}
+		return NextResponse.json(cart, { status: 200 });
 	} catch (error) {
-		console.error('Error fetching cart for user : ', error);
+		console.error(
+			'❌ [GET] Erreur lors de la récupération du panier :',
+			error,
+		);
 		return NextResponse.json(
-			{ error: 'Error fetching cart for user : ' },
+			{
+				message: 'Erreur serveur lors de la récupération du panier',
+			},
 			{ status: 500 },
 		);
 	}

@@ -30,33 +30,33 @@ model User {
   // Optional for WebAuthn support
   Authenticator Authenticator[]
 
-  isAdmin       Boolean         @default(false)
+  isAdmin Boolean @default(false)
 }
 
 model Article {
-  id           String      @id @default(cuid())
-  name         String      @unique
-  unit         String
-  price        Float
-  image        String
-  description  String?
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  categoryId   String
-  category     Category    @relation(fields: [categoryId], references: [id])
-  cartItems    CartItem[]
-  orderItems   OrderItem[]
+  id          String      @id @default(cuid())
+  name        String      @unique
+  unit        String
+  price       Float
+  image       String
+  description String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  categoryId  String
+  category    Category    @relation(fields: [categoryId], references: [id])
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
 }
 
 model Category {
-  id        String    @id @default(cuid())
-  name      String    @unique
-  image     String?   // URL de l'image
-  description  String?
-  featured  Boolean   @default(false)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  articles  Article[]
+  id          String    @id @default(cuid())
+  name        String    @unique
+  image       String? // URL de l'image
+  description String?
+  featured    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  articles    Article[]
 }
 
 model Cart {
@@ -83,7 +83,7 @@ model Order {
   id         Int         @id @default(autoincrement())
   userId     String
   user       User        @relation(fields: [userId], references: [id])
-  total      Float
+  total      Float // potentiel rabais ou reduction donc par forcement égal au qtté * prix articles
   note       String?
   status     String      @default("PENDING") // "pending", "completed", etc.
   createdAt  DateTime    @default(now())
@@ -98,7 +98,7 @@ model OrderItem {
   articleId String
   article   Article @relation(fields: [articleId], references: [id])
   quantity  Int     @default(1)
-  price     Float
+  price     Float // potentiel rabais ou reduction donc par forcement égal au qtté * prix articles
 
   @@unique([orderId, articleId])
 }

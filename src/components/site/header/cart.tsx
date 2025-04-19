@@ -11,7 +11,7 @@ import {
 import { motion } from 'framer-motion';
 import { Minus, Plus, ShoppingBag, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useCartStore } from '@/store/useCartStore';
 
@@ -85,8 +85,8 @@ export const Cart = ({ className = '' }: CartProps) => {
 												<Image
 													// TODO : a modifier quand il y aura les images des articles
 													// src={article.image && article.image.startsWith('http') ? article.image : '/placeholder.svg'}
-													src={item.article.image}
-													alt={item.article.name}
+													src={item.article.image!}
+													alt={item.article.name!}
 													width={50}
 													height={50}
 													className="rounded-md"
@@ -96,7 +96,7 @@ export const Cart = ({ className = '' }: CartProps) => {
 														{item.article.name}
 													</p>
 													<p className="text-sm text-muted-foreground">
-														{item.article.price.toFixed(2)}€ ×{' '}
+														{item.article.price!.toFixed(2)}€ ×{' '}
 														{item.quantity}
 													</p>
 												</div>

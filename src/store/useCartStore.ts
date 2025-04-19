@@ -1,4 +1,4 @@
-import { CartItem } from '@/types/cart';
+import { CartGetDto, CartItem } from '@/types/cart';
 import { create } from 'zustand';
 import { ArticleGetDto } from '@/types/article';
 import { getSession } from 'next-auth/react';
@@ -15,9 +15,12 @@ type CartStore = {
 
 	setShowMergePopup: (show: boolean) => void;
 	fetchCartItems: () => Promise<void>;
-	addCartItem: (newItem: ArticleGetDto) => Promise<void>;
-	removeFromCart: (item: ArticleGetDto) => Promise<void>;
-	updateQuantity: (item: ArticleGetDto, quantity: number) => Promise<void>;
+	addCartItem: (newItem: Partial<ArticleGetDto>) => Promise<void>;
+	removeFromCart: (item: Partial<ArticleGetDto>) => Promise<void>;
+	updateQuantity: (
+		item: Partial<ArticleGetDto>,
+		quantity: number,
+	) => Promise<void>;
 	handleMergeOption: (option: CartMergeOption) => void;
 	clearCart: () => Promise<void>;
 };
@@ -33,9 +36,9 @@ const syncCartToLocalStorage = (cartItems: CartItem[]) => {
 };
 
 const calculateTotals = (cartItems: CartItem[]) => {
-	const totalCartItems = cartItems.reduce((sum, item) => sum + 1, 0);
+	const totalCartItems = cartItems.reduce((sum, _) => sum + 1, 0);
 	const totalPrice = cartItems.reduce(
-		(sum, item) => sum + item.article.price * item.quantity,
+		(sum, item) => sum + (item.article.price ?? 0) * item.quantity,
 		0,
 	);
 	return { totalCartItems, totalPrice };
@@ -60,7 +63,8 @@ export const useCartStore = create<CartStore>((set, get) => ({
 				const response = await fetch(`/api/carts/${session.user?.id}`);
 				if (!response.ok)
 					throw new Error('Failed to fetch cart items from API');
-				cartItems = await response.json();
+				const cart: CartGetDto = await response.json();
+				cartItems = cart.cartItems;
 			} catch (error) {
 				console.error('Error fetching cart items:', error);
 			}
@@ -89,10 +93,15 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
 		if (session) {
 			try {
-				const response = await fetch('/api/cart', {
+				// Ajoute l'article au panier de l'utilisateur
+				const response = await fetch(`/api/carts`, {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ articleId: newItem.id, quantity: 1 }),
+					body: JSON.stringify({
+						articleId: newItem.id,
+						quantity: 1,
+						userId: session.user?.id,
+					}),
 				});
 				if (!response.ok) throw new Error('Failed to add item to cart');
 				await get().fetchCartItems(); // Rafraîchit le panier
