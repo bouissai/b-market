@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useCartStore } from '@/store/useCartStore';
+import { CartMergeOption, useCartStore } from '@/store/useCartStore';
 import {
 	CloudIcon as CloudCheck,
 	Combine,
@@ -30,29 +30,23 @@ export function CartMergeDialog() {
 	const { showMergePopup, handleMergeOption, localCart, remoteCart } =
 		useCartStore();
 	const [open, setOpen] = useState(true);
-	const [selectedOption, setSelectedOption] = useState<string | null>(null);
+	const [selectedMergeOption, setSelectedMergeOption] =
+		useState<CartMergeOption | null>(null);
 	const [expandedDetails, setExpandedDetails] = useState<string | null>(null);
 	const [openAccordion, setOpenAccordion] = useState<string | null>(null);
 
 	// Mettre à jour l'accordéon ouvert lorsque l'option sélectionnée change
 	useEffect(() => {
-		if (selectedOption) {
-			setOpenAccordion(`${selectedOption}-items`);
+		if (selectedMergeOption) {
+			setOpenAccordion(`${selectedMergeOption}-items`);
 		}
-	}, [selectedOption]);
+	}, [selectedMergeOption]);
 
 	const handleContinue = () => {
-		if (!selectedOption) return;
-		console.log(`Option sélectionnée: ${selectedOption}`);
+		if (!selectedMergeOption) return;
+		console.log(`Option sélectionnée: ${selectedMergeOption}`);
+		handleMergeOption(selectedMergeOption);
 		setOpen(false);
-	};
-
-	const toggleDetails = (option: string) => {
-		if (expandedDetails === option) {
-			setExpandedDetails(null);
-		} else {
-			setExpandedDetails(option);
-		}
 	};
 
 	// Calcul des totaux
@@ -80,8 +74,10 @@ export function CartMergeDialog() {
 
 				<div className="py-4 flex-grow overflow-auto">
 					<RadioGroup
-						value={selectedOption || ''}
-						onValueChange={setSelectedOption}>
+						value={selectedMergeOption || undefined}
+						onValueChange={value =>
+							setSelectedMergeOption(value as CartMergeOption | null)
+						}>
 						<div className="flex flex-col gap-4">
 							{/* Un seul Accordion parent pour tous les items */}
 							<Accordion
@@ -91,10 +87,10 @@ export function CartMergeDialog() {
 								onValueChange={setOpenAccordion}>
 								{/* Option 1: Garder le panier du compte */}
 								<div
-									className={`border rounded-lg ${selectedOption === 'db' ? 'border-red-600 bg-red-50/10' : 'border-gray-200'}`}>
+									className={`border rounded-lg ${selectedMergeOption === 'db' ? 'border-red-600 bg-red-50/10' : 'border-gray-200'}`}>
 									<div className="flex items-start p-4 pb-2">
 										<div className="flex-shrink-0 mt-1 mr-3">
-											<RadioGroupItem value="db" id="db" />
+											<RadioGroupItem value={'db'} id="db" />
 										</div>
 										<div className="flex-grow">
 											<div className="flex justify-between items-center">
@@ -146,7 +142,7 @@ export function CartMergeDialog() {
 
 								{/* Option 2: Garder le panier local */}
 								<div
-									className={`border rounded-lg mt-4 ${selectedOption === 'local' ? 'border-red-600 bg-red-50/10' : 'border-gray-200'}`}>
+									className={`border rounded-lg mt-4 ${selectedMergeOption === 'local' ? 'border-red-600 bg-red-50/10' : 'border-gray-200'}`}>
 									<div className="flex items-start p-4 pb-2">
 										<div className="flex-shrink-0 mt-1 mr-3">
 											<RadioGroupItem value="local" id="local" />
@@ -203,7 +199,7 @@ export function CartMergeDialog() {
 
 								{/* Option 3: Fusionner les paniers */}
 								<div
-									className={`border rounded-lg mt-4 ${selectedOption === 'merge' ? 'border-red-600 bg-red-50/10' : 'border-gray-200'}`}>
+									className={`border rounded-lg mt-4 ${selectedMergeOption === 'merge' ? 'border-red-600 bg-red-50/10' : 'border-gray-200'}`}>
 									<div className="flex items-start p-4 pb-2">
 										<div className="flex-shrink-0 mt-1 mr-3">
 											<RadioGroupItem value="merge" id="merge" />
@@ -334,7 +330,7 @@ export function CartMergeDialog() {
 					</Button>
 					<Button
 						onClick={handleContinue}
-						disabled={!selectedOption}
+						disabled={!selectedMergeOption}
 						className="w-full sm:w-auto bg-red-700 hover:bg-red-800">
 						Continuer
 					</Button>

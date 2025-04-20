@@ -4,7 +4,7 @@ import { ArticleGetDto } from '@/types/article';
 import { getSession } from 'next-auth/react';
 import { toast } from '@/hooks/use-toast';
 
-type CartMergeOption = 'merge' | 'keep-db' | 'keep-local';
+export type CartMergeOption = 'merge' | 'db' | 'local';
 
 type CartStore = {
 	cartItems: CartItem[];
@@ -26,43 +26,6 @@ type CartStore = {
 	) => Promise<void>;
 	handleMergeOption: (option: CartMergeOption) => void;
 	clearCart: () => Promise<void>;
-};
-
-// Utilities
-const getLocalCart = (): CartItem[] => {
-	if (typeof window === 'undefined') return [];
-	return JSON.parse(localStorage.getItem('cart') || '[]');
-};
-
-const syncCartToLocalStorage = (cartItems: CartItem[]) => {
-	localStorage.setItem('cart', JSON.stringify(cartItems));
-};
-
-const calculateTotals = (cartItems: CartItem[]) => {
-	const totalCartItems = cartItems.reduce((sum, _) => sum + 1, 0);
-	const totalPrice = cartItems.reduce(
-		(sum, item) => sum + (item.article.price ?? 0) * item.quantity,
-		0,
-	);
-	return { totalCartItems, totalPrice };
-};
-
-// services/cartService.ts - Ajouter cette fonction
-export const resolveCartConflict = (
-	localCart: CartItem[],
-	remoteCart: CartItem[],
-	setStoreState: (state: any) => void,
-): boolean => {
-	if (localCart.length > 0 && remoteCart.length > 0) {
-		console.log('modal merge popup');
-		setStoreState({
-			showMergePopup: true,
-			localCart,
-			remoteCart,
-		});
-		return true; // Conflit détecté
-	}
-	return false; // Pas de conflit
 };
 
 export const useCartStore = create<CartStore>((set, get) => ({
@@ -344,7 +307,100 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
 	handleMergeOption: async option => {
 		console.log(`Handling merge option: ${option}`);
-		// TODO: implement merge logic
+		switch (option) {
+			case 'merge':
+				//TODO : merge
+				break;
+			case 'db':
+				set({ cartItems: get().remoteCart });
+				break;
+			case 'local':
+				//TODO : finir
+				try {
+					await overwriteRemoteCart(getLocalCart());
+				} catch (error: any) {
+					toast({
+						title: 'Erreur lors de la mise à jour du panier',
+						description: error.message,
+						variant: 'destructive',
+					});
+				}
+				break;
+			default:
+				break;
+		}
+		localStorage.removeItem('cart');
+		await get().fetchCartItems();
 		set({ showMergePopup: false });
 	},
 }));
+
+// Utilities
+const getLocalCart = (): CartItem[] => {
+	if (typeof window === 'undefined') return [];
+	return JSON.parse(localStorage.getItem('cart') || '[]');
+};
+
+const syncCartToLocalStorage = (cartItems: CartItem[]) => {
+	localStorage.setItem('cart', JSON.stringify(cartItems));
+};
+
+const calculateTotals = (cartItems: CartItem[]) => {
+	const totalCartItems = cartItems.reduce((sum, _) => sum + 1, 0);
+	const totalPrice = cartItems.reduce(
+		(sum, item) => sum + (item.article.price ?? 0) * item.quantity,
+		0,
+	);
+	return { totalCartItems, totalPrice };
+};
+
+// services/cartService.ts - Ajouter cette fonction
+export const resolveCartConflict = (
+	localCart: CartItem[],
+	remoteCart: CartItem[],
+	setStoreState: (state: any) => void,
+): boolean => {
+	if (localCart.length > 0 && remoteCart.length > 0) {
+		console.log('modal merge popup');
+		setStoreState({
+			showMergePopup: true,
+			localCart,
+			remoteCart,
+		});
+		return true; // Conflit détecté
+	}
+	return false; // Pas de conflit
+};
+
+const overwriteRemoteCart = async (newCartItems: CartItem[]): Promise<void> => {
+	const session = await getSession();
+
+	if (!session) {
+		console.error(
+			"Utilisateur non connecté. Impossible d'écraser le panier.",
+		);
+		toast({
+			title: 'Erreur lors du remplacement du panier connecté',
+			description: 'Connectez-vous pour écraser le panier.',
+			variant: 'destructive',
+		});
+		return;
+	}
+
+	const response = await fetch(`/api/carts/replace`, {
+		method: 'PATCH',
+		body: JSON.stringify({
+			userId: session.user?.id,
+			cartItems: newCartItems,
+		}),
+	});
+
+	if (!response.ok) {
+		throw { message: response.statusText, status: response.status };
+	}
+
+	toast({
+		title: 'Panier mis à jour',
+		description: 'Le panier a été mis à jour avec succès',
+	});
+};

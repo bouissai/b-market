@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { CartGetDto } from '@/types/cart';
+import { CartGetDto, CartItem } from '@/types/cart';
 
 export async function getCartByUserId(
 	userId: string,
@@ -92,5 +92,42 @@ export async function clearCartByUserId(
 			error,
 		);
 		throw new Error('Impossible de vider le panier.');
+	}
+}
+
+export async function replaceCartByUserId(
+	userId: string,
+	cartItems: CartItem[],
+): Promise<CartGetDto | null> {
+	try {
+		const cart = await prisma.cart.findUnique({
+			where: { userId },
+		});
+
+		if (!cart) {
+			return null;
+		}
+
+		await prisma.cartItem.deleteMany({
+			where: { cartId: cart.id },
+		});
+
+		const cartItemsData = cartItems.map(item => ({
+			cartId: cart.id,
+			articleId: item.article.id!,
+			quantity: item.quantity,
+		}));
+
+		await prisma.cartItem.createMany({
+			data: cartItemsData,
+		});
+
+		return await getCartByUserId(userId);
+	} catch (error) {
+		console.error(
+			`[replaceCartByUserId] Erreur lors de la mise à jour du panier avec user ID ${userId}`,
+			error,
+		);
+		throw new Error('Impossible de mettre à jour le panier.');
 	}
 }
