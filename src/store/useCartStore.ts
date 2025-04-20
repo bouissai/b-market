@@ -149,60 +149,50 @@ export const useCartStore = create<CartStore>((set, get) => ({
 					userId: session.user?.id,
 				}),
 			});
-			switch (response.status) {
-				case 200:
-					// TODO : remplacer toast par une animation
-					toast({
-						title: 'Article ajouté',
-						description: 'Article ajouté au panier avec succès',
-					});
-					break;
-				case 400:
-					toast({
-						title: "Erreur lors de l'ajout au panier",
-						description: 'Quantité invalide ou article introuvable',
-						variant: 'destructive',
-					});
-					break;
-				case 403:
-					toast({
-						title: 'Erreur de session',
-						description: 'Action pas autorisée pour cet utilisateur',
-						variant: 'destructive',
-					});
-					break;
-				case 500:
-					toast({
-						title: 'Erreur serveur',
-						description:
-							'Une erreur est survenue lors de la mise à jour du panier',
-						variant: 'destructive',
-					});
-					break;
-				default:
-					break;
+			if (!response.ok) {
+				const errorMessages = {
+					400: 'Quantité invalide ou article introuvable',
+					403: 'Action pas autorisée pour cet utilisateur',
+					500: 'Erreur serveur lors de la mise à jour du panier',
+				};
+				toast({
+					title: 'Erreur',
+					description:
+						errorMessages[
+							response.status as keyof typeof errorMessages
+						] || 'Erreur inconnue',
+					variant: 'destructive',
+				});
+				return;
 			}
+
+			toast({
+				title: 'Article mis à jour',
+				description:
+					"La quantité de l'article a été mise à jour avec succès",
+			});
 		} else {
-			// Traitement local (pas de session)
+			// Mise à jour côté local
 			const localCart = getLocalCart();
+			let itemFound = false;
 
-			// Trouver l'article dans le panier
-			const existingItemIndex = localCart.findIndex(
-				cartItem => cartItem.article.id === item.id,
-			);
+			const updatedCart = localCart.map(cartItem => {
+				if (cartItem.article.id === item.id) {
+					itemFound = true;
+					return { ...cartItem, quantity }; // Met à jour la quantité
+				}
+				return cartItem; // Garde les autres articles inchangés
+			});
 
-			if (existingItemIndex !== -1) {
-				// Si l'article existe, mettre à jour sa quantité
-				localCart[existingItemIndex].quantity = quantity;
-			} else {
-				// Si l'article n'existe pas, l'ajouter avec une quantité de 1
-				localCart.push({
+			if (!itemFound) {
+				// Ajoute l'article à la fin si non trouvé
+				updatedCart.push({
 					article: item,
-					quantity: 1,
+					quantity,
 				});
 			}
 
-			syncCartToLocalStorage(localCart);
+			syncCartToLocalStorage(updatedCart);
 		}
 		await get().fetchCartItems();
 	},
