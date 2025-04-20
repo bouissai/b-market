@@ -95,11 +95,19 @@ export const useCartStore = create<CartStore>((set, get) => ({
 				cartItems: remoteCart.cartItems,
 				totalCartItems,
 				totalPrice,
+				localCart: [],
+				remoteCart: [],
 			});
 		} else {
 			// Aucun utilisateur connecté, utilisation du panier local
 			const { totalCartItems, totalPrice } = calculateTotals(localCart);
-			setStoreState({ cartItems: localCart, totalCartItems, totalPrice });
+			setStoreState({
+				cartItems: localCart,
+				totalCartItems,
+				totalPrice,
+				localCart: [],
+				remoteCart: [],
+			});
 		}
 	},
 
@@ -116,7 +124,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
 			await updateQuantity(newItem, existingItem.quantity + 1);
 			return;
 		} else {
-			console.log('Article non trouvé dans le panier, ajout en cours...');
 			await updateQuantity(newItem, 1);
 			return;
 		}
@@ -175,7 +182,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
 				default:
 					break;
 			}
-			await get().fetchCartItems();
 		} else {
 			// Traitement local (pas de session)
 			const localCart = getLocalCart();
@@ -244,7 +250,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
 				default:
 					break;
 			}
-			await get().fetchCartItems();
 		} else {
 			const updatedCart = getLocalCart().filter(
 				cartItem => cartItem.article.id !== item.id,
@@ -297,8 +302,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
 				default:
 					break;
 			}
-
-			await get().fetchCartItems();
 		} else {
 			localStorage.removeItem('cart');
 		}
@@ -306,7 +309,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
 	},
 
 	handleMergeOption: async option => {
-		console.log(`Handling merge option: ${option}`);
 		switch (option) {
 			case 'merge':
 				//TODO : merge
@@ -361,7 +363,6 @@ export const resolveCartConflict = (
 	setStoreState: (state: any) => void,
 ): boolean => {
 	if (localCart.length > 0 && remoteCart.length > 0) {
-		console.log('modal merge popup');
 		setStoreState({
 			showMergePopup: true,
 			localCart,
