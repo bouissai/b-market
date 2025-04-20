@@ -130,12 +130,12 @@ export const useCartStore = create<CartStore>((set, get) => ({
 	},
 
 	updateQuantity: async (item, quantity) => {
-		const session = await getSession();
-
 		if (quantity <= 0) {
 			await get().removeFromCart(item);
 			return;
 		}
+
+		const session = await getSession();
 
 		if (session) {
 			const response = await fetch('/api/carts/items', {
