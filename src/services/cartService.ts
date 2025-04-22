@@ -20,6 +20,9 @@ export async function getCartByUserId(
 							},
 						},
 					},
+					orderBy: {
+						createdAt: 'desc',
+					},
 				},
 			},
 		});

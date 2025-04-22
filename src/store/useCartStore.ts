@@ -166,6 +166,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
 				return;
 			}
 
+			//TODO : enlever le toast et mettre autre chose (anim..)
 			toast({
 				title: 'Article mis à jour',
 				description:

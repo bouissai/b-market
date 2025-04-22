@@ -69,12 +69,13 @@ model Cart {
 }
 
 model CartItem {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   cartId    String
-  cart      Cart    @relation(fields: [cartId], references: [id])
+  cart      Cart     @relation(fields: [cartId], references: [id])
   articleId String
-  article   Article @relation(fields: [articleId], references: [id])
-  quantity  Int     @default(1)
+  article   Article  @relation(fields: [articleId], references: [id])
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
 
   @@unique([cartId, articleId]) // 🚀 Ajout de la contrainte UNIQUE
 }

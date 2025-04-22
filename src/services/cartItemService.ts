@@ -1,17 +1,17 @@
-import { Cart } from '@prisma/client';
+import { Cart, CartItem } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 
 export async function addOrUpdateCartItem(
 	userId: string,
 	articleId: string,
 	quantity: number,
-): Promise<Cart> {
+): Promise<CartItem> {
 	try {
 		const cart = await getOrCreateCart(userId);
 		const item = await getCartItem(cart.id, articleId);
 
 		if (item) {
-			return await updateCartItemQuantity(cart.id, item.id, quantity);
+			return await updateCartItemQuantity(item.id, quantity);
 		} else {
 			return await addCartItemToCart(cart.id, articleId, quantity);
 		}
@@ -25,12 +25,11 @@ async function addCartItemToCart(
 	articleId: string,
 	quantity: number,
 ) {
-	return await prisma.cart.update({
-		where: { id: cartId },
+	return await prisma.cartItem.create({
 		data: {
-			cartItems: {
-				create: { articleId, quantity },
-			},
+			cartId,
+			articleId,
+			quantity,
 		},
 	});
 }
@@ -62,20 +61,11 @@ async function getCartItem(cartId: string, articleId: string) {
 	});
 }
 
-async function updateCartItemQuantity(
-	cartId: string,
-	itemId: string,
-	quantity: number,
-) {
-	return await prisma.cart.update({
-		where: { id: cartId },
+async function updateCartItemQuantity(itemId: string, quantity: number) {
+	return await prisma.cartItem.update({
+		where: { id: itemId },
 		data: {
-			cartItems: {
-				update: {
-					where: { id: itemId },
-					data: { quantity },
-				},
-			},
+			quantity,
 		},
 	});
 }
