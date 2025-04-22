@@ -25,15 +25,16 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from '@/components/ui/accordion';
+import { CartItem } from '@/types/cart';
 
 export function CartMergeDialog() {
 	const { showMergePopup, handleMergeOption, localCart, remoteCart } =
 		useCartStore();
-	const [open, setOpen] = useState(true);
+
 	const [selectedMergeOption, setSelectedMergeOption] =
 		useState<CartMergeOption | null>(null);
-	const [expandedDetails, setExpandedDetails] = useState<string | null>(null);
 	const [openAccordion, setOpenAccordion] = useState<string | null>(null);
+	const [mergedCart, setMergedCart] = useState<CartItem[]>([]);
 
 	// Mettre à jour l'accordéon ouvert lorsque l'option sélectionnée change
 	useEffect(() => {
@@ -42,11 +43,16 @@ export function CartMergeDialog() {
 		}
 	}, [selectedMergeOption]);
 
+	useEffect(() => {
+		if (showMergePopup) {
+			setMergedCart(mergeCarts(localCart, remoteCart));
+		}
+	}, [showMergePopup, localCart, remoteCart]);
+
 	const handleContinue = () => {
 		if (!selectedMergeOption) return;
 		console.log(`Option sélectionnée: ${selectedMergeOption}`);
-		handleMergeOption(selectedMergeOption);
-		setOpen(false);
+		handleMergeOption(selectedMergeOption, mergedCart);
 	};
 
 	// Calcul des totaux
@@ -58,7 +64,30 @@ export function CartMergeDialog() {
 		(sum, item) => sum + item.article.price! * item.quantity,
 		0,
 	);
-	const mergedTotal = localTotal + dbTotal;
+
+	const mergeCarts = (localCart: CartItem[], remoteCart: CartItem[]) => {
+		const mergedCart = [...localCart];
+
+		remoteCart.forEach(remoteItem => {
+			const existingItem = mergedCart.find(
+				item => item.article.id === remoteItem.article.id,
+			);
+			if (!existingItem) {
+				mergedCart.push(remoteItem);
+			}
+		});
+
+		console.log('mergedCart in function : ', mergedCart);
+		return mergedCart;
+	};
+
+	const calculateMergedTotal = (mergedCart: CartItem[]) => {
+		console.log('calculateMergedTotal function : ');
+		return mergedCart.reduce(
+			(sum, item) => sum + item.article.price! * item.quantity,
+			0,
+		);
+	};
 	return (
 		<Dialog open={showMergePopup}>
 			<DialogContent className="sm:max-w-[600px] max-h-[90vh] flex flex-col">
@@ -214,10 +243,14 @@ export function CartMergeDialog() {
 												</Label>
 												<div className="flex items-center gap-2">
 													<Badge variant="outline">
-														{localCart.length + remoteCart.length}{' '}
-														articles
+														{mergedCart.length} articles
 													</Badge>
-													<Badge>{mergedTotal.toFixed(2)}€</Badge>
+													<Badge>
+														{calculateMergedTotal(
+															mergedCart,
+														).toFixed(2)}
+														€
+													</Badge>
 												</div>
 											</div>
 										</div>
@@ -234,10 +267,7 @@ export function CartMergeDialog() {
 												<Tabs defaultValue="all" className="w-full">
 													<TabsList className="grid w-full grid-cols-3">
 														<TabsTrigger value="all">
-															Tous (
-															{localCart.length +
-																remoteCart.length}
-															)
+															Tous ({mergedCart.length})
 														</TabsTrigger>
 														<TabsTrigger value="local">
 															Appareil ({localCart.length})
@@ -249,25 +279,23 @@ export function CartMergeDialog() {
 													<TabsContent
 														value="all"
 														className="max-h-[200px] overflow-auto text-sm bg-neutral-800 rounded p-2">
-														{[...localCart, ...remoteCart].map(
-															(item, i) => (
-																<div
-																	key={i}
-																	className="flex justify-between py-1 border-b border-gray-100 last:border-0">
-																	<span>
-																		{item.article.name} ×{' '}
-																		{item.quantity}
-																	</span>
-																	<span className="font-medium">
-																		{(
-																			item.article.price! *
-																			item.quantity
-																		).toFixed(2)}
-																		€
-																	</span>
-																</div>
-															),
-														)}
+														{mergedCart.map(item => (
+															<div
+																key={item.article.id}
+																className="flex justify-between py-1 border-b border-gray-100 last:border-0">
+																<span>
+																	{item.article.name} ×{' '}
+																	{item.quantity}
+																</span>
+																<span className="font-medium">
+																	{(
+																		item.article.price! *
+																		item.quantity
+																	).toFixed(2)}
+																	€
+																</span>
+															</div>
+														))}
 													</TabsContent>
 													<TabsContent
 														value="local"
@@ -322,12 +350,6 @@ export function CartMergeDialog() {
 				</div>
 
 				<DialogFooter>
-					<Button
-						variant="outline"
-						onClick={() => setOpen(false)}
-						className="w-full sm:w-auto">
-						Annuler
-					</Button>
 					<Button
 						onClick={handleContinue}
 						disabled={!selectedMergeOption}

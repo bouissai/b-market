@@ -24,7 +24,7 @@ type CartStore = {
 		item: Partial<ArticleGetDto>,
 		quantity: number,
 	) => Promise<void>;
-	handleMergeOption: (option: CartMergeOption) => void;
+	handleMergeOption: (option: CartMergeOption, mergedCart: CartItem[]) => void;
 	clearCart: () => Promise<void>;
 };
 
@@ -299,16 +299,26 @@ export const useCartStore = create<CartStore>((set, get) => ({
 		await get().fetchCartItems();
 	},
 
-	handleMergeOption: async option => {
+	handleMergeOption: async (
+		option: CartMergeOption,
+		mergedCarts: CartItem[],
+	) => {
 		switch (option) {
 			case 'merge':
-				//TODO : merge
+				try {
+					await overwriteRemoteCart(mergedCarts);
+				} catch (error: any) {
+					toast({
+						title: 'Erreur lors de la mise à jour du panier',
+						description: error.message,
+						variant: 'destructive',
+					});
+				}
 				break;
 			case 'db':
 				set({ cartItems: get().remoteCart });
 				break;
 			case 'local':
-				//TODO : finir
 				try {
 					await overwriteRemoteCart(getLocalCart());
 				} catch (error: any) {
@@ -365,6 +375,7 @@ export const resolveCartConflict = (
 };
 
 const overwriteRemoteCart = async (newCartItems: CartItem[]): Promise<void> => {
+	//TODO: resoudre le pb d'ordre des articles qui bug quand on les remplace
 	const session = await getSession();
 
 	if (!session) {
