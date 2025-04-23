@@ -75,18 +75,21 @@ export const useCartStore = create<CartStore>((set, get) => ({
 					});
 					return;
 			}
-
-			// Vérification et gestion des conflits
-			const conflictDetected = resolveCartConflict(
-				localCart,
-				remoteCart.cartItems,
-				setStoreState,
-			);
-
-			if (conflictDetected) {
-				return; // Gestion des conflits terminée
+			
+			if (localCart.length > 0) {
+				if (remoteCart.cartItems.length > 0) {
+					setStoreState({
+						showMergePopup: true,
+						localCart,
+						remoteCart: remoteCart.cartItems,
+					});
+					return; // Conflit détecté
+				} else {
+					await overwriteRemoteCart(localCart);
+					localStorage.removeItem('cart');
+					return;
+				}
 			}
-
 			// Aucun conflit détecté, mise à jour avec le panier distant
 			const { totalCartItems, totalPrice } = calculateTotals(
 				remoteCart.cartItems,
@@ -357,7 +360,6 @@ const calculateTotals = (cartItems: CartItem[]) => {
 	return { totalCartItems, totalPrice };
 };
 
-// services/cartService.ts - Ajouter cette fonction
 export const resolveCartConflict = (
 	localCart: CartItem[],
 	remoteCart: CartItem[],
@@ -375,7 +377,6 @@ export const resolveCartConflict = (
 };
 
 const overwriteRemoteCart = async (newCartItems: CartItem[]): Promise<void> => {
-	//TODO: resoudre le pb d'ordre des articles qui bug quand on les remplace
 	const session = await getSession();
 
 	if (!session) {
