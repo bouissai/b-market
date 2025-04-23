@@ -91,7 +91,6 @@ export const useArticleStore = create<ArticleStore>((set, get) => ({
 		set({ isLoading: true, error: null });
 
 		try {
-			console.log(JSON.stringify(articleData));
 			const response = await fetch('/api/article', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },

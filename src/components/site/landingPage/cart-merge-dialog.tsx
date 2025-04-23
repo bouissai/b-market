@@ -51,7 +51,6 @@ export function CartMergeDialog() {
 
 	const handleContinue = () => {
 		if (!selectedMergeOption) return;
-		console.log(`Option sélectionnée: ${selectedMergeOption}`);
 		handleMergeOption(selectedMergeOption, mergedCart);
 	};
 
@@ -77,12 +76,10 @@ export function CartMergeDialog() {
 			}
 		});
 
-		console.log('mergedCart in function : ', mergedCart);
 		return mergedCart;
 	};
 
 	const calculateMergedTotal = (mergedCart: CartItem[]) => {
-		console.log('calculateMergedTotal function : ');
 		return mergedCart.reduce(
 			(sum, item) => sum + item.article.price! * item.quantity,
 			0,

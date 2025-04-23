@@ -75,7 +75,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
 					});
 					return;
 			}
-			
+
 			if (localCart.length > 0) {
 				if (remoteCart.cartItems.length > 0) {
 					setStoreState({
@@ -358,22 +358,6 @@ const calculateTotals = (cartItems: CartItem[]) => {
 		0,
 	);
 	return { totalCartItems, totalPrice };
-};
-
-export const resolveCartConflict = (
-	localCart: CartItem[],
-	remoteCart: CartItem[],
-	setStoreState: (state: any) => void,
-): boolean => {
-	if (localCart.length > 0 && remoteCart.length > 0) {
-		setStoreState({
-			showMergePopup: true,
-			localCart,
-			remoteCart,
-		});
-		return true; // Conflit détecté
-	}
-	return false; // Pas de conflit
 };
 
 const overwriteRemoteCart = async (newCartItems: CartItem[]): Promise<void> => {
