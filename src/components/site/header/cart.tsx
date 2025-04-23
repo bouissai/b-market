@@ -114,7 +114,7 @@ export const Cart = ({ className = '' }: CartProps) => {
 															item.quantity - 1,
 														)
 													}>
-													<Minus className="h-4 w-4" />
+													<Minus className="h-4 w-4 " />
 												</Button>
 												<input
 													type="number"
@@ -131,7 +131,7 @@ export const Cart = ({ className = '' }: CartProps) => {
 															);
 														}
 													}}
-													className="w-12 h-8 text-center border rounded-md
+													className="w-12 h-8 text-center border rounded-md bg-neutral-700
                             [appearance:textfield]
                             [&::-webkit-outer-spin-button]:appearance-none
                             [&::-webkit-inner-spin-button]:appearance-none" // pour enlever les boutons d'incrementation de l'input number
