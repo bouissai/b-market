@@ -111,19 +111,24 @@ export async function replaceCartByUserId(
 			return null;
 		}
 
+		// Supprimer les articles existants
 		await prisma.cartItem.deleteMany({
 			where: { cartId: cart.id },
 		});
 
-		const cartItemsData = cartItems.map(item => ({
-			cartId: cart.id,
-			articleId: item.article.id!,
-			quantity: item.quantity,
-		}));
-
-		await prisma.cartItem.createMany({
-			data: cartItemsData,
-		});
+		// Créer les nouveaux articles avec des timestamps échelonnés
+		await prisma.$transaction(
+			cartItems.map((item, index) => {
+				return prisma.cartItem.create({
+					data: {
+						cartId: cart.id,
+						articleId: item.article.id!,
+						quantity: item.quantity,
+						createdAt: new Date(Date.now() - index * 1000), // Timestamps échelonnés
+					},
+				});
+			}),
+		);
 
 		return await getCartByUserId(userId);
 	} catch (error) {
