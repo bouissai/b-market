@@ -20,7 +20,7 @@ type ProductCardProps = {
 export function ProductCard({ article, onAddToCart }: ProductCardProps) {
 	const [isLoadingAddCartItem, setIslLoadingAddCartItem] = useState(false);
 	return (
-		<Card key={article.id} className="overflow-hidden">
+		<Card className="overflow-hidden">
 			<div className="aspect-video relative">
 				<Image
 					src={article.image}
