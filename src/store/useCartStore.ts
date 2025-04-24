@@ -15,6 +15,7 @@ type CartStore = {
 	totalCartItems: number;
 	totalPrice: number;
 	showMergePopup: boolean;
+	loadingItems: Set<string>;
 
 	setShowMergePopup: (show: boolean) => void;
 	fetchCartItems: () => Promise<void>;
@@ -37,6 +38,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
 	totalCartItems: 0,
 	totalPrice: 0,
 	showMergePopup: false,
+	loadingItems: new Set<string>(),
 
 	setShowMergePopup: show => set({ showMergePopup: show }),
 
@@ -137,6 +139,9 @@ export const useCartStore = create<CartStore>((set, get) => ({
 			await get().removeFromCart(item);
 			return;
 		}
+		set(state => ({
+			loadingItems: new Set([...state.loadingItems, item.id!]),
+		}));
 
 		const session = await getSession();
 
@@ -168,13 +173,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
 				});
 				return;
 			}
-
-			//TODO : enlever le toast et mettre autre chose (anim..)
-			toast({
-				title: 'Article mis à jour',
-				description:
-					"La quantité de l'article a été mise à jour avec succès",
-			});
 		} else {
 			// Mise à jour côté local
 			const localCart = getLocalCart();
@@ -198,6 +196,11 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
 			syncCartToLocalStorage(updatedCart);
 		}
+		set(state => {
+			const newLoadingItems = new Set(state.loadingItems);
+			newLoadingItems.delete(item.id!);
+			return { loadingItems: newLoadingItems };
+		});
 		await get().fetchCartItems();
 	},
 

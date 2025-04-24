@@ -6,6 +6,20 @@ export async function addOrUpdateCartItem(
 	articleId: string,
 	quantity: number,
 ): Promise<CartItem> {
+	// Validation de la quantité
+	if (quantity < 0 || quantity > 99) {
+		throw new Error('La quantité doit être comprise entre 0 et 99');
+	}
+
+	// Vérification que l'article existe
+	const article = await prisma.article.findUnique({
+		where: { id: articleId },
+	});
+
+	if (!article) {
+		throw new Error('Article introuvable');
+	}
+
 	try {
 		const cart = await getOrCreateCart(userId);
 		const item = await getCartItem(cart.id, articleId);

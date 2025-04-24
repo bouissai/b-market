@@ -1,5 +1,4 @@
 'use client';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
 	Sheet,
@@ -9,12 +8,13 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from '@/components/ui/sheet';
-import { motion } from 'framer-motion';
-import { Minus, Plus, ShoppingBag, Trash, Trash2 } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Loader2, Minus, Plus, ShoppingBag, Trash, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useCartStore } from '@/store/useCartStore';
+import { CartClearConfirmDialog } from '@/components/site/landingPage/cart-clear-confirm-dialog';
 
 interface CartProps {
 	className?: string;
@@ -29,10 +29,13 @@ export const Cart = ({ className = '' }: CartProps) => {
 		totalPrice,
 		fetchCartItems,
 		clearCart,
+		loadingItems,
 	} = useCartStore();
 
 	const router = useRouter();
 	const [open, setOpen] = useState(false);
+
+	const [showClearConfirm, setShowClearConfirm] = useState(false);
 
 	useEffect(() => {
 		fetchCartItems();
@@ -48,11 +51,17 @@ export const Cart = ({ className = '' }: CartProps) => {
 					<SheetTrigger asChild>
 						<Button variant="ghost" size="icon" className="relative">
 							<ShoppingBag className="h-5 w-5" />
-							{totalCartItems > 0 && (
-								<Badge className="absolute -top-2 -right-2 px-2 py-1 text-xs min-w-5 h-5 flex items-center justify-center">
-									{totalCartItems}
-								</Badge>
-							)}
+							<AnimatePresence>
+								{totalCartItems > 0 && (
+									<motion.div
+										key={totalCartItems}
+										initial={{ scale: 0.6, opacity: 0 }}
+										animate={{ scale: 1, opacity: 1 }}
+										className="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-primary rounded-full">
+										{totalCartItems}
+									</motion.div>
+								)}
+							</AnimatePresence>
 							<span className="sr-only">Panier</span>
 						</Button>
 					</SheetTrigger>
@@ -70,11 +79,11 @@ export const Cart = ({ className = '' }: CartProps) => {
 									</p>
 									<Button
 										onClick={() => {
-											router.push('/');
+											router.push('/products');
 											setOpen(false);
 										}}
 										className="mt-4">
-										Continuer mes achats
+										Découvrir nos produits
 									</Button>
 								</div>
 							) : (
@@ -85,8 +94,6 @@ export const Cart = ({ className = '' }: CartProps) => {
 											className="flex items-center justify-between">
 											<div className="flex items-center space-x-4">
 												<Image
-													// TODO : a modifier quand il y aura les images des articles
-													// src={article.image && article.image.startsWith('http') ? article.image : '/placeholder.svg'}
 													src={item.article.image!}
 													alt={item.article.name!}
 													width={50}
@@ -107,14 +114,20 @@ export const Cart = ({ className = '' }: CartProps) => {
 												<Button
 													variant="outline"
 													size="icon"
-													className="h-8 w-8"
-													onClick={() =>
-														updateQuantity(
+													disabled={loadingItems.has(
+														item.article.id!,
+													)}
+													onClick={async () => {
+														await updateQuantity(
 															item.article,
 															item.quantity - 1,
-														)
-													}>
-													<Minus className="h-4 w-4 " />
+														);
+													}}>
+													{loadingItems.has(item.article.id!) ? (
+														<Loader2 className="h-4 w-4 animate-spin" />
+													) : (
+														<Minus className="h-4 w-4" />
+													)}
 												</Button>
 												<input
 													type="number"
@@ -140,14 +153,20 @@ export const Cart = ({ className = '' }: CartProps) => {
 												<Button
 													variant="outline"
 													size="icon"
-													className="h-8 w-8"
-													onClick={() =>
-														updateQuantity(
+													disabled={loadingItems.has(
+														item.article.id!,
+													)}
+													onClick={async () => {
+														await updateQuantity(
 															item.article,
 															item.quantity + 1,
-														)
-													}>
-													<Plus className="h-4 w-4" />
+														);
+													}}>
+													{loadingItems.has(item.article.id!) ? (
+														<Loader2 className="h-4 w-4 animate-spin" />
+													) : (
+														<Plus className="h-4 w-4" />
+													)}
 												</Button>
 												<Button
 													variant="outline"
@@ -163,13 +182,21 @@ export const Cart = ({ className = '' }: CartProps) => {
 									))}
 									<Button
 										onClick={() => {
-											clearCart();
+											setShowClearConfirm(true);
 										}}
 										variant="ghost"
 										className="text-red-500 hover:text-red-400 hover:bg-red-950 flex items-center gap-2 mt-2 box-border">
 										<Trash2 className="h-4 w-4" />
 										Vider le panier
 									</Button>
+									<CartClearConfirmDialog
+										isOpen={showClearConfirm}
+										onConfirm={async () => {
+											await clearCart();
+											setShowClearConfirm(false);
+										}}
+										onClose={() => setShowClearConfirm(false)}
+									/>
 									<div className="border-t pt-4 mt-auto">
 										<div className="flex justify-between py-2">
 											<span>Sous-total</span>

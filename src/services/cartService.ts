@@ -103,34 +103,30 @@ export async function replaceCartByUserId(
 	cartItems: CartItem[],
 ): Promise<CartGetDto | null> {
 	try {
-		const cart = await prisma.cart.findUnique({
-			where: { userId },
+		return await prisma.$transaction(async tx => {
+			const cart = await tx.cart.findUnique({
+				where: { userId },
+			});
+
+			if (!cart) {
+				return null;
+			}
+
+			await tx.cartItem.deleteMany({
+				where: { cartId: cart.id },
+			});
+
+			await tx.cartItem.createMany({
+				data: cartItems.map((item, index) => ({
+					cartId: cart.id,
+					articleId: item.article.id!,
+					quantity: item.quantity,
+					createdAt: new Date(Date.now() - index * 1000),
+				})),
+			});
+
+			return await getCartByUserId(userId);
 		});
-
-		if (!cart) {
-			return null;
-		}
-
-		// Supprimer les articles existants
-		await prisma.cartItem.deleteMany({
-			where: { cartId: cart.id },
-		});
-
-		// Créer les nouveaux articles avec des timestamps échelonnés
-		await prisma.$transaction(
-			cartItems.map((item, index) => {
-				return prisma.cartItem.create({
-					data: {
-						cartId: cart.id,
-						articleId: item.article.id!,
-						quantity: item.quantity,
-						createdAt: new Date(Date.now() - index * 1000), // Timestamps échelonnés
-					},
-				});
-			}),
-		);
-
-		return await getCartByUserId(userId);
 	} catch (error) {
 		console.error(
 			`[replaceCartByUserId] Erreur lors de la mise à jour du panier avec user ID ${userId}`,
