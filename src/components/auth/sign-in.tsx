@@ -28,7 +28,14 @@ import { useCartStore } from '@/store/useCartStore';
 const SignIn = () => {
 	const router = useRouter();
 	const { toast } = useToast();
-	const { signIn, isSubmitting, error, setError } = useAuthStore();
+	const {
+		signIn,
+		isSubmitting,
+		error,
+		setError,
+		redirectPath,
+		setRedirectPath,
+	} = useAuthStore();
 	const { fetchCartItems } = useCartStore(); // 👈 dans le composant SignIn
 
 	const form = useForm<z.infer<typeof signInSchema>>({
@@ -46,7 +53,10 @@ const SignIn = () => {
 			if (success) {
 				await fetchCartItems(); // 👈 fetch les articles du panier
 				toast({ title: 'Connecté avec succès' });
-				router.push('/');
+
+				const redirectTo = redirectPath || '/';
+				setRedirectPath(null); // Nettoyer après utilisation
+				router.replace(redirectTo);
 			} else {
 				toast({
 					title: "Erreur d'authentification",
