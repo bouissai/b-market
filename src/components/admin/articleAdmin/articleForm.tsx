@@ -30,16 +30,12 @@ import { extractPublicId } from '@/lib/helpers/extractPublicId';
 import { useArticleStore } from '@/store/useArticleStore';
 import { useCategoryStore } from '@/store/useCategoryStore';
 import { useImageStore } from '@/store/useImageStore';
-import type {
-	ArticleGetDto,
-	ArticlePostDto,
-	ArticlePutDto,
-} from '@/types/article';
+import type { ArticlePostDto, ArticlePutDto } from '@/types/article';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { ArticleImage } from './articleImage';
+import { ArticleImage } from '../../../../temp';
 
 const formSchema = z.object({
 	name: z.string().min(1, 'Le nom est requis'),
