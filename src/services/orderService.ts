@@ -130,22 +130,22 @@ export async function createOrder(
 		},
 	});
 
-	return {
-		id: newOrder.id,
-		customerName: newOrder.user.name ?? 'Non renseigné',
-		customerEmail: newOrder.user.email,
-		customerPhone: newOrder.user.phone ?? 'Non renseigné',
-		date: newOrder.createdAt,
-		total: newOrder.total,
-		status: newOrder.status,
-		note: newOrder.note,
-		items: newOrder.orderItems.map(item => ({
-			id: item.id,
-			name: item.article.name,
-			quantity: item.quantity,
-			price: item.price,
-		})),
-	};
+  return {
+    id: newOrder.id,
+    customerName: newOrder.user.name ?? "Nom inconnu",
+    customerEmail: newOrder.user.email,
+    customerPhone: '+33 6 95 50 90 33',
+    date: newOrder.createdAt,
+    total: newOrder.total,
+    status: newOrder.status,
+    note: newOrder.note,
+    items: newOrder.orderItems.map((item) => ({
+      id: item.id,
+      name: item.article.name,
+      quantity: item.quantity,
+      price: item.price,
+    })),
+  };
 }
 
 // Suppression d'une commande

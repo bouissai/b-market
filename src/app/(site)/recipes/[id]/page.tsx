@@ -144,7 +144,7 @@ export default async function RecipeDetailPage({ params }: Props) {
 						<div className="mb-6">
 							<div className="flex flex-wrap gap-2 mb-4">
 								{recipe.tags.map((tag, index) => (
-									<Badge key={index} variant="secondary">
+									<Badge key={index} variant="pending">
 										{tag}
 									</Badge>
 								))}

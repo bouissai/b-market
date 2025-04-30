@@ -1,6 +1,7 @@
 // app/api/auth/verify-email/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 
 export async function GET(request: NextRequest) {
   try {
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Mettre à jour l'utilisateur et supprimer le token (transaction)
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx : Prisma.TransactionClient) => {
       // Marquer l'email comme vérifié
       await tx.user.update({
         where: { email: verificationToken.identifier },
