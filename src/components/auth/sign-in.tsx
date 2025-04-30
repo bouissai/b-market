@@ -23,11 +23,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
+import { useCartStore } from '@/store/useCartStore';
 
 const SignIn = () => {
 	const router = useRouter();
 	const { toast } = useToast();
 	const { signIn, isSubmitting, error, setError } = useAuthStore();
+	const { fetchCartItems } = useCartStore(); // 👈 dans le composant SignIn
 
 	const form = useForm<z.infer<typeof signInSchema>>({
 		resolver: zodResolver(signInSchema),
@@ -42,6 +44,7 @@ const SignIn = () => {
 			setError(null);
 			const success = await signIn(data);
 			if (success) {
+				await fetchCartItems(); // 👈 fetch les articles du panier
 				toast({ title: 'Connecté avec succès' });
 				router.push('/');
 			} else {
