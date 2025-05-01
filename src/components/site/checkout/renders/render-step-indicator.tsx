@@ -65,7 +65,7 @@ export default function RenderStepIndicator({
 						{index < steps.length - 1 && (
 							<div
 								className={`h-0.5 w-16 mx-4  ${
-									currentStep === step.id
+									steps.findIndex(s => s.id === currentStep) > index
 										? 'bg-boucherie-red '
 										: 'bg-gray-700'
 								}`}

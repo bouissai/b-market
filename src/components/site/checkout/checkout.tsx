@@ -3,30 +3,23 @@ import { useState } from 'react';
 import { useCartStore } from '@/store/useCartStore';
 import RenderRecapCard from '@/components/site/checkout/renders/render-recap-card';
 import RenderCurrentStep from '@/components/site/checkout/renders/render-current-step';
-
-// Type pour les étapes du checkout
-type CheckoutStep = 'cart' | 'delivery' | 'payment' | 'confirmation';
+import { useCheckoutStore } from '@/store/useCheckoutStore';
 
 export default function Checkout() {
 	const { cartItems, totalPrice } = useCartStore();
-	// État pour l'étape actuelle du checkout
-	const [currentStep, setCurrentStep] = useState<CheckoutStep>('cart');
 
-	// État pour le mode de livraison
-	const [deliveryMethod, setDeliveryMethod] = useState('standard');
-
-	// Frais de livraison
-	const deliveryFee =
-		deliveryMethod === 'express'
-			? 9.9
-			: deliveryMethod === 'standard'
-				? 4.9
-				: 0;
+	const {
+		currentStep,
+		deliveryFee,
+		promoDiscount,
+		previousStep,
+		nextStep,
+		deliveryMethod,
+		promoCode,
+	} = useCheckoutStore();
 
 	// État pour le code promo
-	const [promoCode, setPromoCode] = useState('');
 	const [promoApplied, setPromoApplied] = useState(false);
-	const [promoDiscount, setPromoDiscount] = useState(0);
 
 	// Total
 	const total = totalPrice + deliveryFee - promoDiscount;
@@ -35,7 +28,11 @@ export default function Checkout() {
 			<RenderStepIndicator currentStep={currentStep} />
 			<div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
 				<div className="lg:col-span-2">
-					<RenderCurrentStep />
+					<RenderCurrentStep
+						currentStep={currentStep}
+						previousStep={previousStep}
+						nextStep={nextStep}
+					/>
 				</div>
 				{currentStep !== 'confirmation' && (
 					<div className="lg:col-span-1">
