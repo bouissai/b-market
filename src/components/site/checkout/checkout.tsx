@@ -1,12 +1,11 @@
 import RenderStepIndicator from '@/components/site/checkout/renders/render-step-indicator';
-import { useState } from 'react';
 import { useCartStore } from '@/store/useCartStore';
 import RenderRecapCard from '@/components/site/checkout/renders/render-recap-card';
 import RenderCurrentStep from '@/components/site/checkout/renders/render-current-step';
 import { useCheckoutStore } from '@/store/useCheckoutStore';
 
 export default function Checkout() {
-	const { cartItems, totalPrice } = useCartStore();
+	const { totalPrice } = useCartStore();
 
 	const {
 		currentStep,
@@ -14,12 +13,8 @@ export default function Checkout() {
 		promoDiscount,
 		previousStep,
 		nextStep,
-		deliveryMethod,
-		promoCode,
+		promoApplied,
 	} = useCheckoutStore();
-
-	// État pour le code promo
-	const [promoApplied, setPromoApplied] = useState(false);
 
 	// Total
 	const total = totalPrice + deliveryFee - promoDiscount;
@@ -37,12 +32,10 @@ export default function Checkout() {
 				{currentStep !== 'confirmation' && (
 					<div className="lg:col-span-1">
 						<RenderRecapCard
-							cartItems={cartItems}
 							currentStep={currentStep}
-							deliveryFee={0}
+							deliveryFee={deliveryFee}
 							promoApplied={promoApplied}
 							promoDiscount={promoDiscount}
-							totalCart={totalPrice}
 							total={total}
 						/>
 					</div>

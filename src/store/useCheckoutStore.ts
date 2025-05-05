@@ -2,6 +2,12 @@ import { create } from 'zustand';
 
 type CheckoutStep = 'cart' | 'delivery' | 'payment' | 'confirmation';
 
+enum PromoCode {
+	'PROMO10' = 10,
+	'PROMO20' = 20,
+	'PROMO30' = 30,
+}
+
 interface CheckoutStore {
 	currentStep: CheckoutStep;
 	steps: CheckoutStep[];
@@ -16,6 +22,8 @@ interface CheckoutStore {
 	setIsStepValid: (isValid: boolean) => void;
 	nextStep: () => void;
 	previousStep: () => void;
+	setPromoCode: (code: string | null) => void;
+	promoApplied: boolean | null;
 }
 
 export const useCheckoutStore = create<CheckoutStore>()(set => ({
@@ -27,6 +35,7 @@ export const useCheckoutStore = create<CheckoutStore>()(set => ({
 	promoDiscount: 0,
 	isStepValid: false,
 	total: 0,
+	promoApplied: null,
 
 	setCurrentStep: (step: CheckoutStep) => set({ currentStep: step }),
 	setDeliveryMethod: method => {
@@ -37,6 +46,17 @@ export const useCheckoutStore = create<CheckoutStore>()(set => ({
 		});
 	},
 	setIsStepValid: (isValid: boolean) => set({ isStepValid: isValid }),
+	setPromoCode: (code: string | null) => {
+		if (PromoCode[code as keyof typeof PromoCode]) {
+			set({
+				promoDiscount: PromoCode[code as keyof typeof PromoCode],
+				promoCode: code,
+				promoApplied: true,
+			});
+		} else {
+			set({ promoDiscount: 0, promoCode: code, promoApplied: false });
+		}
+	},
 
 	nextStep: () =>
 		set(state => {

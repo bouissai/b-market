@@ -1,30 +1,30 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { CartItem } from '@/types/cart';
+import { useCartStore } from '@/store/useCartStore';
 
 type RenderRecapCartProps = {
-	cartItems: CartItem[];
-	totalCart: number;
 	total: number;
 	currentStep: 'cart' | 'delivery' | 'payment' | 'confirmation';
-	promoApplied: boolean;
+	promoApplied: boolean | null;
 	promoDiscount: number;
 	deliveryFee: number;
 };
 
 export default function RenderRecapCard({
-	cartItems,
-	totalCart,
 	total,
 	currentStep,
 	promoDiscount,
 	promoApplied,
 	deliveryFee,
 }: RenderRecapCartProps) {
+	const { cartItems, totalPrice } = useCartStore();
+
 	return (
 		<Card className="sticky top-8">
 			<CardHeader>
-				<CardTitle className="text-2xl">Récapitulatif</CardTitle>
+				<CardTitle>
+					<h1 className="text-2xl">Récapitulatif</h1>
+				</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<div className="space-y-4">
@@ -43,10 +43,10 @@ export default function RenderRecapCard({
 				<div className="space-y-2">
 					<div className="flex justify-between">
 						<span>Total du panier</span>
-						<span>{totalCart.toFixed(2)}€</span>
+						<span>{totalPrice.toFixed(2)}€</span>
 					</div>
 					{promoApplied && (
-						<div className="flex justify-between text-green-600">
+						<div className="flex justify-between text-success">
 							<span>Réduction</span>
 							<span>-{promoDiscount.toFixed(2)}€</span>
 						</div>
@@ -61,7 +61,7 @@ export default function RenderRecapCard({
 						<span>Total</span>
 						<span>
 							{currentStep === 'cart'
-								? (totalCart - promoDiscount).toFixed(2)
+								? (totalPrice - promoDiscount).toFixed(2)
 								: total.toFixed(2)}
 							€
 						</span>
