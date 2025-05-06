@@ -1,20 +1,22 @@
 import RenderStepIndicator from '@/components/site/checkout/renders/render-step-indicator';
 import { useCartStore } from '@/store/useCartStore';
 import RenderRecapCard from '@/components/site/checkout/renders/render-recap-card';
-import RenderCurrentStep from '@/components/site/checkout/renders/render-current-step';
-import { useCheckoutStore } from '@/store/useCheckoutStore';
+import { useCheckoutFlow } from '@/hooks/use-checkout-flow';
 
 export default function Checkout() {
 	const { totalPrice } = useCartStore();
 
 	const {
 		currentStep,
+		stepMeta,
+		previous,
+		next,
 		deliveryFee,
 		promoDiscount,
-		previousStep,
-		nextStep,
 		promoApplied,
-	} = useCheckoutStore();
+	} = useCheckoutFlow();
+
+	const StepComponent = stepMeta.component;
 
 	// Total
 	const total = totalPrice + deliveryFee - promoDiscount;
@@ -23,11 +25,7 @@ export default function Checkout() {
 			<RenderStepIndicator currentStep={currentStep} />
 			<div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
 				<div className="lg:col-span-2">
-					<RenderCurrentStep
-						currentStep={currentStep}
-						previousStep={previousStep}
-						nextStep={nextStep}
-					/>
+					<StepComponent previousStep={previous} nextStep={next} />
 				</div>
 				{currentStep !== 'confirmation' && (
 					<div className="lg:col-span-1">

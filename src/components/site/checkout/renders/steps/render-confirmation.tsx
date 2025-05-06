@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 
-export function RenderConfirmation() {
+export default function RenderConfirmation() {
 	const router = useRouter();
 	return (
 		<div>

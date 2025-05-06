@@ -15,11 +15,9 @@ interface CheckoutStore {
 	deliveryFee: number;
 	promoCode: string | null;
 	promoDiscount: number;
-	isStepValid: boolean;
 	total: number;
 	setCurrentStep: (step: CheckoutStep) => void;
 	setDeliveryMethod: (method: string) => void;
-	setIsStepValid: (isValid: boolean) => void;
 	nextStep: () => void;
 	previousStep: () => void;
 	setPromoCode: (code: string | null) => void;
@@ -33,7 +31,6 @@ export const useCheckoutStore = create<CheckoutStore>()(set => ({
 	deliveryFee: 4.9,
 	promoCode: null,
 	promoDiscount: 0,
-	isStepValid: false,
 	total: 0,
 	promoApplied: null,
 
@@ -45,7 +42,6 @@ export const useCheckoutStore = create<CheckoutStore>()(set => ({
 				method === 'express' ? 9.9 : method === 'standard' ? 4.9 : 0,
 		});
 	},
-	setIsStepValid: (isValid: boolean) => set({ isStepValid: isValid }),
 	setPromoCode: (code: string | null) => {
 		if (PromoCode[code as keyof typeof PromoCode]) {
 			set({
