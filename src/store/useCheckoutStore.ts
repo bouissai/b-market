@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-type CheckoutStep = 'cart' | 'delivery' | 'payment' | 'confirmation';
+type CheckoutStep = 'cart' | 'information' | 'payment' | 'confirmation';
 
 enum PromoCode {
 	'PROMO10' = 10,
@@ -10,7 +10,6 @@ enum PromoCode {
 
 interface CheckoutStore {
 	currentStep: CheckoutStep;
-	steps: CheckoutStep[];
 	deliveryMethod: string;
 	deliveryFee: number;
 	promoCode: string | null;
@@ -18,15 +17,12 @@ interface CheckoutStore {
 	total: number;
 	setCurrentStep: (step: CheckoutStep) => void;
 	setDeliveryMethod: (method: string) => void;
-	nextStep: () => void;
-	previousStep: () => void;
 	setPromoCode: (code: string | null) => void;
 	promoApplied: boolean | null;
 }
 
 export const useCheckoutStore = create<CheckoutStore>()(set => ({
 	currentStep: 'cart',
-	steps: ['cart', 'delivery', 'payment', 'confirmation'],
 	deliveryMethod: 'standard',
 	deliveryFee: 4.9,
 	promoCode: null,
@@ -53,21 +49,4 @@ export const useCheckoutStore = create<CheckoutStore>()(set => ({
 			set({ promoDiscount: 0, promoCode: code, promoApplied: false });
 		}
 	},
-
-	nextStep: () =>
-		set(state => {
-			const currentIndex = state.steps.indexOf(state.currentStep);
-			if (currentIndex < state.steps.length - 1) {
-				return { currentStep: state.steps[currentIndex + 1] };
-			}
-			return state;
-		}),
-	previousStep: () =>
-		set(state => {
-			const currentIndex = state.steps.indexOf(state.currentStep);
-			if (currentIndex > 0) {
-				return { currentStep: state.steps[currentIndex - 1] };
-			}
-			return state;
-		}),
 }));

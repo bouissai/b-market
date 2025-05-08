@@ -1,14 +1,14 @@
 import { Button } from '@/components/ui/button';
 
-type RenderPaymentFormProps = {
+type PaymentFormStepProps = {
 	nextStep: () => void;
 	previousStep: () => void;
 };
 
-export default function RenderPaymentForm({
+export default function PaymentFormStep({
 	nextStep,
 	previousStep,
-}: RenderPaymentFormProps) {
+}: PaymentFormStepProps) {
 	return (
 		<div>
 			{/* Payment form content goes here */}

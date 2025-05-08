@@ -1,6 +1,6 @@
-import RenderStepIndicator from '@/components/site/checkout/renders/render-step-indicator';
+import RenderStepIndicator from '@/components/site/checkout/render-step-indicator';
 import { useCartStore } from '@/store/useCartStore';
-import RenderRecapCard from '@/components/site/checkout/renders/render-recap-card';
+import RecapOrderCard from '@/components/site/checkout/recap-order-card';
 import { useCheckoutFlow } from '@/hooks/use-checkout-flow';
 
 export default function Checkout() {
@@ -29,7 +29,7 @@ export default function Checkout() {
 				</div>
 				{currentStep !== 'confirmation' && (
 					<div className="lg:col-span-1">
-						<RenderRecapCard
+						<RecapOrderCard
 							currentStep={currentStep}
 							deliveryFee={deliveryFee}
 							promoApplied={promoApplied}

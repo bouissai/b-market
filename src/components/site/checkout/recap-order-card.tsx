@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useCartStore } from '@/store/useCartStore';
 
-type RenderRecapCartProps = {
+type RecapOrderCardProps = {
 	total: number;
 	currentStep: 'cart' | 'delivery' | 'payment' | 'confirmation';
 	promoApplied: boolean | null;
@@ -10,17 +10,17 @@ type RenderRecapCartProps = {
 	deliveryFee: number;
 };
 
-export default function RenderRecapCard({
+export default function RecapOrderCard({
 	total,
 	currentStep,
 	promoDiscount,
 	promoApplied,
 	deliveryFee,
-}: RenderRecapCartProps) {
+}: RecapOrderCardProps) {
 	const { cartItems, totalPrice } = useCartStore();
 
 	return (
-		<Card className="sticky top-8">
+		<Card className="sticky top-24">
 			<CardHeader>
 				<CardTitle>
 					<h1 className="text-2xl">Récapitulatif</h1>

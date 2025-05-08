@@ -1,3 +1,4 @@
+'use client';
 import { Button } from '@/components/ui/button';
 import {
 	CalendarIcon,
@@ -78,7 +79,7 @@ const deliveryFormSchema = z.object({
 	saveAddress: z.boolean().optional(),
 });
 
-export default function RenderDeliveryForm({
+export default function InfoOrderStep({
 	nextStep,
 	previousStep,
 }: RenderDeliveryFormProps) {

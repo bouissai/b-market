@@ -1,5 +1,5 @@
 import { useCheckoutStore } from '@/store/useCheckoutStore';
-import { CHECKOUT_STEPS } from '@/components/site/checkout/renders/checkout-step-config';
+import { CHECKOUT_STEPS } from '@/constants';
 
 export function useCheckoutFlow() {
 	const store = useCheckoutStore();

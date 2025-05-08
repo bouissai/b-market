@@ -1,3 +1,4 @@
+'use client';
 import { Button } from '@/components/ui/button';
 import {
 	CheckCircle2,
@@ -32,13 +33,11 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useCheckoutStore } from '@/store/useCheckoutStore';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
-type RenderCartSummaryProps = {
+type CartSummaryStepProps = {
 	nextStep: () => void;
 };
 
-export default function RenderCartSummary({
-	nextStep,
-}: RenderCartSummaryProps) {
+export default function CartSummaryStep({ nextStep }: CartSummaryStepProps) {
 	const {
 		cartItems,
 		totalCartItems,
