@@ -1,7 +1,5 @@
 import { create } from 'zustand';
 
-type CheckoutStep = 'cart' | 'information' | 'payment' | 'confirmation';
-
 enum PromoCode {
 	'PROMO10' = 10,
 	'PROMO20' = 20,
@@ -9,35 +7,27 @@ enum PromoCode {
 }
 
 interface CheckoutStore {
-	currentStep: CheckoutStep;
-	deliveryMethod: string;
-	deliveryFee: number;
+	currentStep: string;
+
 	promoCode: string | null;
 	promoDiscount: number;
 	total: number;
-	setCurrentStep: (step: CheckoutStep) => void;
-	setDeliveryMethod: (method: string) => void;
+	setCurrentStep: (step: string) => void;
+
 	setPromoCode: (code: string | null) => void;
 	promoApplied: boolean | null;
 }
 
 export const useCheckoutStore = create<CheckoutStore>()(set => ({
 	currentStep: 'cart',
-	deliveryMethod: 'standard',
-	deliveryFee: 4.9,
+
 	promoCode: null,
 	promoDiscount: 0,
 	total: 0,
 	promoApplied: null,
 
-	setCurrentStep: (step: CheckoutStep) => set({ currentStep: step }),
-	setDeliveryMethod: method => {
-		set({
-			deliveryMethod: method,
-			deliveryFee:
-				method === 'express' ? 9.9 : method === 'standard' ? 4.9 : 0,
-		});
-	},
+	setCurrentStep: (step: string) => set({ currentStep: step }),
+
 	setPromoCode: (code: string | null) => {
 		if (PromoCode[code as keyof typeof PromoCode]) {
 			set({

@@ -27,10 +27,10 @@ export default function RenderStepIndicator({
 							index ? (
 								<DynamicIcon
 									name="check-circle-2"
-									className="h-6 w-6"
+									className="h-5 w-5"
 								/>
 							) : (
-								<DynamicIcon name={step.icon} className="h-6 w-6" />
+								<DynamicIcon name={step.icon} className="h-5 w-5" />
 							)}
 						</div>
 						<div

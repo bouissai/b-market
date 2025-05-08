@@ -4,7 +4,7 @@ import { useCartStore } from '@/store/useCartStore';
 
 type RecapOrderCardProps = {
 	total: number;
-	currentStep: 'cart' | 'delivery' | 'payment' | 'confirmation';
+	currentStep: string;
 	promoApplied: boolean | null;
 	promoDiscount: number;
 	deliveryFee: number;

@@ -24,7 +24,7 @@ export const CHECKOUT_STEPS = [
 		key: 'information',
 		title: 'Informations de commande',
 		component: InfoOrderStep,
-		icon: 'map-pin',
+		icon: 'file-box',
 	},
 	{
 		key: 'payment',
