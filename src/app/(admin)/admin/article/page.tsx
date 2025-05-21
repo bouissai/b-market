@@ -1,7 +1,7 @@
 'use client';
 
-import { ArticleForm } from '@/components/admin/articleAdmin/articleForm';
-import { ArticleTable } from '@/components/admin/articleAdmin/articleTable';
+import { ArticleForm } from '@/components/admin/articleAdmin/article-form';
+import { ArticleTable } from '@/components/admin/articleAdmin/article-table';
 import { Loading } from '@/components/loading';
 import {
 	AlertDialog,
