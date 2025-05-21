@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+
 export function HeroSection() {
 	return (
 		<section className="relative min-h-screen flex items-center pt-16 overflow-hidden">
