@@ -41,6 +41,8 @@ export const useAuthStore = create<AuthState>(set => ({
 				redirect: false,
 			});
 
+			console.log('result log in : ', result);
+
 			if (result?.error) {
 				let message = 'Adresse email ou mot de passe incorrect.';
 				if (result.error === 'USER_NOT_FOUND')

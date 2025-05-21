@@ -3,19 +3,15 @@ import { Separator } from '@/components/ui/separator';
 import { useCartStore } from '@/store/useCartStore';
 
 type RecapOrderCardProps = {
-	total: number;
 	currentStep: string;
 	promoApplied: boolean | null;
 	promoDiscount: number;
-	deliveryFee: number;
 };
 
 export default function RecapOrderCard({
-	total,
 	currentStep,
 	promoDiscount,
 	promoApplied,
-	deliveryFee,
 }: RecapOrderCardProps) {
 	const { cartItems, totalPrice } = useCartStore();
 
@@ -51,20 +47,9 @@ export default function RecapOrderCard({
 							<span>-{promoDiscount.toFixed(2)}€</span>
 						</div>
 					)}
-					{currentStep !== 'cart' && (
-						<div className="flex justify-between">
-							<span>Frais de livraison</span>
-							<span>{deliveryFee.toFixed(2)}€</span>
-						</div>
-					)}
 					<div className="flex justify-between text-lg font-bold">
 						<span>Total</span>
-						<span>
-							{currentStep === 'cart'
-								? (totalPrice - promoDiscount).toFixed(2)
-								: total.toFixed(2)}
-							€
-						</span>
+						<span>{(totalPrice - promoDiscount).toFixed(2)}€</span>
 					</div>
 				</div>
 			</CardContent>

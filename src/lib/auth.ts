@@ -22,7 +22,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 				}
 				return {
 					...user,
-					isAdmin: user.isAdmin ?? false,
 				};
 			},
 		}),
@@ -30,14 +29,15 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 	callbacks: {
 		async jwt({ token, user }) {
 			if (user) {
-				token.id = user.id;
-				token.isAdmin = user.isAdmin;
+				token.user = user;
 			}
 			return token;
 		},
 		async session({ session, token }) {
-			session.user.id = token.id as string;
-			session.user.isAdmin = token.isAdmin as boolean;
+			if (token.user) {
+				// @ts-ignore
+				session.user = token.user;
+			}
 			return session;
 		},
 	},

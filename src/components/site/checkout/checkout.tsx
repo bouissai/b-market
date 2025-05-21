@@ -11,15 +11,12 @@ export default function Checkout() {
 		stepMeta,
 		previous,
 		next,
-		deliveryFee,
 		promoDiscount,
 		promoApplied,
 	} = useCheckoutFlow();
 
 	const StepComponent = stepMeta.component;
 
-	// Total
-	const total = totalPrice + deliveryFee - promoDiscount;
 	return (
 		<div className="container mx-auto px-4 py-8">
 			<RenderStepIndicator currentStep={currentStep} />
@@ -31,10 +28,8 @@ export default function Checkout() {
 					<div className="lg:col-span-1">
 						<RecapOrderCard
 							currentStep={currentStep}
-							deliveryFee={deliveryFee}
 							promoApplied={promoApplied}
 							promoDiscount={promoDiscount}
-							total={total}
 						/>
 					</div>
 				)}
