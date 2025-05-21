@@ -1,0 +1,74 @@
+name: 🚀 Build, Push & Deploy to VPS
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Cloner le dépôt
+        uses: actions/checkout@v4
+
+      - name: 🔑 Connexion à GHCR
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+
+      - name: 🏗️ Build de l'image Docker avec Prisma
+        run: docker build -t ghcr.io/bouissai/bmarket:latest .
+
+      - name: 📤 Push de l'image sur GHCR
+        run: docker push ghcr.io/bouissai/bmarket:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Cloner le dépôt
+        uses: actions/checkout@v4
+
+      - name: 🔐 Configurer SSH pour scp
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      - name: 📄 Copier le docker-compose.yml sur le serveur
+        run: |
+          scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USER }}@${{ secrets.SERVER_IP }}:/root/bmarket/docker-compose.yml
+
+      - name: 📡 Connexion SSH et déploiement
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            echo "📌 Passage au dossier..."
+            cd /root/bmarket
+
+            echo "🔐 Connexion à GHCR"
+            docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} -p ${{ secrets.GHCR_TOKEN }}
+
+            echo "📦 Pull de la nouvelle image"
+            docker-compose pull
+
+            echo "🛑 Arrêt des anciens conteneurs"
+            docker-compose down || echo "⚠️ Aucun conteneur à stopper"
+
+            echo "🚀 Démarrage des nouveaux conteneurs"
+            docker-compose up -d
+
+            echo "⏳ Attente Postgres (15s)..."
+            sleep 15
+
+            echo "📂 Prisma migrate deploy"
+            APP_ID=$(docker-compose ps -q bmarket)
+            docker exec $APP_ID npx prisma migrate deploy || echo "⚠️ Prisma migration skipped"
+
+            echo "✅ Déploiement terminé !"
