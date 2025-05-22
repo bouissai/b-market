@@ -26,6 +26,12 @@ export const CHECKOUT_STEPS = [
 		icon: 'file-box',
 	},
 	// {
+	// 	key: 'recapOrder',
+	// 	title: 'Recapitulatif de la commande',
+	// 	component: RecapOrderStep,
+	// 	icon: 'credit-card',
+	// },
+	// {
 	// 	key: 'payment',
 	// 	title: 'Paiement',
 	// 	component: PaymentFormStep,
