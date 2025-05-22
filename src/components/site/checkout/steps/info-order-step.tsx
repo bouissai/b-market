@@ -22,6 +22,9 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog';
+import { useCheckoutStore } from '@/store/useCheckoutStore';
+import { useOrderStore } from '@/store/useOrderStore';
+import { store } from 'next/dist/build/output/store';
 
 const deliveryFormSchema = z.object({
 	firstName: z
@@ -48,6 +51,9 @@ export default function InfoOrderStep({
 	nextStep,
 	previousStep,
 }: RenderDeliveryFormProps) {
+	const setSavedOrder = useCheckoutStore(state => state.setSavedOrder);
+	const { saveOrder } = useOrderStore();
+
 	const { data: session } = useSession();
 	const [otherPerson, setOtherPerson] = useState(false);
 	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -73,6 +79,14 @@ export default function InfoOrderStep({
 	};
 
 	const confirmOrder = () => {
+		// TODO : sauvegarder la commande dans la base de données via le store de order
+		const savedOrder = store.saveOrder(otherInfoForm);
+		if (savedOrder) {
+			setSavedOrder(savedOrder);
+		} else {
+			console.error('Erreur lors de la confirmation de la commande');
+		}
+
 		setShowConfirmDialog(false);
 		nextStep();
 	};
