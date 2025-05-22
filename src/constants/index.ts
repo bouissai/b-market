@@ -10,7 +10,6 @@ import {
 
 import CartSummaryStep from '@/components/site/checkout/steps/cart-summary-step';
 import InfoOrderStep from '@/components/site/checkout/steps/info-order-step';
-import PaymentFormStep from '@/components/site/checkout/steps/render-paiement-form';
 import ConfirmationOrderStep from '@/components/site/checkout/steps/confirmation-order-step';
 
 export const CHECKOUT_STEPS = [
@@ -26,12 +25,12 @@ export const CHECKOUT_STEPS = [
 		component: InfoOrderStep,
 		icon: 'file-box',
 	},
-	{
-		key: 'payment',
-		title: 'Paiement',
-		component: PaymentFormStep,
-		icon: 'credit-card',
-	},
+	// {
+	// 	key: 'payment',
+	// 	title: 'Paiement',
+	// 	component: PaymentFormStep,
+	// 	icon: 'credit-card',
+	// },
 	{
 		key: 'confirmation',
 		title: 'Confirmation',

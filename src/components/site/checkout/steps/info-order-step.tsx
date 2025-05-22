@@ -43,7 +43,22 @@ export default function InfoOrderStep({
 	previousStep,
 }: RenderDeliveryFormProps) {
 	const { data: session } = useSession();
-	const [orderInfo, setOrderInfo] = useState([]);
+	const [orderInfo, setOrderInfo] = useState<(typeof deliveryFormSchema)[]>(
+		[],
+	);
+
+	const useEffect = () => {
+		if (session) {
+			setOrderInfo([
+				{
+					firstName: session.user.name,
+					lastName: session.user.name,
+					email: session.user.email,
+					phone: session.user.phone,
+				},
+			]);
+		}
+	};
 
 	const personnalInfoForm = useForm<z.infer<typeof deliveryFormSchema>>({
 		resolver: zodResolver(deliveryFormSchema),

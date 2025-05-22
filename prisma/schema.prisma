@@ -14,7 +14,8 @@ datasource prisma {
 
 model User {
   id            String          @id @default(cuid())
-  name          String?
+  firstname     String
+  lastname      String
   phone         String?
   email         String          @unique
   emailVerified DateTime?

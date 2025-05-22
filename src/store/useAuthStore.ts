@@ -76,7 +76,8 @@ export const useAuthStore = create<AuthState>(set => ({
 				body: JSON.stringify({
 					email: data.email,
 					password: data.password,
-					name: data.name,
+					firstname: data.firstname,
+					lastname: data.lastname,
 					phone: data.phone,
 				}),
 			});
