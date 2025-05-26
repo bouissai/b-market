@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/dialog';
 import { useCheckoutStore } from '@/store/useCheckoutStore';
 import { useOrderStore } from '@/store/useOrderStore';
-import { store } from 'next/dist/build/output/store';
+import { useCartStore } from '@/store/useCartStore';
 
 const deliveryFormSchema = z.object({
 	firstName: z
@@ -51,8 +51,9 @@ export default function InfoOrderStep({
 	nextStep,
 	previousStep,
 }: RenderDeliveryFormProps) {
-	const setSavedOrder = useCheckoutStore(state => state.setSavedOrder);
+	const { promoDiscount } = useCheckoutStore();
 	const { saveOrder } = useOrderStore();
+	const { cartItems } = useCartStore();
 
 	const { data: session } = useSession();
 	const [otherPerson, setOtherPerson] = useState(false);
@@ -78,17 +79,50 @@ export default function InfoOrderStep({
 		}
 	};
 
-	const confirmOrder = () => {
-		// TODO : sauvegarder la commande dans la base de données via le store de order
-		const savedOrder = store.saveOrder(otherInfoForm);
-		if (savedOrder) {
-			setSavedOrder(savedOrder);
-		} else {
-			console.error('Erreur lors de la confirmation de la commande');
-		}
+	const confirmOrder = async () => {
+		try {
+			// Calculer le total directement
+			const total =
+				cartItems.reduce(
+					(sum, item) => sum + item.article.price! * item.quantity,
+					0,
+				) - promoDiscount;
 
-		setShowConfirmDialog(false);
-		nextStep();
+			const orderData = {
+				userId: session!.user.id,
+				firstname: otherPerson
+					? otherInfoForm.getValues().firstName
+					: session?.user?.firstname!,
+				lastname: otherPerson
+					? otherInfoForm.getValues().lastName
+					: session?.user?.lastname!,
+				email: otherPerson
+					? otherInfoForm.getValues().email
+					: session?.user?.email!,
+				phone: otherPerson
+					? otherInfoForm.getValues().phone
+					: session?.user?.phone!,
+				status: 'PENDING' as const,
+				note: '',
+				total: total,
+				orderItems: cartItems.map(item => ({
+					articleId: item.article.id!,
+					price: item.article.price!,
+					quantity: item.quantity,
+				})),
+			};
+
+			const savedOrder = await saveOrder(orderData);
+			useCheckoutStore.getState().setLastOrderId(savedOrder.id);
+
+			// Vider le panier
+			await useCartStore.getState().clearCart();
+
+			setShowConfirmDialog(false);
+			nextStep();
+		} catch (error) {
+			console.error('Erreur lors de la confirmation:', error);
+		}
 	};
 
 	return (

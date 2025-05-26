@@ -70,20 +70,31 @@ VALUES ('ci1', 'cart1', 'art1', 2),
 
 -- Insérer des commandes avec différents statuts
 -- Insérer des commandes avec différents statuts
-INSERT INTO "Order" (id, "userId", total, note, status, "createdAt", "updatedAt")
+INSERT INTO "Order" (id, "userId", total, note, status, "createdAt", "updatedAt", firstname, lastname, email, phone)
 VALUES
     -- Commande passée hier (1 jour avant aujourd'hui)
-    (1, 'user1', 33.8, 'Commande rapide', 'CONFIRMED', NOW() - INTERVAL '1 days', NOW() - INTERVAL '1 days'),
+    (1, 'user1', 33.8, 'Commande rapide', 'CONFIRMED', NOW() - INTERVAL '1 days', NOW() - INTERVAL '1 days', 
+    'Mohammed', 'Benali', 'mohammed.benali@example.com', '+33 0 00 00 00 00'),
+    
     -- Commande passée il y a 1 semaine
-    (2, 'user2', 67.7, 'Livraison demain', 'PENDING', NOW() - INTERVAL '7 days', NOW() - INTERVAL '7 days'),
+    (2, 'user2', 67.7, 'Livraison demain', 'PENDING', NOW() - INTERVAL '7 days', NOW() - INTERVAL '7 days',
+    'Sarah', 'Dubois', 'sarah.dubois@example.com', ''),
+    
     -- Commande passée il y a 32 jours (environ 1 mois)
-    (3, 'user3', 41.3, 'Bonne qualité', 'PENDING_PAYMENT', NOW() - INTERVAL '32 days', NOW() - INTERVAL '32 days'),
+    (3, 'user3', 41.3, 'Bonne qualité', 'PENDING_PAYMENT', NOW() - INTERVAL '32 days', NOW() - INTERVAL '32 days',
+    'Ilyass', 'Bouissa', 'bouissailyass@gmail.com', '+33 6 95 50 90 33'),
+    
     -- Commande très ancienne, passée il y a 365 jours (plus d'un an)
-    (4, 'user1', 7.8, 'Au top', 'CONFIRMED', NOW() - INTERVAL '365 days', NOW() - INTERVAL '365 days'),
+    (4, 'user1', 7.8, 'Au top', 'CONFIRMED', NOW() - INTERVAL '365 days', NOW() - INTERVAL '365 days',
+    'Mohammed', 'Benali', 'mohammed.benali@example.com', '+33 0 00 00 00 00'),
+    
     -- Commande passée aujourd’hui
-    (5, 'user1', 7.8, 'Au top', 'CANCELLED', NOW(), NOW()),
+    (5, 'user1', 7.8, 'Au top', 'CANCELLED', NOW(), NOW(),
+    'Mohammed', 'Benali', 'mohammed.benali@example.com', '+33 0 00 00 00 00'),
+    
     -- Commande passée il y a 64 jours (un peu plus de 2 mois)
-    (6, 'user1', 3.9, 'Rat yan', 'PENDING_PAYMENT', NOW() - INTERVAL '64 days', NOW() - INTERVAL '64 days');
+    (6, 'user1', 3.9, 'Rat yan', 'PENDING_PAYMENT', NOW() - INTERVAL '64 days', NOW() - INTERVAL '64 days',
+    'Mohammed', 'Benali', 'mohammed.benali@example.com', '+33 0 00 00 00 00');
 
 
 -- Insérer des articles dans les commandes

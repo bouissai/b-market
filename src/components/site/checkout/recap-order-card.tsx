@@ -1,19 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useCartStore } from '@/store/useCartStore';
+import { useCheckoutStore, useCheckoutTotal } from '@/store/useCheckoutStore';
 
-type RecapOrderCardProps = {
-	currentStep: string;
-	promoApplied: boolean | null;
-	promoDiscount: number;
-};
-
-export default function RecapOrderCard({
-	currentStep,
-	promoDiscount,
-	promoApplied,
-}: RecapOrderCardProps) {
-	const { cartItems, totalPrice } = useCartStore();
+export default function RecapOrderCard() {
+	const { promoApplied, promoDiscount } = useCheckoutStore();
+	const { cartItems, totalPrice: cartPrice } = useCartStore();
+	const finalTotal = useCheckoutTotal();
 
 	return (
 		<Card className="sticky top-24">
@@ -39,7 +32,7 @@ export default function RecapOrderCard({
 				<div className="space-y-2">
 					<div className="flex justify-between">
 						<span>Total du panier</span>
-						<span>{totalPrice.toFixed(2)}€</span>
+						<span>{cartPrice.toFixed(2)}€</span>
 					</div>
 					{promoApplied && (
 						<div className="flex justify-between text-success">
@@ -49,7 +42,7 @@ export default function RecapOrderCard({
 					)}
 					<div className="flex justify-between text-lg font-bold">
 						<span>Total</span>
-						<span>{(totalPrice - promoDiscount).toFixed(2)}€</span>
+						<span>{finalTotal.toFixed(2)}€</span>
 					</div>
 				</div>
 			</CardContent>

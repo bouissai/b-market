@@ -28,7 +28,16 @@ export async function GET(req: Request) {
 
 export async function POST(request: NextRequest) {
 	try {
-		const { userId, status, note, orderItems } = await request.json();
+		const {
+			userId,
+			status,
+			note,
+			orderItems,
+			firstname, // Notez le changement de casse
+			lastname, // Notez le changement de casse
+			phone,
+			email,
+		} = await request.json();
 
 		if (!userId) {
 			return NextResponse.json(
@@ -37,36 +46,25 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		if (!status) {
-			return NextResponse.json(
-				{ message: 'Le statut de la commande est requis' },
-				{ status: 400 },
-			);
-		}
+		// // Validation des champs obligatoires
+		// if (!firstname || !lastname || !email || !phone) {
+		// 	return NextResponse.json(
+		// 		{ message: 'Les informations de contact sont requises' },
+		// 		{ status: 400 },
+		// 	);
+		// }
 
-		if (note === undefined) {
-			return NextResponse.json(
-				{ message: 'La note de la commande est requise' },
-				{ status: 400 },
-			);
-		}
-
-		if (!Array.isArray(orderItems)) {
-			return NextResponse.json(
-				{ message: 'Les éléments de la commande doivent être un tableau' },
-				{ status: 400 },
-			);
-		}
-
-		if (orderItems.length === 0) {
-			return NextResponse.json(
-				{ message: 'La commande doit contenir au moins un élément' },
-				{ status: 400 },
-			);
-		}
-
-		// ✅ Création de la commande avec les `orderItems`
-		const newOrder = await createOrder(userId, status, note, orderItems);
+		// ✅ Création de la commande avec les bons noms de champs
+		const newOrder = await createOrder(
+			userId,
+			status,
+			note,
+			orderItems,
+			firstname,
+			lastname,
+			email,
+			phone,
+		);
 
 		return NextResponse.json(newOrder, { status: 201 });
 	} catch (error: any) {
