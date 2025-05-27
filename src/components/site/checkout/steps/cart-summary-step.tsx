@@ -164,7 +164,6 @@ export default function CartSummaryStep({ nextStep }: CartSummaryStepProps) {
 									</CardContent>
 								</Card>
 							))}
-							)
 						</div>
 					</ScrollArea>
 					<Collapsible>
