@@ -73,7 +73,7 @@ export function UserTable({ data, onEdit, onDelete }: UserTableProps) {
 		<DataTable
 			columns={columns}
 			data={data}
-			filterColumn="firstname"
+			filterColumn="lastname"
 			filterPlaceholder="Filtrer par nom..."
 			onRowClick={row => handleRowClick(row)}
 		/>
