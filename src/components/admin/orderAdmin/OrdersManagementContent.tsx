@@ -39,6 +39,7 @@ export default function OrdersManagementContent() {
 			lastname: values.lastname,
 			email: values.email,
 			phone: values.phone,
+			promoCodeId: null,
 			orderItems: values.orderItems.map(item => ({
 				articleId: item.articleId,
 				price: item.price,
