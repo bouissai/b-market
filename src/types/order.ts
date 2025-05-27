@@ -37,6 +37,7 @@ export interface OrderDetailsDTO {
 	total: number;
 	status: string;
 	note: string | null;
+	promoDiscount: number | null;
 	items: OrderItemDTO[];
 }
 

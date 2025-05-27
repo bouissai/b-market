@@ -85,6 +85,18 @@ export default function ConfirmationOrderStep() {
 									</span>
 								</div>
 							))}
+							<div className="flex justify-between">
+								<span>Total des articles</span>
+								<span>
+									{formatPrice(
+										orderDetails.items.reduce(
+											(sum, item) =>
+												sum + item.price! * item.quantity,
+											0,
+										),
+									)}
+								</span>
+							</div>
 						</div>
 					</div>
 
@@ -92,6 +104,12 @@ export default function ConfirmationOrderStep() {
 
 					{/* Total */}
 					<div className="space-y-2">
+						{orderDetails.promoDiscount && (
+							<div className="flex justify-between text-success">
+								<span>Réduction</span>
+								<span>-{orderDetails.promoDiscount.toFixed(2)}€</span>
+							</div>
+						)}
 						<div className="flex justify-between text-lg font-bold">
 							<span>Total</span>
 							<span>{formatPrice(orderDetails.total)}</span>

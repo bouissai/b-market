@@ -40,6 +40,7 @@ export async function getOrderById(
 					},
 				},
 				user: true,
+				promoCode: true,
 			},
 		});
 
@@ -49,13 +50,14 @@ export async function getOrderById(
 
 		return {
 			id: order.id,
-			customerName: order.user.firstname + ' ' + order.user.lastname,
-			customerEmail: order.user.email,
-			customerPhone: order.user?.phone ?? 'Non renseigné', // Utiliser le champ phone du modèle
+			customerName: order.firstname + ' ' + order.user.lastname,
+			customerEmail: order.email,
+			customerPhone: order.phone ?? 'Non renseigné', // Utiliser le champ phone du modèle
 			date: order.createdAt,
 			total: order.total,
 			status: order.status,
 			note: order.note,
+			promoDiscount: order.promoCode?.discount ?? null,
 			items: order.orderItems.map(item => ({
 				id: item.id,
 				name: item.article?.name ?? 'Article inconnu',
@@ -130,6 +132,7 @@ export async function createOrder(
 					},
 				},
 				user: true,
+				promoCode: true,
 			},
 		});
 
@@ -142,7 +145,7 @@ export async function createOrder(
 			total: newOrder.total,
 			status: newOrder.status,
 			note: newOrder.note,
-			promoCodeId: newOrder.promoCodeId,
+			promoDiscount: newOrder.promoCode?.discount ?? null,
 			items: newOrder.orderItems.map(item => ({
 				id: item.id,
 				name: item.article.name,
