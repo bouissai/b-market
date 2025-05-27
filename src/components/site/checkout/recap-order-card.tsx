@@ -1,10 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useCartStore } from '@/store/useCartStore';
-import { useCheckoutStore, useCheckoutTotal } from '@/store/useCheckoutStore';
+import { useCheckoutTotal } from '@/store/useCheckoutStore';
+import { usePromoCodeStore } from '@/store/usePromoCodeStore';
 
 export default function RecapOrderCard() {
-	const { promoApplied, promoDiscount } = useCheckoutStore();
+	const { isValid, discount: promoDiscount } = usePromoCodeStore();
 	const { cartItems, totalPrice: cartPrice } = useCartStore();
 	const finalTotal = useCheckoutTotal();
 
@@ -34,7 +35,7 @@ export default function RecapOrderCard() {
 						<span>Total du panier</span>
 						<span>{cartPrice.toFixed(2)}€</span>
 					</div>
-					{promoApplied && (
+					{isValid && (
 						<div className="flex justify-between text-success">
 							<span>Réduction</span>
 							<span>-{promoDiscount.toFixed(2)}€</span>

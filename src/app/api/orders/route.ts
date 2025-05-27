@@ -33,10 +33,12 @@ export async function POST(request: NextRequest) {
 			status,
 			note,
 			orderItems,
-			firstname, // Notez le changement de casse
-			lastname, // Notez le changement de casse
+			firstname,
+			lastname,
 			phone,
 			email,
+			total,
+			promoCodeId,
 		} = await request.json();
 
 		if (!userId) {
@@ -46,13 +48,13 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// // Validation des champs obligatoires
-		// if (!firstname || !lastname || !email || !phone) {
-		// 	return NextResponse.json(
-		// 		{ message: 'Les informations de contact sont requises' },
-		// 		{ status: 400 },
-		// 	);
-		// }
+		// Validation des champs obligatoires
+		if (!firstname || !lastname || !email || !phone) {
+			return NextResponse.json(
+				{ message: 'Les informations de contact sont requises' },
+				{ status: 400 },
+			);
+		}
 
 		// ✅ Création de la commande avec les bons noms de champs
 		const newOrder = await createOrder(
@@ -64,6 +66,8 @@ export async function POST(request: NextRequest) {
 			lastname,
 			email,
 			phone,
+			total,
+			promoCodeId,
 		);
 
 		return NextResponse.json(newOrder, { status: 201 });

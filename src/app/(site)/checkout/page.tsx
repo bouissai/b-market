@@ -5,11 +5,20 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Checkout from '@/components/site/checkout/checkout';
+import { useCheckoutStore } from '@/store/useCheckoutStore';
 
 export default function CheckoutPage() {
 	const { data: session, status } = useSession();
 	const router = useRouter();
 	const setRedirectPath = useAuthStore(state => state.setRedirectPath);
+	const { resetCheckout } = useCheckoutStore();
+
+	useEffect(() => {
+		// Réinitialiser le checkout quand le composant est démonté
+		return () => {
+			resetCheckout();
+		};
+	}, [resetCheckout]);
 
 	useEffect(() => {
 		if (status === 'unauthenticated') {

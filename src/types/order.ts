@@ -66,6 +66,7 @@ export interface OrderSaveDTO {
 	lastname?: string;
 	email?: string;
 	phone?: string;
+	promoCodeId: string | null;
 }
 
 interface OrderItemSaveDTO {

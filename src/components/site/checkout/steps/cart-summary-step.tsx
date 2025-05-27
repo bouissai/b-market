@@ -30,8 +30,8 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useCheckoutStore } from '@/store/useCheckoutStore';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { usePromoCodeStore } from '@/store/usePromoCodeStore';
 
 type CartSummaryStepProps = {
 	nextStep: () => void;
@@ -45,13 +45,14 @@ export default function CartSummaryStep({ nextStep }: CartSummaryStepProps) {
 		updateQuantity,
 		removeFromCart,
 	} = useCartStore();
-	const { setPromoCode, promoApplied, promoDiscount, promoCode } =
-		useCheckoutStore();
+	const { validateCode, currentCode, discount, isValid, isLoading } =
+		usePromoCodeStore();
+
 	const [promoCodeInput, setPromoCodeInput] = useState<string>('');
 
 	const handleSubmitPromo = (event: React.FormEvent) => {
 		event.preventDefault();
-		setPromoCode(promoCodeInput);
+		validateCode(promoCodeInput);
 	};
 
 	return (
@@ -149,7 +150,10 @@ export default function CartSummaryStep({ nextStep }: CartSummaryStepProps) {
 									<Info className="h-4 w-4 text-muted-foreground" />
 								</TooltipTrigger>
 								<TooltipContent>
-									<p>Entrez PROMO10 pour obtenir 10% de réduction</p>
+									<p>
+										Entrez un code de promotion pour obtenir une
+										réduction
+									</p>
 								</TooltipContent>
 							</Tooltip>
 						</TooltipProvider>
@@ -175,25 +179,30 @@ export default function CartSummaryStep({ nextStep }: CartSummaryStepProps) {
 						</form>
 					</div>
 
-					{promoApplied === false && (
-						<Alert variant="destructive" className="mt-2">
+					{isLoading ? (
+						<Alert>
+							<Loader2 className="h-4 w-4 animate-spin" />
+							<AlertTitle>Validation en cours...</AlertTitle>
+						</Alert>
+					) : isValid === false ? (
+						<Alert variant="destructive">
 							<XCircle className="h-4 w-4" />
 							<AlertTitle>Code promo invalide</AlertTitle>
 							<AlertDescription>
-								Le code "{promoCode}" n'est pas valide.
+								Le code "{currentCode}" n'est pas valide.
 							</AlertDescription>
 						</Alert>
-					)}
-
-					{promoApplied === true && (
-						<Alert className="mt-2 text-success ">
-							<CheckCircle2 color={'green'} className="h-4 w-4 " />
-							<AlertTitle>Code promo appliqué</AlertTitle>
-							<AlertDescription>
-								Vous bénéficiez d'une réduction de{' '}
-								{promoDiscount.toFixed(2)}€
-							</AlertDescription>
-						</Alert>
+					) : (
+						isValid === true && (
+							<Alert className="text-success">
+								<CheckCircle2 color="green" className="h-4 w-4" />
+								<AlertTitle>Code promo appliqué</AlertTitle>
+								<AlertDescription>
+									Vous bénéficiez d'une réduction de{' '}
+									{discount.toFixed(2)}€
+								</AlertDescription>
+							</Alert>
+						)
 					)}
 				</CollapsibleContent>
 			</Collapsible>

@@ -25,6 +25,7 @@ import {
 import { useCheckoutStore } from '@/store/useCheckoutStore';
 import { useOrderStore } from '@/store/useOrderStore';
 import { useCartStore } from '@/store/useCartStore';
+import { usePromoCodeStore } from '@/store/usePromoCodeStore';
 
 const deliveryFormSchema = z.object({
 	firstName: z
@@ -51,7 +52,7 @@ export default function InfoOrderStep({
 	nextStep,
 	previousStep,
 }: RenderDeliveryFormProps) {
-	const { promoDiscount } = useCheckoutStore();
+	const { discount: promoDiscount, currentCodeId } = usePromoCodeStore();
 	const { saveOrder } = useOrderStore();
 	const { cartItems } = useCartStore();
 
@@ -81,7 +82,7 @@ export default function InfoOrderStep({
 
 	const confirmOrder = async () => {
 		try {
-			// Calculer le total directement
+			// Calculer le total directement car impossible d'utiliser le store du total ici
 			const total =
 				cartItems.reduce(
 					(sum, item) => sum + item.article.price! * item.quantity,
@@ -105,6 +106,7 @@ export default function InfoOrderStep({
 				status: 'PENDING' as const,
 				note: '',
 				total: total,
+				promoCodeId: currentCodeId,
 				orderItems: cartItems.map(item => ({
 					articleId: item.article.id!,
 					price: item.article.price!,

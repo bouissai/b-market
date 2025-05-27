@@ -82,19 +82,35 @@ model CartItem {
 }
 
 model Order {
-  id         Int         @id @default(autoincrement())
-  userId     String
-  user       User        @relation(fields: [userId], references: [id])
-  total      Float // potentiel rabais ou reduction donc par forcement égal au qtté * prix articles
-  note       String?
-  status     String      @default("PENDING") // "pending", "completed", etc.
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  orderItems OrderItem[]
-  firstname  String
-  lastname   String
-  email      String
-  phone      String
+  id          Int         @id @default(autoincrement())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  total       Float // potentiel rabais ou reduction donc par forcement égal au qtté * prix articles
+  note        String?
+  status      String      @default("PENDING") // "pending", "completed", etc.
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  orderItems  OrderItem[]
+  firstname   String
+  lastname    String
+  email       String
+  phone       String
+  promoCodeId String?
+  promoCode   PromoCode?  @relation(fields: [promoCodeId], references: [id])
+}
+
+model PromoCode {
+  id        String    @id @default(cuid())
+  code      String    @unique
+  discount  Int
+  startDate DateTime  @default(now())
+  endDate   DateTime?
+  maxUses   Int?
+  useCount  Int       @default(0)
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  orders    Order[]
 }
 
 model OrderItem {

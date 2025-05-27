@@ -99,12 +99,9 @@ export async function createOrder(
 	lastname: string,
 	email: string,
 	phone: string,
+	total: number,
+	promoCodeId: string | null,
 ): Promise<OrderDetailsDTO> {
-	const total = orderItems.reduce(
-		(acc, item) => acc + item.price * item.quantity,
-		0,
-	);
-
 	return await prisma.$transaction(async tx => {
 		// 1. Créer la commande
 		const newOrder = await tx.order.create({
@@ -117,6 +114,7 @@ export async function createOrder(
 				lastname,
 				email,
 				phone,
+				promoCodeId,
 				orderItems: {
 					create: orderItems.map(item => ({
 						articleId: item.articleId,
@@ -144,6 +142,7 @@ export async function createOrder(
 			total: newOrder.total,
 			status: newOrder.status,
 			note: newOrder.note,
+			promoCodeId: newOrder.promoCodeId,
 			items: newOrder.orderItems.map(item => ({
 				id: item.id,
 				name: item.article.name,
