@@ -13,20 +13,25 @@ export interface User {
 
 export interface UserPut {
 	id: string;
-	name: string;
+	firstname: string;
+	lastname: string;
 	email: string;
 	phone?: string | null;
 }
 
 export interface UserPost {
-	name: string;
+	firstname: string;
+	lastname: string;
 	email: string;
 	phone?: string | null;
 }
 
 export interface UserDelete {
 	id: string;
-	name: string;
+	firstname: string;
+	lastname: string;
+	email: string;
+	phone?: string | null;
 }
 
 // types/user.ts

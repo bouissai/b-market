@@ -27,7 +27,11 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import { PhoneInput } from '@/components/ui/phone-input';
 
-const SignUp = () => {
+interface SignUpProps {
+	onSuccess?: () => void;
+}
+
+const SignUp = ({ onSuccess }: SignUpProps) => {
 	const { toast } = useToast();
 	const { signUp, error, isSubmitting, setError, successMessage } =
 		useAuthStore();
