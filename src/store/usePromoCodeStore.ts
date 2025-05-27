@@ -12,9 +12,10 @@ interface PromoCodeState {
 
 	validateCode: (code: string) => Promise<void>;
 	clearPromoCode: () => void;
+	calculateDiscount: (cartTotal: number) => number;
 }
 
-export const usePromoCodeStore = create<PromoCodeState>(set => ({
+export const usePromoCodeStore = create<PromoCodeState>((set, get) => ({
 	currentCode: null,
 	currentCodeId: null,
 	discount: 0,
@@ -77,4 +78,11 @@ export const usePromoCodeStore = create<PromoCodeState>(set => ({
 			isValid: null,
 			error: null,
 		}),
+
+	calculateDiscount: (cartTotal: number) => {
+		const { isValid, discount } = get();
+		if (!isValid) return 0;
+
+		return discount < 1 && discount > 0 ? cartTotal * discount : discount;
+	},
 }));

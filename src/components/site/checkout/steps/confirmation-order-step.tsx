@@ -140,10 +140,6 @@ export default function ConfirmationOrderStep() {
 			</Card>
 
 			<div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-				{/*<Button variant="outline" className="flex-1" onClick={handlePrint}>*/}
-				{/*	<Printer className="mr-2 h-4 w-4" />*/}
-				{/*	Imprimer*/}
-				{/*</Button>*/}
 				<Button
 					variant="default"
 					className="flex-1"

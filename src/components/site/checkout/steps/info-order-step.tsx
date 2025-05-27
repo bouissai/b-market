@@ -22,7 +22,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog';
-import { useCheckoutStore } from '@/store/useCheckoutStore';
+import { useCheckoutStore, useCheckoutTotal } from '@/store/useCheckoutStore';
 import { useOrderStore } from '@/store/useOrderStore';
 import { useCartStore } from '@/store/useCartStore';
 import { usePromoCodeStore } from '@/store/usePromoCodeStore';
@@ -52,9 +52,10 @@ export default function InfoOrderStep({
 	nextStep,
 	previousStep,
 }: RenderDeliveryFormProps) {
-	const { discount: promoDiscount, currentCodeId } = usePromoCodeStore();
+	const { currentCodeId } = usePromoCodeStore();
 	const { saveOrder } = useOrderStore();
 	const { cartItems } = useCartStore();
+	const total = useCheckoutTotal();
 
 	const { data: session } = useSession();
 	const [otherPerson, setOtherPerson] = useState(false);
@@ -82,13 +83,6 @@ export default function InfoOrderStep({
 
 	const confirmOrder = async () => {
 		try {
-			// Calculer le total directement car impossible d'utiliser le store du total ici
-			const total =
-				cartItems.reduce(
-					(sum, item) => sum + item.article.price! * item.quantity,
-					0,
-				) - promoDiscount;
-
 			const orderData = {
 				userId: session!.user.id,
 				firstname: otherPerson

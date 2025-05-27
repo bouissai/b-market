@@ -5,7 +5,6 @@ import { usePromoCodeStore } from '@/store/usePromoCodeStore';
 interface CheckoutStore {
 	currentStep: string;
 	lastOrderId: number | null;
-	total: number;
 
 	setLastOrderId: (id: number | null) => void;
 	setCurrentStep: (step: string) => void;
@@ -15,7 +14,6 @@ interface CheckoutStore {
 export const useCheckoutStore = create<CheckoutStore>(set => ({
 	currentStep: 'cart',
 	lastOrderId: null,
-	total: 0,
 
 	setLastOrderId: id => set({ lastOrderId: id }),
 	setCurrentStep: step => set({ currentStep: step }),
@@ -23,16 +21,16 @@ export const useCheckoutStore = create<CheckoutStore>(set => ({
 		set({
 			currentStep: 'cart',
 			lastOrderId: null,
-			total: 0,
 		}),
 }));
 
-// Hook personnalisé pour le calcul total du panier
+// store/useCheckoutStore.ts
 export const useCheckoutTotal = () => {
-	const cartTotal = useCartStore(state => state.totalPrice);
-	const promoDiscount = usePromoCodeStore(state => state.discount);
+	const cartStore = useCartStore();
+	const promoStore = usePromoCodeStore();
 
-	return promoDiscount < 1 && promoDiscount > 0
-		? cartTotal * promoDiscount
-		: cartTotal - promoDiscount;
+	const cartTotal = cartStore.totalPrice;
+	const discountAmount = promoStore.calculateDiscount(cartTotal);
+
+	return cartTotal - discountAmount;
 };

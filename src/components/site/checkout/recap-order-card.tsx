@@ -5,8 +5,13 @@ import { useCheckoutTotal } from '@/store/useCheckoutStore';
 import { usePromoCodeStore } from '@/store/usePromoCodeStore';
 
 export default function RecapOrderCard() {
-	const { isValid, discount: promoDiscount } = usePromoCodeStore();
-	const { cartItems, totalPrice: cartPrice } = useCartStore();
+	const {
+		cartItems,
+		totalCartItems,
+		totalPrice: totalCartPrice,
+	} = useCartStore();
+	const { isValid, calculateDiscount } = usePromoCodeStore();
+	const discountAmount = calculateDiscount(totalCartPrice);
 	const finalTotal = useCheckoutTotal();
 
 	return (
@@ -24,7 +29,7 @@ export default function RecapOrderCard() {
 								{item.article.name} × {item.quantity}
 							</span>
 							<span className="font-medium">
-								{(item.article.price! * item.quantity).toFixed(2)}€
+								{totalCartItems.toFixed(2)}€
 							</span>
 						</div>
 					))}
@@ -33,12 +38,12 @@ export default function RecapOrderCard() {
 				<div className="space-y-2">
 					<div className="flex justify-between">
 						<span>Total du panier</span>
-						<span>{cartPrice.toFixed(2)}€</span>
+						<span>{totalCartPrice.toFixed(2)}€</span>
 					</div>
 					{isValid && (
 						<div className="flex justify-between text-success">
 							<span>Réduction</span>
-							<span>-{promoDiscount.toFixed(2)}€</span>
+							<span>-{discountAmount.toFixed(2)}€</span>
 						</div>
 					)}
 					<div className="flex justify-between text-lg font-bold">
