@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function EventsPage() {
 	return (
-		<>
+		<div >
 			<section className="relative">
 				<div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40 z-10" />
 				<HeroEvent />
@@ -46,6 +46,6 @@ export default function EventsPage() {
 			<section className="py-16 bg-primary/10">
 				<CtaEvents />
 			</section>
-		</>
+		</div>
 	);
 }

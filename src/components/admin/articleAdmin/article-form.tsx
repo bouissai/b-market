@@ -35,7 +35,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { ArticleImage } from '../../../../temp';
+import { ArticleImage } from './article-image';
 
 const formSchema = z.object({
 	name: z.string().min(1, 'Le nom est requis'),

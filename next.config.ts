@@ -4,13 +4,19 @@ const nextConfig = {
 	output: 'standalone',
 	productionBrowserSourceMaps: true,
 	compress: true,
+	experimental: {
+		serverComponentsExternalPackages: ["@auth/core"]
+	},
+	env: {
+		NEXTAUTH_URL: 'https://bmarket.fr',
+	  },	  
 	images: {
 		remotePatterns: [
 			{
 				protocol: 'https',
 				hostname: 'images.unsplash.com',
 				pathname: '**',
-			},			
+			},
 			{
 				protocol: 'https',
 				hostname: 'lh3.googleusercontent.com',

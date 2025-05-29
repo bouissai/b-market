@@ -41,4 +41,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 			return session;
 		},
 	},
+	pages: {
+		error: '/auth/error',  // Permet d'afficher une page d'erreur personnalisée
+	},
+	trustHost: true,  // Permet d'ajouter l'hôte comme étant de confiance
 });
