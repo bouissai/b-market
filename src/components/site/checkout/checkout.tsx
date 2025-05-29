@@ -11,7 +11,12 @@ export default function Checkout() {
 		<div className="container mx-auto px-4 py-8">
 			<RenderStepIndicator currentStep={currentStep} />
 			<div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-				<div className="lg:col-span-2">
+				<div
+					className={
+						currentStep === 'confirmation'
+							? 'lg:col-span-3'
+							: 'lg:col-span-2'
+					}>
 					<StepComponent previousStep={previous} nextStep={next} />
 				</div>
 				{currentStep !== 'confirmation' && (

@@ -15,6 +15,7 @@ import { useEffect } from 'react';
 import { useOrderStore } from '@/store/useOrderStore';
 import { Loading } from '@/components/loading';
 import { usePromoCodeStore } from '@/store/usePromoCodeStore';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const formatPrice = (price: number) => price.toFixed(2) + '€';
 const formatDate = (date: Date) => new Date(date).toLocaleString('fr-FR');
@@ -35,9 +36,7 @@ export default function ConfirmationOrderStep() {
 
 	if (isLoading || !orderDetails) return <Loading />;
 
-	// Utiliser orderDetails au lieu de savedOrder
 	return (
-		// ... le reste du composant utilisant orderDetails
 		<div className="space-y-6 max-w-3xl mx-auto">
 			<div className="flex items-center space-x-2 text-success">
 				<CheckCircle2 className="h-8 w-8" />
@@ -132,6 +131,17 @@ export default function ConfirmationOrderStep() {
 						</div>
 					</div>
 
+					<Alert className="mb-8 bg-amber-900/20 border-amber-700 text-amber-200">
+						<MapPin className="h-4 w-4 text-amber-50" />
+						<AlertTitle className="text-amber-300">
+							Click and Collect uniquement
+						</AlertTitle>
+						<AlertDescription className="text-amber-200">
+							Les commandes sont uniquement disponibles en retrait sur
+							place.
+						</AlertDescription>
+					</Alert>
+
 					{/* Instructions */}
 					<div className="rounded-lg bg-secondary/20 p-4 space-y-4">
 						<div className="flex items-center space-x-2">
@@ -147,7 +157,7 @@ export default function ConfirmationOrderStep() {
 							<div>
 								<p className="font-semibold">Point de retrait</p>
 								<p className="text-muted-foreground">
-									123 rue du Restaurant, 75000 Paris
+									39 Avenue du Vercors, 38600 Fontaine
 								</p>
 							</div>
 						</div>

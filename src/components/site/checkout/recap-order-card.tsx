@@ -3,6 +3,8 @@ import { Separator } from '@/components/ui/separator';
 import { useCartStore } from '@/store/useCartStore';
 import { useCheckoutTotal } from '@/store/useCheckoutStore';
 import { usePromoCodeStore } from '@/store/usePromoCodeStore';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { MapPin } from 'lucide-react';
 
 export default function RecapOrderCard() {
 	const {
@@ -15,49 +17,61 @@ export default function RecapOrderCard() {
 	const finalTotal = useCheckoutTotal();
 
 	return (
-		<Card className="sticky top-24">
-			<CardHeader>
-				<CardTitle>
-					<h1 className="text-2xl">Récapitulatif</h1>
-				</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<div className="space-y-4">
-					{cartItems.map(item => (
-						<div key={item.article.id} className="flex justify-between">
-							<span>
-								{item.article.name} × {item.quantity}
-							</span>
-							<span className="font-medium">
-								{totalCartItems.toFixed(2)}€
-							</span>
-						</div>
-					))}
-				</div>
-				<Separator className="my-4" />
-				<div className="space-y-2">
-					<div className="flex justify-between">
-						<span>Total du panier</span>
-						<span>{totalCartPrice.toFixed(2)}€</span>
+		<div className="sticky top-24">
+			<Alert className="mb-8 bg-amber-900/20 border-amber-700 text-amber-200">
+				<MapPin className="h-4 w-4 text-amber-50" />
+				<AlertTitle className="text-amber-300">
+					Click and Collect uniquement
+				</AlertTitle>
+				<AlertDescription className="text-amber-200">
+					Les commandes sont uniquement disponibles en retrait sur place.
+				</AlertDescription>
+			</Alert>
+			<Card>
+				<CardHeader>
+					<CardTitle>
+						<h1 className="text-2xl">Récapitulatif</h1>
+					</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<div className="space-y-4">
+						{cartItems.map(item => (
+							<div
+								key={item.article.id}
+								className="flex justify-between">
+								<span>
+									{item.article.name} × {item.quantity}
+								</span>
+								<span className="font-medium">
+									{totalCartItems.toFixed(2)}€
+								</span>
+							</div>
+						))}
 					</div>
-					{isValid && (
-						<div className="flex justify-between text-success">
-							<span>
-								{' '}
-								Réduction de{' '}
-								{discount < 1 && discount > 0
-									? discount * 100 + '%'
-									: discount + '€'}
-							</span>
-							<span>-{discountAmount.toFixed(2)}€</span>
+					<Separator className="my-4" />
+					<div className="space-y-2">
+						<div className="flex justify-between">
+							<span>Total du panier</span>
+							<span>{totalCartPrice.toFixed(2)}€</span>
 						</div>
-					)}
-					<div className="flex justify-between text-lg font-bold">
-						<span>Total</span>
-						<span>{finalTotal.toFixed(2)}€</span>
+						{isValid && (
+							<div className="flex justify-between text-success">
+								<span>
+									Réduction de{' '}
+									{discount < 1 && discount > 0
+										? discount * 100 + '%'
+										: discount + '€'}
+								</span>
+								<span>-{discountAmount.toFixed(2)}€</span>
+							</div>
+						)}
+						<div className="flex justify-between text-lg font-bold">
+							<span>Total</span>
+							<span>{finalTotal.toFixed(2)}€</span>
+						</div>
 					</div>
-				</div>
-			</CardContent>
-		</Card>
+				</CardContent>
+			</Card>
+		</div>
 	);
 }
