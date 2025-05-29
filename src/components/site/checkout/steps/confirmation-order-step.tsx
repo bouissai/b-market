@@ -14,6 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { useEffect } from 'react';
 import { useOrderStore } from '@/store/useOrderStore';
 import { Loading } from '@/components/loading';
+import { usePromoCodeStore } from '@/store/usePromoCodeStore';
 
 const formatPrice = (price: number) => price.toFixed(2) + '€';
 const formatDate = (date: Date) => new Date(date).toLocaleString('fr-FR');
@@ -22,6 +23,7 @@ export default function ConfirmationOrderStep() {
 	const router = useRouter();
 	const { lastOrderId } = useCheckoutStore();
 	const { orderDetails, fetchOrderDetails, isLoading } = useOrderStore();
+	const { discount } = usePromoCodeStore();
 
 	useEffect(() => {
 		if (!lastOrderId) {
@@ -106,8 +108,22 @@ export default function ConfirmationOrderStep() {
 					<div className="space-y-2">
 						{orderDetails.promoDiscount && (
 							<div className="flex justify-between text-success">
-								<span>Réduction</span>
-								<span>-{orderDetails.promoDiscount.toFixed(2)}€</span>
+								<span>
+									Réduction de{' '}
+									{discount < 1 && discount > 0
+										? discount * 100 + '%'
+										: discount + '€'}
+								</span>
+								<span>
+									-
+									{discount < 1 && discount > 0
+										? (
+												(orderDetails.total / (1 - discount)) *
+												discount
+											).toFixed(2)
+										: discount}
+									€
+								</span>
 							</div>
 						)}
 						<div className="flex justify-between text-lg font-bold">

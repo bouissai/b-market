@@ -24,6 +24,7 @@ export const usePromoCodeStore = create<PromoCodeState>((set, get) => ({
 	error: null,
 
 	validateCode: async (code: string) => {
+		console.log('validateCode', code);
 		set({ isLoading: true, error: null });
 
 		try {
@@ -45,11 +46,6 @@ export const usePromoCodeStore = create<PromoCodeState>((set, get) => ({
 				discount: data.discount,
 				isValid: true,
 				error: null,
-			});
-
-			toast({
-				title: 'Code promo appliqué',
-				description: `Réduction de ${data.discount}€ appliquée`,
 			});
 		} catch (error) {
 			set({

@@ -10,7 +10,7 @@ export default function RecapOrderCard() {
 		totalCartItems,
 		totalPrice: totalCartPrice,
 	} = useCartStore();
-	const { isValid, calculateDiscount } = usePromoCodeStore();
+	const { isValid, discount, calculateDiscount } = usePromoCodeStore();
 	const discountAmount = calculateDiscount(totalCartPrice);
 	const finalTotal = useCheckoutTotal();
 
@@ -42,7 +42,13 @@ export default function RecapOrderCard() {
 					</div>
 					{isValid && (
 						<div className="flex justify-between text-success">
-							<span>Réduction</span>
+							<span>
+								{' '}
+								Réduction de{' '}
+								{discount < 1 && discount > 0
+									? discount * 100 + '%'
+									: discount + '€'}
+							</span>
 							<span>-{discountAmount.toFixed(2)}€</span>
 						</div>
 					)}

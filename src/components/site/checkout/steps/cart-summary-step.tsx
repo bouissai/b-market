@@ -229,7 +229,9 @@ export default function CartSummaryStep({ nextStep }: CartSummaryStepProps) {
 										<AlertTitle>Code promo appliqué</AlertTitle>
 										<AlertDescription>
 											Vous bénéficiez d'une réduction de{' '}
-											{discount.toFixed(2)}€
+											{discount < 1 && discount > 0
+												? discount * 100 + '%'
+												: discount + '€'}
 										</AlertDescription>
 									</Alert>
 								)
