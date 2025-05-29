@@ -1,15 +1,16 @@
 import { withSentryConfig } from '@sentry/nextjs';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	output: 'standalone',
 	productionBrowserSourceMaps: true,
 	compress: true,
-	experimental: {
-		serverComponentsExternalPackages: ["@auth/core"]
-	},
-	env: {
-		NEXTAUTH_URL: 'https://bmarket.fr',
-	  },	  
+	// experimental: {
+	// 	serverComponentsExternalPackages: ["@auth/core"]
+	// },
+	// env: {
+	// 	NEXTAUTH_URL: 'https://bmarket.fr',
+	//   },
 	images: {
 		remotePatterns: [
 			{

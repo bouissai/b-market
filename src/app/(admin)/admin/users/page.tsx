@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useUserStore } from '@/store/useUserStore';
-import { UserPut, UserPost, UserDelete } from '@/types/user';
+import { UserDelete, UserPost, UserPut } from '@/types/user';
 import { useEffect } from 'react';
 
 export default function UserPage() {
@@ -76,7 +76,13 @@ export default function UserPage() {
 						}}
 						onDelete={(user: UserDelete) => {
 							setSelectedUser(
-								{ id: user.id, name: user.name, email: '', phone: '' },
+								{
+									id: user.id,
+									firstname: user.firstname,
+									lastname: user.lastname,
+									email: user.email,
+									phone: user.phone || '',
+								},
 								'delete',
 							);
 						}}

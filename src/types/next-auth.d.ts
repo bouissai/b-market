@@ -1,9 +1,12 @@
-import NextAuth, { DefaultSession, DefaultUser } from 'next-auth';
+import { DefaultSession, DefaultUser } from 'next-auth';
 
 declare module 'next-auth' {
 	interface User extends DefaultUser {
 		id: string;
-		isAdmin?: boolean;
+		firstname: string;
+		lastname: string;
+		isAdmin: boolean;
+		phone: string | null;
 	}
 
 	interface Session extends DefaultSession {

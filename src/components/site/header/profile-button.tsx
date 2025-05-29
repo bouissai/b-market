@@ -24,10 +24,10 @@ export const ProfileButton = ({ goTo }: { goTo: (href: string) => void }) => {
 						<Avatar className="h-9 w-9">
 							<AvatarImage
 								src="/placeholder.svg"
-								alt={session.user?.name || 'U'}
+								alt={session.user?.firstname || 'U'}
 							/>
 							<AvatarFallback>
-								{session.user?.name?.charAt(0) || 'U'}
+								{session.user?.firstname?.charAt(0) || 'U'}
 							</AvatarFallback>
 						</Avatar>
 					</DropdownMenuTrigger>

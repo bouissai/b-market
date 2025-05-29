@@ -12,18 +12,15 @@ export async function getAllOrders(): Promise<orderDTO[]> {
 			},
 		});
 
-		const formattedOrders = orders.map(order => {
-			const formattedOrder = {
+		return orders.map(order => {
+			return {
 				id: order.id,
-				customerName: order.user?.name || 'Inconnu',
+				customerName: order.user.firstname + ' ' + order.user.lastname,
 				total: order.total,
 				nbArticles: order.orderItems.length,
 				status: order.status as keyof typeof OrderStatus,
 			};
-			return formattedOrder;
 		});
-
-		return formattedOrders;
 	} catch (error) {
 		throw new Error('Impossible de récupérer les commandes.');
 	}
@@ -43,6 +40,7 @@ export async function getOrderById(
 					},
 				},
 				user: true,
+				promoCode: true,
 			},
 		});
 
@@ -50,15 +48,16 @@ export async function getOrderById(
 			return null;
 		}
 
-		const formattedOrder: OrderDetailsDTO = {
+		return {
 			id: order.id,
-			customerName: order.user?.name ?? 'Inconnu',
-			customerEmail: order.user.email,
-			customerPhone: order.user?.phone ?? 'Non renseigné', // Utiliser le champ phone du modèle
+			customerName: order.firstname + ' ' + order.lastname,
+			customerEmail: order.email,
+			customerPhone: order.phone ?? 'Non renseigné', // Utiliser le champ phone du modèle
 			date: order.createdAt,
 			total: order.total,
 			status: order.status,
 			note: order.note,
+			promoDiscount: order.promoCode?.discount ?? null,
 			items: order.orderItems.map(item => ({
 				id: item.id,
 				name: item.article?.name ?? 'Article inconnu',
@@ -66,8 +65,6 @@ export async function getOrderById(
 				price: item.price,
 			})),
 		};
-
-		return formattedOrder;
 	} catch (error) {
 		console.error(
 			`❌ [getOrderById] Erreur lors de la récupération de la commande avec ID ${id}:`,
@@ -100,52 +97,63 @@ export async function createOrder(
 	status: string,
 	note: string,
 	orderItems: OrderItemInput[],
+	firstname: string,
+	lastname: string,
+	email: string,
+	phone: string,
+	total: number,
+	promoCodeId: string | null,
 ): Promise<OrderDetailsDTO> {
-	const total = await orderItems.reduce(
-		(acc, item) => acc + item.price * item.quantity,
-		0,
-	);
-
-	const newOrder = await prisma.order.create({
-		data: {
-			userId,
-			status,
-			note,
-			total,
-			orderItems: {
-				create: orderItems.map(item => ({
-					articleId: item.articleId,
-					quantity: item.quantity,
-					price: item.price,
-				})),
-			},
-		},
-		include: {
-			orderItems: {
-				include: {
-					article: true,
+	return await prisma.$transaction(async tx => {
+		// 1. Créer la commande
+		const newOrder = await tx.order.create({
+			data: {
+				userId,
+				status,
+				note,
+				total,
+				firstname,
+				lastname,
+				email,
+				phone,
+				promoCodeId,
+				orderItems: {
+					create: orderItems.map(item => ({
+						articleId: item.articleId,
+						quantity: item.quantity,
+						price: item.price,
+					})),
 				},
 			},
-			user: true,
-		},
-	});
+			include: {
+				orderItems: {
+					include: {
+						article: true,
+					},
+				},
+				user: true,
+				promoCode: true,
+			},
+		});
 
-  return {
-    id: newOrder.id,
-    customerName: newOrder.user.name ?? "Nom inconnu",
-    customerEmail: newOrder.user.email,
-    customerPhone: '+33 6 95 50 90 33',
-    date: newOrder.createdAt,
-    total: newOrder.total,
-    status: newOrder.status,
-    note: newOrder.note,
-    items: newOrder.orderItems.map((item) => ({
-      id: item.id,
-      name: item.article.name,
-      quantity: item.quantity,
-      price: item.price,
-    })),
-  };
+		return {
+			id: newOrder.id,
+			customerName: newOrder.user.firstname + ' ' + newOrder.user.lastname,
+			customerEmail: newOrder.user.email,
+			customerPhone: newOrder.phone,
+			date: newOrder.createdAt,
+			total: newOrder.total,
+			status: newOrder.status,
+			note: newOrder.note,
+			promoDiscount: newOrder.promoCode?.discount ?? null,
+			items: newOrder.orderItems.map(item => ({
+				id: item.id,
+				name: item.article.name,
+				quantity: item.quantity,
+				price: item.price,
+			})),
+		};
+	});
 }
 
 // Suppression d'une commande
@@ -176,7 +184,7 @@ export async function getOrdersByUserId(userId: string): Promise<Order[]> {
 		}
 
 		// Récupérer les commandes
-		const orders = await prisma.order.findMany({
+		return await prisma.order.findMany({
 			where: { userId },
 			include: {
 				orderItems: {
@@ -186,8 +194,6 @@ export async function getOrdersByUserId(userId: string): Promise<Order[]> {
 				},
 			},
 		});
-
-		return orders;
 	} catch (error) {
 		console.error(
 			`❌ [getOrdersByUserId] Erreur lors de la récupération des commandes pour l'utilisateur ${userId} :`,

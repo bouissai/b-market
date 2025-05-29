@@ -2,34 +2,40 @@
 import nodemailer from 'nodemailer';
 
 interface VerificationEmailProps {
-  email: string;
-  token: string;
-  name: string;
+	email: string;
+	token: string;
+	firstname: string;
+	lastname: string;
 }
 
-export async function sendVerificationEmail({ email, token, name }: VerificationEmailProps) {
-  // Configuration de nodemailer
-  // Pour le développement, vous pouvez utiliser un service comme Mailtrap ou Ethereal
-  const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_SERVER_HOST,
-    port: Number(process.env.EMAIL_SERVER_PORT),
-    auth: {
-      user: process.env.EMAIL_SERVER_USER,
-      pass: process.env.EMAIL_SERVER_PASSWORD,
-    },
-    secure: process.env.NODE_ENV === 'production',
-  });
+export async function sendVerificationEmail({
+	email,
+	token,
+	firstname,
+	lastname,
+}: VerificationEmailProps) {
+	// Configuration de nodemailer
+	// Pour le développement, vous pouvez utiliser un service comme Mailtrap ou Ethereal
+	const transporter = nodemailer.createTransport({
+		host: process.env.EMAIL_SERVER_HOST,
+		port: Number(process.env.EMAIL_SERVER_PORT),
+		auth: {
+			user: process.env.EMAIL_SERVER_USER,
+			pass: process.env.EMAIL_SERVER_PASSWORD,
+		},
+		secure: process.env.NODE_ENV === 'production',
+	});
 
-  const verificationUrl = `${process.env.NEXTAUTH_URL}/verify-email?token=${token}`;
-  const displayName = name || 'utilisateur';
+	const verificationUrl = `${process.env.NEXTAUTH_URL}/verify-email?token=${token}`;
+	const displayName = firstname + ' ' + lastname || 'utilisateur';
 
-  // Contenu de l'email
-  const mailOptions = {
-    from: process.env.EMAIL_FROM,
-    to: email,
-    subject: 'Vérification de votre adresse email',
-    text: `Bonjour ${displayName},\n\nMerci de vous être inscrit. Veuillez vérifier votre email en cliquant sur le lien suivant: ${verificationUrl}\n\nCe lien expirera dans 24 heures.`,
-    html: `
+	// Contenu de l'email
+	const mailOptions = {
+		from: process.env.EMAIL_FROM,
+		to: email,
+		subject: 'Vérification de votre adresse email',
+		text: `Bonjour ${displayName},\n\nMerci de vous être inscrit. Veuillez vérifier votre email en cliquant sur le lien suivant: ${verificationUrl}\n\nCe lien expirera dans 24 heures.`,
+		html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2>Vérification de votre adresse email</h2>
         <p>Bonjour ${displayName},</p>
@@ -45,13 +51,13 @@ export async function sendVerificationEmail({ email, token, name }: Verification
         <p>Cordialement,<br>L'équipe du site</p>
       </div>
     `,
-  };
+	};
 
-  try {
-    await transporter.sendMail(mailOptions);
-    return { success: true };
-  } catch (error) {
-    console.error('Error sending email:', error);
-    return { success: false, error };
-  }
+	try {
+		await transporter.sendMail(mailOptions);
+		return { success: true };
+	} catch (error) {
+		console.error('Error sending email:', error);
+		return { success: false, error };
+	}
 }

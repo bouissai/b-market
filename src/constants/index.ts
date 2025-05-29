@@ -3,13 +3,47 @@ import {
 	ChefHat,
 	Clock,
 	HandPlatter,
-	Mail,
-	MapPin,
-	Phone,
 	ShoppingBag,
 	Sparkles,
 	Truck,
 } from 'lucide-react';
+
+import CartSummaryStep from '@/components/site/checkout/steps/cart-summary-step';
+import InfoOrderStep from '@/components/site/checkout/steps/info-order-step';
+import ConfirmationOrderStep from '@/components/site/checkout/steps/confirmation-order-step';
+
+export const CHECKOUT_STEPS = [
+	{
+		key: 'cart',
+		title: 'Panier',
+		component: CartSummaryStep,
+		icon: 'shopping-bag',
+	},
+	{
+		key: 'information',
+		title: 'Informations de commande',
+		component: InfoOrderStep,
+		icon: 'file-box',
+	},
+	// {
+	// 	key: 'recapOrder',
+	// 	title: 'Recapitulatif de la commande',
+	// 	component: RecapOrderStep,
+	// 	icon: 'credit-card',
+	// },
+	// {
+	// 	key: 'payment',
+	// 	title: 'Paiement',
+	// 	component: PaymentFormStep,
+	// 	icon: 'credit-card',
+	// },
+	{
+		key: 'confirmation',
+		title: 'Confirmation',
+		component: ConfirmationOrderStep,
+		icon: 'check-check',
+	},
+] as const;
 
 export const GENERAL_INFO = {
 	address: '39 Avenue du Vercors, 38600 Fontaine',
