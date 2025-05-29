@@ -50,7 +50,7 @@ export async function getOrderById(
 
 		return {
 			id: order.id,
-			customerName: order.firstname + ' ' + order.user.lastname,
+			customerName: order.firstname + ' ' + order.lastname,
 			customerEmail: order.email,
 			customerPhone: order.phone ?? 'Non renseigné', // Utiliser le champ phone du modèle
 			date: order.createdAt,
