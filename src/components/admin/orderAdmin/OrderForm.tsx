@@ -55,7 +55,7 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
 		resolver: zodResolver(OrderSchema),
 		defaultValues: {
 			total: 0,
-			orderItems: [],
+			items: [],
 			note: '',
 		},
 	});
@@ -67,13 +67,13 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
 		append,
 	} = useFieldArray({
 		control: form.control,
-		name: 'orderItems',
+		name: 'items',
 	});
 
 	// useWatch to track changes in orderItems for calculating the total
 	const watchedOrderItems = useWatch({
 		control: form.control,
-		name: 'orderItems',
+		name: 'items',
 	});
 
 	// Compute the total order price using useMemo for performance optimization.
@@ -103,7 +103,7 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
 				setSelectedArticlesIds(prev => prev.filter(id => id !== articleId));
 				const index = form
 					.getValues()
-					.orderItems.findIndex(item => item.articleId === articleId);
+					.items.findIndex(item => item.articleId === articleId);
 				if (index !== -1) {
 					remove(index);
 				}
@@ -244,7 +244,7 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
 						{/* Article selection field */}
 						<FormField
 							control={form.control}
-							name="orderItems"
+							name="items"
 							render={() => (
 								<FormItem className="flex flex-col">
 									<FormLabel>Articles</FormLabel>
@@ -305,14 +305,14 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
 							<div className="space-y-2">
 								{itemFields.map((field, index) => {
 									// Retrieve the current item values
-									const item = form.getValues().orderItems[index];
+									const item = form.getValues().items[index];
 									const itemTotal = item.price * item.quantity;
 
 									return (
 										<FormField
 											key={field.id}
 											control={form.control}
-											name={`orderItems.${index}.quantity`}
+											name={`items.${index}.quantity`}
 											render={({ field: quantityField }) => (
 												<FormItem>
 													<div className="grid grid-rows-1 grid-cols-6 items-center text-sm border rounded-md py-1 box-border">

@@ -108,8 +108,6 @@ export default function InfoOrderStep({
 				})),
 			};
 
-			console.log('orderData', orderData);
-
 			const savedOrder = await saveOrder(orderData);
 			useCheckoutStore.getState().setLastOrderId(savedOrder.id);
 

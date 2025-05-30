@@ -4,12 +4,14 @@ import { create } from 'zustand';
 
 type OrderStore = {
 	orders: orderDTO[];
+	ordersDetails: OrderDetailsDTO[];
 	orderDetails: OrderDetailsDTO | null;
 	isLoading: boolean;
 	isSubmitting: boolean;
 	error: string | null;
 	fetchOrders: () => Promise<void>;
 	fetchOrderDetails: (id: number) => Promise<void>;
+	fetchOrdersDetailsByUserId: (userId: string) => Promise<OrderDetailsDTO[]>;
 	addOrder: (newOrder: orderDTO) => void;
 	init: () => void;
 	updateOrder: (updatedOrder: orderDTO) => void;
@@ -31,6 +33,7 @@ type OrderStore = {
 
 export const useOrderStore = create<OrderStore>((set, get) => ({
 	orders: [],
+	ordersDetails: [],
 	orderDetails: null,
 	isLoading: true,
 	isSubmitting: false,
@@ -70,6 +73,27 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
 			set({ orderDetails: data, isLoading: false }); // 🔥 Mise à jour globale du store
 		} catch (error) {
 			set({ error: 'Commande introuvable', isLoading: false });
+		}
+	},
+
+	fetchOrdersDetailsByUserId: async userId => {
+		set({ isLoading: true, error: null });
+
+		try {
+			// ⚠️ Corrige l'URL
+			const response = await fetch(`/api/orders?userId=${userId}`);
+			const data = await response.json();
+
+			if (!response.ok) throw new Error(data.message);
+
+			set({ ordersDetails: data, isLoading: false });
+			return data;
+		} catch (error) {
+			set({
+				error: error instanceof Error ? error.message : 'Erreur inconnue',
+				isLoading: false,
+			});
+			return [];
 		}
 	},
 
@@ -159,7 +183,6 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
 				},
 				body: JSON.stringify(payload),
 			});
-			console.log(JSON.stringify(payload));
 			if (!response.ok) {
 				const data = await response.json();
 				toast({

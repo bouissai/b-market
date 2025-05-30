@@ -191,7 +191,7 @@ export default function CartSummaryStep({ nextStep }: CartSummaryStepProps) {
 							</CollapsibleTrigger>
 						</div>
 						<CollapsibleContent className="mt-2">
-							<div>
+							<div className="mb-2">
 								<form
 									onSubmit={handleSubmitPromo}
 									className="flex space-x-2">
@@ -224,8 +224,8 @@ export default function CartSummaryStep({ nextStep }: CartSummaryStepProps) {
 								</Alert>
 							) : (
 								isValid === true && (
-									<Alert className="text-success">
-										<CheckCircle2 color="green" className="h-4 w-4" />
+									<Alert variant={'success'}>
+										<CheckCircle2 className="h-4 w-4" />
 										<AlertTitle>Code promo appliqué</AlertTitle>
 										<AlertDescription>
 											Vous bénéficiez d'une réduction de{' '}

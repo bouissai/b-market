@@ -32,7 +32,5 @@ export const useCheckoutTotal = () => {
 	const cartTotal = cartStore.totalPrice;
 	const discountAmount = promoStore.calculateDiscount(cartTotal);
 
-	console.log('final total :', cartTotal - discountAmount);
-
 	return cartTotal - discountAmount;
 };

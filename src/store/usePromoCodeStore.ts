@@ -24,7 +24,6 @@ export const usePromoCodeStore = create<PromoCodeState>((set, get) => ({
 	error: null,
 
 	validateCode: async (code: string) => {
-		console.log('validateCode', code);
 		set({ isLoading: true, error: null });
 
 		try {

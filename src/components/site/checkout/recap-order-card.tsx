@@ -18,7 +18,7 @@ export default function RecapOrderCard() {
 
 	return (
 		<div className="sticky top-24">
-			<Alert className="mb-8" variant={'warning'}>
+			<Alert className="mb-3" variant={'warning'}>
 				<MapPin className="h-4 w-4 " />
 				<AlertTitle>Click and Collect uniquement !</AlertTitle>
 				<AlertDescription>

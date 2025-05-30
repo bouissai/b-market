@@ -1,25 +1,25 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter, useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import {
-	ArrowLeft,
-	Package,
-	Calendar,
-	Clock,
-	MapPin,
-	CreditCard,
-	CheckCircle2,
-	Truck,
 	AlertCircle,
+	ArrowLeft,
+	Calendar,
+	CheckCircle2,
 	ClipboardList,
-	Phone,
+	Clock,
+	CreditCard,
 	Mail,
+	MapPin,
+	Package,
+	Phone,
+	Truck,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Loading } from '@/components/loading';
@@ -271,7 +271,7 @@ const StatusBadge = ({ status }: { status: Order['status'] }) => {
 };
 
 export default function OrderDetailPage() {
-	const { data: session, status: sessionStatus } = useSession();
+	const { status: sessionStatus } = useSession();
 	const router = useRouter();
 	const params = useParams();
 	const [order, setOrder] = useState<Order | null>(null);

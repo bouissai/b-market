@@ -1,13 +1,12 @@
 import { prisma } from '@/lib/prisma';
 import { OrderDetailsDTO, orderDTO, OrderStatus } from '@/types/order';
-import { Order } from '@prisma/client';
 
 // Récupérer toutes les commandes et les formatter en `ordersDTO`
 export async function getAllOrders(): Promise<orderDTO[]> {
 	try {
 		const orders = await prisma.order.findMany({
 			include: {
-				orderItems: true,
+				items: true,
 				user: true,
 			},
 		});
@@ -17,7 +16,7 @@ export async function getAllOrders(): Promise<orderDTO[]> {
 				id: order.id,
 				customerName: order.user.firstname + ' ' + order.user.lastname,
 				total: order.total,
-				nbArticles: order.orderItems.length,
+				nbArticles: order.items.length,
 				status: order.status as keyof typeof OrderStatus,
 			};
 		});
@@ -34,7 +33,7 @@ export async function getOrderById(
 		const order = await prisma.order.findUnique({
 			where: { id },
 			include: {
-				orderItems: {
+				items: {
 					include: {
 						article: true,
 					},
@@ -55,10 +54,10 @@ export async function getOrderById(
 			customerPhone: order.phone ?? 'Non renseigné', // Utiliser le champ phone du modèle
 			date: order.createdAt,
 			total: order.total,
-			status: order.status,
+			status: (order.status as keyof typeof OrderStatus) || '',
 			note: order.note,
 			promoDiscount: order.promoCode?.discount ?? null,
-			items: order.orderItems.map(item => ({
+			items: order.items.map(item => ({
 				id: item.id,
 				name: item.article?.name ?? 'Article inconnu',
 				quantity: item.quantity,
@@ -94,7 +93,7 @@ interface OrderItemInput {
 // Création d'une commande avec formatage DTO
 export async function createOrder(
 	userId: string,
-	status: string,
+	status: keyof typeof OrderStatus,
 	note: string,
 	orderItems: OrderItemInput[],
 	firstname: string,
@@ -117,7 +116,7 @@ export async function createOrder(
 				email,
 				phone,
 				promoCodeId,
-				orderItems: {
+				items: {
 					create: orderItems.map(item => ({
 						articleId: item.articleId,
 						quantity: item.quantity,
@@ -126,7 +125,7 @@ export async function createOrder(
 				},
 			},
 			include: {
-				orderItems: {
+				items: {
 					include: {
 						article: true,
 					},
@@ -143,10 +142,10 @@ export async function createOrder(
 			customerPhone: newOrder.phone,
 			date: newOrder.createdAt,
 			total: newOrder.total,
-			status: newOrder.status,
+			status: newOrder.status as keyof typeof OrderStatus,
 			note: newOrder.note,
 			promoDiscount: newOrder.promoCode?.discount ?? null,
-			items: newOrder.orderItems.map(item => ({
+			items: newOrder.items.map(item => ({
 				id: item.id,
 				name: item.article.name,
 				quantity: item.quantity,
@@ -168,7 +167,9 @@ export async function deleteOrder(id: number): Promise<void> {
  * @param userId - ID de l'utilisateur
  * @returns Liste des commandes de l'utilisateur ou une erreur
  */
-export async function getOrdersByUserId(userId: string): Promise<Order[]> {
+export async function getOrdersByUserId(
+	userId: string,
+): Promise<OrderDetailsDTO[]> {
 	try {
 		if (!userId) {
 			throw new Error("L'ID de l'utilisateur est requis.");
@@ -184,15 +185,37 @@ export async function getOrdersByUserId(userId: string): Promise<Order[]> {
 		}
 
 		// Récupérer les commandes
-		return await prisma.order.findMany({
+
+		const orders = await prisma.order.findMany({
 			where: { userId },
 			include: {
-				orderItems: {
+				items: {
 					include: {
 						article: true,
 					},
 				},
+				promoCode: true,
 			},
+		});
+
+		return orders.map(order => {
+			return {
+				id: order.id,
+				customerName: order.firstname + ' ' + order.lastname,
+				customerEmail: order.email,
+				date: order.createdAt,
+				note: order.note,
+				promoDiscount: order.promoCode?.discount ?? null,
+				total: order.total,
+				nbArticles: order.items.length,
+				status: order.status as keyof typeof OrderStatus,
+				items: order.items.map(item => ({
+					id: item.id,
+					name: item.article.name,
+					quantity: item.quantity,
+					price: item.price,
+				})),
+			};
 		});
 	} catch (error) {
 		console.error(
