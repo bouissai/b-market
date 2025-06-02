@@ -36,11 +36,7 @@ export default function AdminLayout({
 	}
 
 	return (
-		<ThemeProvider
-			attribute="class"
-			defaultTheme="system"
-			enableSystem
-			disableTransitionOnChange>
+		<ThemeProvider forcedTheme={'light'}>
 			<AdminNavBar>{children}</AdminNavBar>
 		</ThemeProvider>
 	);

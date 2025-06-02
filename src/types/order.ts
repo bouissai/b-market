@@ -19,9 +19,7 @@ export const OrderSchema = z.object({
 	phone: z.string(),
 	total: z.number().nonnegative('Le total doit être un nombre non négatif'),
 	note: z.string(),
-	orderItems: z
-		.array(OrderItemSchema)
-		.nonempty('Au moins un article est requis'),
+	items: z.array(OrderItemSchema).nonempty('Au moins un article est requis'),
 });
 
 export type OrderFormValues = z.infer<typeof OrderSchema>;
@@ -30,12 +28,13 @@ export type OrderItemSchema = z.infer<typeof OrderItemSchema>;
 
 export interface OrderDetailsDTO {
 	id: number;
+	userId: string;
 	customerName: string;
 	customerEmail: string;
 	customerPhone?: string;
 	date: Date;
 	total: number;
-	status: string;
+	status: keyof typeof OrderStatus;
 	note: string | null;
 	promoDiscount: number | null;
 	items: OrderItemDTO[];
@@ -84,7 +83,8 @@ export const OrderStatus = {
 		color: 'info',
 		order: 3,
 	},
-	CONFIRMED: { status: 'Confirmée', color: 'success', order: 4 },
-	CANCELLED: { status: 'Annulée', color: 'destructive', order: 5 },
+	READY: { status: 'Prête', color: 'success', order: 4 },
+	COMPLETED: { status: 'Complétée', color: 'success', order: 5 },
+	CANCELLED: { status: 'Annulée', color: 'destructive', order: 6 },
 };
 export type OrderStatusKey = keyof typeof OrderStatus;

@@ -14,6 +14,8 @@ import { Separator } from '@/components/ui/separator';
 import { useEffect } from 'react';
 import { useOrderStore } from '@/store/useOrderStore';
 import { Loading } from '@/components/loading';
+import { usePromoCodeStore } from '@/store/usePromoCodeStore';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const formatPrice = (price: number) => price.toFixed(2) + '€';
 const formatDate = (date: Date) => new Date(date).toLocaleString('fr-FR');
@@ -22,6 +24,7 @@ export default function ConfirmationOrderStep() {
 	const router = useRouter();
 	const { lastOrderId } = useCheckoutStore();
 	const { orderDetails, fetchOrderDetails, isLoading } = useOrderStore();
+	const { discount } = usePromoCodeStore();
 
 	useEffect(() => {
 		if (!lastOrderId) {
@@ -33,9 +36,7 @@ export default function ConfirmationOrderStep() {
 
 	if (isLoading || !orderDetails) return <Loading />;
 
-	// Utiliser orderDetails au lieu de savedOrder
 	return (
-		// ... le reste du composant utilisant orderDetails
 		<div className="space-y-6 max-w-3xl mx-auto">
 			<div className="flex items-center space-x-2 text-success">
 				<CheckCircle2 className="h-8 w-8" />
@@ -106,8 +107,22 @@ export default function ConfirmationOrderStep() {
 					<div className="space-y-2">
 						{orderDetails.promoDiscount && (
 							<div className="flex justify-between text-success">
-								<span>Réduction</span>
-								<span>-{orderDetails.promoDiscount.toFixed(2)}€</span>
+								<span>
+									Réduction de{' '}
+									{discount < 1 && discount > 0
+										? discount * 100 + '%'
+										: discount + '€'}
+								</span>
+								<span>
+									-
+									{discount < 1 && discount > 0
+										? (
+												(orderDetails.total / (1 - discount)) *
+												discount
+											).toFixed(2)
+										: discount}
+									€
+								</span>
 							</div>
 						)}
 						<div className="flex justify-between text-lg font-bold">
@@ -115,6 +130,15 @@ export default function ConfirmationOrderStep() {
 							<span>{formatPrice(orderDetails.total)}</span>
 						</div>
 					</div>
+
+					<Alert className="mb-3" variant={'warning'}>
+						<MapPin className="h-4 w-4 " />
+						<AlertTitle>Click and Collect uniquement !</AlertTitle>
+						<AlertDescription>
+							Les commandes sont uniquement disponibles en retrait sur
+							place.
+						</AlertDescription>
+					</Alert>
 
 					{/* Instructions */}
 					<div className="rounded-lg bg-secondary/20 p-4 space-y-4">
@@ -131,7 +155,7 @@ export default function ConfirmationOrderStep() {
 							<div>
 								<p className="font-semibold">Point de retrait</p>
 								<p className="text-muted-foreground">
-									123 rue du Restaurant, 75000 Paris
+									39 Avenue du Vercors, 38600 Fontaine
 								</p>
 							</div>
 						</div>

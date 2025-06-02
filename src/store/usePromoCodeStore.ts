@@ -46,11 +46,6 @@ export const usePromoCodeStore = create<PromoCodeState>((set, get) => ({
 				isValid: true,
 				error: null,
 			});
-
-			toast({
-				title: 'Code promo appliqué',
-				description: `Réduction de ${data.discount}€ appliquée`,
-			});
 		} catch (error) {
 			set({
 				currentCode: code,
