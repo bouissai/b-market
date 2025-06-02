@@ -30,7 +30,7 @@ export function OrderDetail({ order }: OrderDetailProps) {
 		(sum, item) => sum + item.price * item.quantity,
 		0,
 	);
-	const canCancel = ['PENDING', 'CONFIRMED'].includes(order.status);
+	const canCancel = ['PENDING'].includes(order.status);
 
 	function getStatusColor(status: keyof typeof OrderStatus) {
 		switch (status) {
