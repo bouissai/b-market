@@ -37,9 +37,7 @@ export function OrderCard({ order }: OrderCardProps) {
 						<div className="flex items-center gap-4">
 							<p className="font-bold">{order.total.toFixed(2)} €</p>
 							<Button asChild variant="outline" size="sm">
-								<Link href={`/mon-compte/commandes/${order.id}`}>
-									Détails
-								</Link>
+								<Link href={`/order-history/${order.id}`}>Détails</Link>
 							</Button>
 						</div>
 					</div>

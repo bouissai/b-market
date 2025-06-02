@@ -11,71 +11,7 @@ import { OrderDetailsDTO } from '@/types/order';
 import { useOrderStore } from '@/store/useOrderStore';
 import { useSession } from 'next-auth/react';
 
-// Types
-
-// ──────── Données mockées (à supprimer en prod) ────────
-// Sample orders data
-// export const sampleOrders: Order[] = [
-// 	{
-// 		id: '1',
-// 		orderNumber: 'CMD-4872',
-// 		date: '2023-11-15',
-// 		total: 87.5,
-// 		status: 'ready',
-// 		items: [
-// 			{ name: 'Entrecôte', quantity: 2, price: 28.9 },
-// 			{ name: 'Filet Mignon', quantity: 1, price: 22.9 },
-// 			{ name: 'Poulet Fermier', quantity: 1, price: 12.9 },
-// 		],
-// 		notes: 'Votre commande est prête à être retirée. Nous avons sélectionné une entrecôte particulièrement persillée comme vous le préférez.',
-// 	},
-// 	{
-// 		id: '2',
-// 		orderNumber: 'CMD-4756',
-// 		date: '2023-11-02',
-// 		total: 64.3,
-// 		status: 'completed',
-// 		items: [
-// 			{ name: 'Côte de Bœuf', quantity: 1, price: 32.5 },
-// 			{ name: 'Côtes de Porc', quantity: 2, price: 16.9 },
-// 		],
-// 	},
-// 	{
-// 		id: '3',
-// 		orderNumber: 'CMD-4921',
-// 		date: '2023-11-20',
-// 		total: 105.7,
-// 		status: 'processing',
-// 		items: [
-// 			{ name: 'Filet de Bœuf', quantity: 2, price: 39.9 },
-// 			{ name: "Gigot d'Agneau", quantity: 1, price: 29.9 },
-// 		],
-// 		notes: 'Votre commande est en cours de préparation. Notre boucher prépare votre filet de bœuf selon vos préférences.',
-// 	},
-// 	{
-// 		id: '4',
-// 		orderNumber: 'CMD-4699',
-// 		date: '2023-10-18',
-// 		total: 49.8,
-// 		status: 'completed',
-// 		items: [{ name: "Bavette d'Aloyau", quantity: 2, price: 24.9 }],
-// 	},
-// 	{
-// 		id: '5',
-// 		orderNumber: 'CMD-4985',
-// 		date: '2023-11-25',
-// 		total: 78.6,
-// 		status: 'pending',
-// 		items: [
-// 			{ name: 'Entrecôte', quantity: 1, price: 28.9 },
-// 			{ name: 'Filet Mignon', quantity: 1, price: 22.9 },
-// 			{ name: 'Côtes de Porc', quantity: 1, price: 16.9 },
-// 			{ name: 'Poulet Fermier', quantity: 1, price: 12.9 },
-// 		],
-// 	},
-// ];
-
-export default function Commandes() {
+export function Commandes() {
 	const [searchTerm, setSearchTerm] = useState('');
 	const { data: session } = useSession();
 
@@ -118,7 +54,7 @@ export default function Commandes() {
 								: "Vous n'avez pas encore passé de commande"}
 						</p>
 						<Button asChild className="mt-4">
-							<Link href="/commander">Commander maintenant</Link>
+							<Link href="/products">Commander maintenant</Link>
 						</Button>
 					</div>
 				</div>

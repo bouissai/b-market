@@ -28,6 +28,7 @@ export type OrderItemSchema = z.infer<typeof OrderItemSchema>;
 
 export interface OrderDetailsDTO {
 	id: number;
+	userId: string;
 	customerName: string;
 	customerEmail: string;
 	customerPhone?: string;

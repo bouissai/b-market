@@ -32,11 +32,10 @@ export const ProfileButton = ({ goTo }: { goTo: (href: string) => void }) => {
 						</Avatar>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
-						<DropdownMenuItem
-							onClick={() => goTo('/compte?tab=commandes')}>
+						<DropdownMenuItem onClick={() => goTo('/order-history')}>
 							Mes commandes
 						</DropdownMenuItem>
-						<DropdownMenuItem onClick={() => goTo('/compte?tab=infos')}>
+						<DropdownMenuItem onClick={() => goTo('/account-infos')}>
 							Mes informations personnelles
 						</DropdownMenuItem>
 						<DropdownMenuItem

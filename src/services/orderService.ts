@@ -49,6 +49,7 @@ export async function getOrderById(
 
 		return {
 			id: order.id,
+			userId: order.userId,
 			customerName: order.firstname + ' ' + order.lastname,
 			customerEmail: order.email,
 			customerPhone: order.phone ?? 'Non renseigné', // Utiliser le champ phone du modèle
@@ -137,6 +138,7 @@ export async function createOrder(
 
 		return {
 			id: newOrder.id,
+			userId: newOrder.userId,
 			customerName: newOrder.user.firstname + ' ' + newOrder.user.lastname,
 			customerEmail: newOrder.user.email,
 			customerPhone: newOrder.phone,
@@ -201,6 +203,7 @@ export async function getOrdersByUserId(
 		return orders.map(order => {
 			return {
 				id: order.id,
+				userId: order.userId,
 				customerName: order.firstname + ' ' + order.lastname,
 				customerEmail: order.email,
 				date: order.createdAt,
