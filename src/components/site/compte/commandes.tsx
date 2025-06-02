@@ -94,7 +94,7 @@ export function Commandes() {
 			</div>
 
 			<Tabs
-				defaultValue="all"
+				defaultValue="pending"
 				className="w-full max-w-2xl mx-auto min-w-[650px]">
 				<TabsList className="mb-6">
 					<TabsTrigger value="all">Toutes</TabsTrigger>
