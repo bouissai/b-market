@@ -1,13 +1,6 @@
 'use client';
 
-import {
-	ArrowLeft,
-	Ban,
-	Calendar,
-	Check,
-	Clock,
-	HelpCircle,
-} from 'lucide-react';
+import { ArrowLeft, Ban, Calendar, Check, Clock } from 'lucide-react';
 import {
 	Card,
 	CardContent,
@@ -299,10 +292,6 @@ export function OrderDetail({ order }: OrderDetailProps) {
 
 			{/* Actions */}
 			<div className="flex flex-wrap gap-3 mt-6">
-				<Button variant="outline">
-					<HelpCircle className="h-4 w-4 mr-2" />
-					Besoin d'aide ?
-				</Button>
 				{canCancel && (
 					<Button
 						variant="outline"
