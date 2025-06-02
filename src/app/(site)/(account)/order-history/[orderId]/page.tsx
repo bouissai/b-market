@@ -1,5 +1,6 @@
 import { auth } from '@/lib/auth';
 import { notFound, redirect } from 'next/navigation';
+import { OrderDetail } from '@/components/site/compte/order-detail';
 
 export default async function OrderDetailPage({
 	params,
@@ -24,8 +25,6 @@ export default async function OrderDetailPage({
 			`http://localhost:3000/api/orders/${orderIdNumber}`,
 		);
 
-		console.log('ici');
-
 		if (!response.ok) {
 			notFound();
 		}
@@ -37,15 +36,7 @@ export default async function OrderDetailPage({
 			notFound();
 		}
 
-		console.log('la bien ');
-
-		return (
-			<div>
-				<h1>Détails de la commande</h1>
-				<p>ID de la commande : {orderDetails.id}</p>
-				{/* Autres détails de la commande */}
-			</div>
-		);
+		return <OrderDetail order={orderDetails} />;
 	} catch (error) {
 		// Vous pouvez enregistrer l'erreur ici si nécessaire
 		console.error('Erreur lors de la récupération de la commande :', error);
