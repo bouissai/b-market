@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, Ban, Calendar, Check, Clock } from 'lucide-react';
+import { ArrowLeft, Ban, Check, Clock } from 'lucide-react';
 import {
 	Card,
 	CardContent,
@@ -13,12 +13,15 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@radix-ui/react-menu';
+import { useOrderStore } from '@/store/useOrderStore';
+import { toast } from '@/hooks/use-toast';
 
 type OrderDetailProps = {
 	order: OrderDetailsDTO;
 };
 
 export function OrderDetail({ order }: OrderDetailProps) {
+	const { updateOrderDetails } = useOrderStore();
 	const subtotal = order.items.reduce(
 		(sum, item) => sum + item.price * item.quantity,
 		0,
@@ -129,11 +132,11 @@ export function OrderDetail({ order }: OrderDetailProps) {
 									style={{
 										width:
 											order.status === 'PENDING'
-												? '25%'
+												? '10%'
 												: order.status === 'PREPARING'
-													? '50%'
+													? '35%'
 													: order.status === 'READY'
-														? '75%'
+														? '65%'
 														: order.status === 'COMPLETED'
 															? '100%'
 															: '0%',
@@ -294,15 +297,28 @@ export function OrderDetail({ order }: OrderDetailProps) {
 			<div className="flex flex-wrap gap-3 mt-6">
 				{canCancel && (
 					<Button
+						onClick={e => {
+							e.preventDefault();
+							updateOrderDetails(order.id, { status: 'CANCELLED' }).then(
+								() => {
+									toast({
+										title: 'Commande annulée',
+										description: 'Votre commande a bien été annulée',
+									});
+									window.location.reload();
+								},
+							);
+						}}
 						variant="outline"
 						className="text-red-600 hover:bg-red-50 hover:text-red-700">
 						Annuler la commande
 					</Button>
 				)}
-				<Button>
-					<Calendar className="h-4 w-4 mr-2" />
-					Commander à nouveau
-				</Button>
+				{/* TODO: à faire si y'a le temps */}
+				{/*<Button>*/}
+				{/*	<Calendar className="h-4 w-4 mr-2" />*/}
+				{/*	Commander à nouveau*/}
+				{/*</Button>*/}
 			</div>
 		</div>
 	);
