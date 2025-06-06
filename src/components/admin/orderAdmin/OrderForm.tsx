@@ -34,6 +34,15 @@ import {
 	CommandList,
 } from '../../ui/command';
 import { ScrollArea } from '../../ui/scroll-area';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
+import { usePromoCodeStore } from '@/store/usePromoCodeStore';
+import { Loading } from '@/components/loading';
 
 // Define the component props
 interface OrderFormProps {
@@ -44,6 +53,11 @@ interface OrderFormProps {
 export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
 	const { articles, fetchArticles } = useArticleStore();
 	const { users, fetchUsers } = useUserStore();
+	const {
+		allPromoCodes,
+		fetchAllPromoCodes,
+		isLoading: isLoadingPromoCodes,
+	} = usePromoCodeStore();
 	// Track IDs of selected articles for UI feedback
 	const [selectedArticlesIds, setSelectedArticlesIds] = useState<string[]>([]);
 
@@ -57,6 +71,7 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
 			total: 0,
 			items: [],
 			note: '',
+			promoCodeId: null,
 		},
 	});
 
@@ -76,21 +91,45 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
 		name: 'items',
 	});
 
+	// useWatch to track changes in orderItems for calculating the total
+	const watchedPromoCode = useWatch({
+		control: form.control,
+		name: 'promoCodeId',
+	});
+
 	// Compute the total order price using useMemo for performance optimization.
 	// This recalculates only when watchedOrderItems change.
 	const computedTotal = useMemo(() => {
 		if (!watchedOrderItems || watchedOrderItems.length === 0) return 0;
-		return watchedOrderItems.reduce((sum: number, item: OrderItemSchema) => {
-			return sum + item.price * item.quantity;
-		}, 0);
-	}, [watchedOrderItems]);
+
+		const subtotal = watchedOrderItems.reduce(
+			(sum: number, item: OrderItemSchema) =>
+				sum + item.price * item.quantity,
+			0,
+		);
+
+		if (!watchedPromoCode) return subtotal;
+
+		const currentPromo = allPromoCodes.find(p => p.id === watchedPromoCode);
+		if (!currentPromo) return subtotal;
+
+		const discountValue =
+			currentPromo.discount < 1
+				? subtotal * currentPromo.discount // pourcentage
+				: currentPromo.discount; // remise fixe
+
+		const totalAfterDiscount = subtotal - discountValue;
+
+		return totalAfterDiscount > 0 ? totalAfterDiscount : 0;
+	}, [watchedOrderItems, watchedPromoCode, allPromoCodes]);
 
 	// Whenever computedTotal changes, update the form value for total.
 	useEffect(() => {
 		form.setValue('total', computedTotal);
 		fetchArticles();
 		fetchUsers();
-	}, [fetchArticles, computedTotal, form, fetchUsers]);
+		fetchAllPromoCodes();
+	}, [fetchArticles, computedTotal, form, fetchUsers, fetchAllPromoCodes]);
 
 	// Handle selecting or deselecting an article
 	const handleArticleSelect = useCallback(
@@ -236,6 +275,49 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
 											</Command>
 										</PopoverContent>
 									</Popover>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						{/* Promo code input field */}
+						<FormField
+							control={form.control}
+							name="promoCodeId"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Code promo</FormLabel>
+									<Select
+										onValueChange={value =>
+											field.onChange(value === 'none' ? null : value)
+										}
+										defaultValue={field.value ?? 'none'}>
+										<FormControl>
+											<SelectTrigger>
+												<SelectValue placeholder="Choisir un code promo" />
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+											<SelectItem value="none">
+												Aucun code promo
+											</SelectItem>
+											{isLoadingPromoCodes ? (
+												<Loading />
+											) : (
+												allPromoCodes.map(promoCode => (
+													<SelectItem
+														key={promoCode.id}
+														value={promoCode.id}>
+														{promoCode.code} |{' '}
+														{promoCode.discount < 1 &&
+														promoCode.discount > 0
+															? promoCode.discount * 100 + '%'
+															: '-' + promoCode.discount + '€'}
+													</SelectItem>
+												))
+											)}
+										</SelectContent>
+									</Select>
 									<FormMessage />
 								</FormItem>
 							)}
