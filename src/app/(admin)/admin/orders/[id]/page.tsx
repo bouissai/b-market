@@ -344,9 +344,53 @@ export default function OrderDetailPage() {
 						</table>
 					</div>
 				</CardContent>
-				<CardFooter className="flex justify-between border-t p-4">
-					<div className="font-medium">Total</div>
-					<div className="font-bold text-lg">{orderDetails.total} €</div>
+				<CardFooter>
+					<div className="space-y-2 w-full px-4">
+						{orderDetails.promoDiscount && (
+							<>
+								<div className="flex justify-between">
+									<div className="font-medium">Total des articles</div>
+									<div className="font-medium text-lg">
+										{orderDetails.items
+											.reduce(
+												(sum, item) =>
+													sum + item.price * item.quantity,
+												0,
+											)
+											.toFixed(2)}
+										€
+									</div>
+								</div>
+								<div className="flex justify-between text-success ">
+									<span>
+										Réduction de{' '}
+										{orderDetails.promoDiscount < 1 &&
+										orderDetails.promoDiscount > 0
+											? orderDetails.promoDiscount * 100 + '%'
+											: orderDetails.promoDiscount + '€'}
+									</span>
+									<span>
+										-
+										{orderDetails.promoDiscount < 1 &&
+										orderDetails.promoDiscount > 0
+											? (
+													(orderDetails.total /
+														(1 - orderDetails.promoDiscount)) *
+													orderDetails.promoDiscount
+												).toFixed(2)
+											: orderDetails.promoDiscount}
+										€
+									</span>
+								</div>
+							</>
+						)}
+						<div className="flex justify-between ">
+							<div className="font-medium">Total</div>
+							<div className="font-bold text-lg">
+								{orderDetails.total.toFixed(2)} €
+							</div>
+						</div>{' '}
+					</div>
 				</CardFooter>
 			</Card>
 
