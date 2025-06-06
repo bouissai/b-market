@@ -255,7 +255,7 @@ export default function OrderDetailPage() {
 							<div className="flex justify-between">
 								<span className="text-muted-foreground">Total</span>
 								<span className="font-medium flex items-center">
-									{orderDetails.total}{' '}
+									{orderDetails.total.toFixed(2)}{' '}
 									<Euro className="ml-1 h-4 w-4" />
 								</span>
 							</div>
