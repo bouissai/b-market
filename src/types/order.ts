@@ -19,6 +19,7 @@ export const OrderSchema = z.object({
 	phone: z.string(),
 	total: z.number().nonnegative('Le total doit être un nombre non négatif'),
 	note: z.string(),
+	promoCodeId: z.string().nullable(),
 	items: z.array(OrderItemSchema).nonempty('Au moins un article est requis'),
 });
 
