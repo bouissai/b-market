@@ -50,19 +50,21 @@ export function UserTable({ data, onEdit, onDelete }: UserTableProps) {
 			cell: ({ row }) => {
 				const user = row.original;
 				return (
-					<div className="flex space-x-2">
-						<Button
-							variant="ghost"
-							size="icon"
-							onClick={() => onEdit(user)}>
-							<Pencil className="w-4 h-4" />
-						</Button>
-						<Button
-							variant="ghost"
-							size="icon"
-							onClick={() => onDelete(user)}>
-							<Trash className="w-4 h-4 text-red-500" />
-						</Button>
+					<div onClick={e => e.stopPropagation()}>
+						<div className="flex space-x-2">
+							<Button
+								variant="ghost"
+								size="icon"
+								onClick={() => onEdit(user)}>
+								<Pencil className="w-4 h-4" />
+							</Button>
+							<Button
+								variant="ghost"
+								size="icon"
+								onClick={() => onDelete(user)}>
+								<Trash className="w-4 h-4 text-red-500" />
+							</Button>
+						</div>
 					</div>
 				);
 			},

@@ -1,11 +1,19 @@
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/lib/auth';
 
 export async function DELETE(
 	req: NextRequest,
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
+		const session = await auth();
+		if (!session || !session.user.isAdmin) {
+			return NextResponse.json(
+				{ message: 'action non autorisée' },
+				{ status: 403 },
+			);
+		}
 		const userId = (await params).id;
 
 		const existingUser = await prisma.user.findUnique({
