@@ -101,7 +101,7 @@ export default function UserForm({
 							name="firstname"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Nom</FormLabel>
+									<FormLabel>Prénom</FormLabel>
 									<FormControl>
 										<Input
 											placeholder="Prénom de l'utilisateur"
