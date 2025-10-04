@@ -12,7 +12,7 @@ import { OrderDetailsDTO, OrderStatus } from '@/types/order';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@radix-ui/react-menu';
+import { Separator } from '@/components/ui/separator';
 import { useOrderStore } from '@/store/useOrderStore';
 import { toast } from '@/hooks/use-toast';
 
