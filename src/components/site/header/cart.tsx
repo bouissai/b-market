@@ -114,6 +114,7 @@ export const Cart = ({ className = '' }: CartProps) => {
 												<Button
 													variant="outline"
 													size="icon"
+													className="rounded-full"
 													disabled={loadingItems.has(
 														item.article.id!,
 													)}
@@ -153,6 +154,7 @@ export const Cart = ({ className = '' }: CartProps) => {
 												<Button
 													variant="outline"
 													size="icon"
+													className="rounded-full"
 													disabled={loadingItems.has(
 														item.article.id!,
 													)}
@@ -207,7 +209,7 @@ export const Cart = ({ className = '' }: CartProps) => {
 										<SheetClose asChild>
 											<Button
 												className="w-full mt-4"
-												onClick={() => router.push('/panier')}>
+												onClick={() => router.push('/checkout')}>
 												Passer la commande
 											</Button>
 										</SheetClose>

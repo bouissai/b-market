@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { PhoneInput } from '@/components/ui/phone-input';
 
-export default function PersonnalInformations() {
+export function PersonnalInformations() {
 	const { data: session } = useSession();
 
 	const [name, setName] = useState(session?.user?.name || '');

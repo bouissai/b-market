@@ -14,7 +14,8 @@ datasource prisma {
 
 model User {
   id            String          @id @default(cuid())
-  name          String?
+  firstname     String
+  lastname      String
   phone         String?
   email         String          @unique
   emailVerified DateTime?
@@ -64,14 +65,14 @@ model Cart {
   userId    String     @unique
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  user      User?      @relation(fields: [userId], references: [id])
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   cartItems CartItem[]
 }
 
 model CartItem {
   id        String   @id @default(cuid())
   cartId    String
-  cart      Cart     @relation(fields: [cartId], references: [id])
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
   articleId String
   article   Article  @relation(fields: [articleId], references: [id])
   quantity  Int      @default(1)
@@ -81,15 +82,35 @@ model CartItem {
 }
 
 model Order {
-  id         Int         @id @default(autoincrement())
-  userId     String
-  user       User        @relation(fields: [userId], references: [id])
-  total      Float // potentiel rabais ou reduction donc par forcement égal au qtté * prix articles
-  note       String?
-  status     String      @default("PENDING") // "pending", "completed", etc.
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  orderItems OrderItem[]
+  id          Int         @id @default(autoincrement())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  total       Float // potentiel rabais ou reduction donc par forcement égal au qtté * prix articles
+  note        String?
+  status      String      @default("PENDING") // "pending", "completed", etc.
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  items       OrderItem[]
+  firstname   String
+  lastname    String
+  email       String
+  phone       String
+  promoCodeId String?
+  promoCode   PromoCode?  @relation(fields: [promoCodeId], references: [id])
+}
+
+model PromoCode {
+  id        String    @id @default(cuid())
+  code      String    @unique
+  discount  Float
+  startDate DateTime  @default(now())
+  endDate   DateTime?
+  maxUses   Int?
+  useCount  Int       @default(0)
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  orders    Order[]
 }
 
 model OrderItem {

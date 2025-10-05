@@ -4,11 +4,11 @@ import { hash } from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { randomUUID } from 'crypto';
 import { sendVerificationEmail } from '@/lib/email';
-import { Prisma } from '@prisma/client';
 
 export async function POST(request: NextRequest) {
 	try {
-		const { email, password, name, phone } = await request.json();
+		const { email, password, firstname, lastname, phone } =
+			await request.json();
 
 		// Vérification si l'email existe déjà
 		const existingUser = await prisma.user.findUnique({
@@ -37,7 +37,8 @@ export async function POST(request: NextRequest) {
 					data: {
 						email,
 						password: hashedPassword,
-						name: name || null,
+						firstname,
+						lastname,
 						phone: phone || null,
 						emailVerified: null, // Explicitement null jusqu'à vérification
 					},
@@ -70,7 +71,8 @@ export async function POST(request: NextRequest) {
 		await sendVerificationEmail({
 			email: user.email,
 			token: verificationToken.token,
-			name: user.name || '',
+			firstname: user.firstname,
+			lastname: user.lastname,
 		});
 
 		return NextResponse.json(
@@ -78,7 +80,8 @@ export async function POST(request: NextRequest) {
 				user: {
 					id: user.id,
 					email: user.email,
-					name: user.name,
+					firstname: user.firstname,
+					lastname: user.lastname,
 					phone: user.phone,
 				},
 				message: 'User created. Please verify your email.',

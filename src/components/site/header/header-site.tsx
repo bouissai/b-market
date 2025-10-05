@@ -28,7 +28,7 @@ export function HeaderSite() {
 
 	return (
 		<header
-			className={`fixed w-full z-50 transition-all duration-300 animate-fadeIn ${
+			className={`sticky top-0 w-full z-50 transition-all duration-300 animate-fadeIn ${
 				isScrolled
 					? 'bg-boucherie-black/95 backdrop-blur-md border-b border-boucherie-red/20 py-2'
 					: 'bg-transparent py-4'

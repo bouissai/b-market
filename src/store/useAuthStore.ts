@@ -16,6 +16,8 @@ interface AuthState {
 	signOut: (isAdmin: boolean) => Promise<void>;
 	setError: (error: string | null) => void;
 	setSuccessMessage: (message: string | null) => void;
+	redirectPath: string | null;
+	setRedirectPath: (path: string | null) => void;
 }
 
 export const useAuthStore = create<AuthState>(set => ({
@@ -23,9 +25,11 @@ export const useAuthStore = create<AuthState>(set => ({
 	isSubmitting: false,
 	error: null,
 	successMessage: null,
+	redirectPath: null,
 
 	setError: error => set({ error }),
 	setSuccessMessage: message => set({ successMessage: message }),
+	setRedirectPath: path => set({ redirectPath: path }),
 
 	signIn: async data => {
 		set({ isSubmitting: true, error: null });
@@ -70,7 +74,8 @@ export const useAuthStore = create<AuthState>(set => ({
 				body: JSON.stringify({
 					email: data.email,
 					password: data.password,
-					name: data.name,
+					firstname: data.firstname,
+					lastname: data.lastname,
 					phone: data.phone,
 				}),
 			});

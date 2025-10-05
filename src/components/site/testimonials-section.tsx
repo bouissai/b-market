@@ -42,7 +42,7 @@ export function TestimonialsSection() {
 	return (
 		<section className="section-padding bg-boucherie-black relative overflow-hidden animate-fadeIn">
 			<div className="absolute inset-0 pointer-events-none opacity-10">
-				<div className="absolute inset-0 bg-[url('/placeholder.svg?height=200&width=200&text=B')] bg-repeat-space bg-contain"></div>
+				<div className="absolute inset-0 bg-repeat-space bg-contain"></div>
 			</div>
 
 			<div className="container-custom relative z-10">
