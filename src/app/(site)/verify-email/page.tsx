@@ -47,7 +47,7 @@ function VerifyEmailContent() {
 						data.message || "Erreur lors de la vérification de l'email.",
 					);
 				}
-			} catch (error) {
+			} catch {
 				setStatus('error');
 				setMessage('Une erreur est survenue lors de la vérification.');
 			}
@@ -60,7 +60,7 @@ function VerifyEmailContent() {
 		<Card className="w-full max-w-md border shadow-sm">
 			<CardHeader className="pb-4">
 				<CardTitle className="text-xl">
-					Vérification de l'email
+					Vérification de l&apos;email
 				</CardTitle>
 				<CardDescription>
 					{status === 'loading' &&

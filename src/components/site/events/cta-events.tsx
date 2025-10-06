@@ -9,7 +9,7 @@ export function CtaEvents() {
                     Prêt à organiser votre événement ?
                 </h2>
                 <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-                    Contactez-nous dès aujourd'hui pour discuter de vos besoins et
+                    Contactez-nous dès aujourd&apos;hui pour discuter de vos besoins et
                     obtenir un devis personnalisé.
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center gap-4">

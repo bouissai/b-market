@@ -1,5 +1,14 @@
 // src/app/api/google-reviews/route.ts
-let cachedReviews: any[] | null = null;
+interface Review {
+  id: number;
+  name: string;
+  role: string;
+  image: string;
+  quote: string;
+  rating: number;
+}
+
+let cachedReviews: Review[] | null = null;
 let lastFetched: number | null = null;
 const CACHE_DURATION = 1000 * 60 * 60 * 24; // 24h en millisecondes
 
@@ -32,8 +41,8 @@ export async function GET() {
     }
 
     const reviews = data.result.reviews
-      .filter((r: any) => r.rating >= 4)
-      .map((r: any, index: number) => ({
+      .filter((r: { rating: number }) => r.rating >= 4)
+      .map((r: { author_name: string; profile_photo_url?: string; text: string; rating: number }, index: number) => ({
         id: index,
         name: r.author_name,
         role: 'Avis Google',

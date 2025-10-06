@@ -219,7 +219,7 @@ export default function CartSummaryStep({ nextStep }: CartSummaryStepProps) {
 									<XCircle className="h-4 w-4" />
 									<AlertTitle>Code promo invalide</AlertTitle>
 									<AlertDescription>
-										Le code "{currentCode}" n'est pas valide.
+										Le code &quot;{currentCode}&quot; n&apos;est pas valide.
 									</AlertDescription>
 								</Alert>
 							) : (
@@ -228,7 +228,7 @@ export default function CartSummaryStep({ nextStep }: CartSummaryStepProps) {
 										<CheckCircle2 className="h-4 w-4" />
 										<AlertTitle>Code promo appliqué</AlertTitle>
 										<AlertDescription>
-											Vous bénéficiez d'une réduction de{' '}
+											Vous bénéficiez d&apos;une réduction de{' '}
 											{discount < 1 && discount > 0
 												? discount * 100 + '%'
 												: discount + '€'}

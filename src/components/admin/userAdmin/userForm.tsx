@@ -75,7 +75,7 @@ export default function UserForm({
 					: 'Utilisateur ajouté avec succès',
 			});
 			onCloseAction();
-		} catch (error) {
+		} catch {
 			toast({
 				title: 'Erreur',
 				description: "Une erreur s'est produite lors de l'enregistrement.",

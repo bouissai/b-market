@@ -18,7 +18,7 @@ export default function Produits() {
 						</h1>
 						<p className="text-muted-foreground mb-6">
 							Découvrez notre sélection de recettes délicieuses préparées
-							avec nos viandes de qualité. De l'entrée au plat principal,
+							avec nos viandes de qualité. De l&apos;entrée au plat principal,
 							pour le quotidien ou pour vos événements spéciaux.
 						</p>
 					</div>

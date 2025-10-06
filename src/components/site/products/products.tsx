@@ -34,7 +34,7 @@ export default function ProductListing() {
 
 	useEffect(() => {
 		fetchCategories();
-	}, []);
+	}, [fetchCategories]);
 
 	// récupération des articles selon la catégorie sélectionnée
 	useEffect(() => {

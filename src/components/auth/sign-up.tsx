@@ -27,11 +27,11 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import { PhoneInput } from '@/components/ui/phone-input';
 
-interface SignUpProps {
-	onSuccess?: () => void;
-}
-
-const SignUp = ({ onSuccess }: SignUpProps) => {
+export interface SignUpProps {
+	onSuccess?: () => void
+  }
+  
+const SignUp: React.FC<SignUpProps> = ({ onSuccess }) => {
 	const { toast } = useToast();
 	const { signUp, error, isSubmitting, setError, successMessage } =
 		useAuthStore();
@@ -56,10 +56,11 @@ const SignUp = ({ onSuccess }: SignUpProps) => {
 			const success = await signUp(data);
 
 			if (success) {
+				onSuccess?.();
 				form.reset();
 				// Ne pas rediriger immédiatement, l'utilisateur doit vérifier son email
 			}
-		} catch (error: any) {
+		} catch (error: unknown) {
 			console.error('Registration Failed:', error);
 		}
 		// Vérifiez l'erreur après que tout soit terminé
@@ -171,7 +172,7 @@ const SignUp = ({ onSuccess }: SignUpProps) => {
 							name="confirmEmail"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Confirmer l'adresse email</FormLabel>
+									<FormLabel>Confirmer l&apos;adresse email</FormLabel>
 									<FormControl>
 										<Input placeholder="hafid@gmail.com" {...field} />
 									</FormControl>
@@ -226,7 +227,7 @@ const SignUp = ({ onSuccess }: SignUpProps) => {
 			{successMessage && (
 				<CardFooter className="bg-gray-50 text-sm text-gray-600 p-4">
 					<p>
-						Un email de confirmation a été envoyé à l'adresse indiquée.
+						Un email de confirmation a été envoyé à l&apos;adresse indiquée.
 						Veuillez vérifier votre boîte de réception et cliquer sur le
 						lien pour activer votre compte.
 					</p>

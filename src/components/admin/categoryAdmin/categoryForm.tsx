@@ -24,7 +24,7 @@ import { useCategoryStore } from "@/store/useCategoryStore";
 import { useImageStore } from "@/store/useImageStore";
 import { Category } from "@/types/category";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { CategoryImage } from "./categoryImage";
@@ -94,10 +94,10 @@ export function CategoryForm({ category, onCloseAction, onSaveAction }: Category
 
       onSaveAction(savedCategory);
       onCloseAction();
-    } catch (error: any) {
+    } catch (error: unknown) {
       let descriptionError = "Une erreur est survenue lors de l'enregistrement.";
-      if (error.status === 409) {
-        descriptionError = error.message || "Cette catégorie existe déjà.";
+      if (error && typeof error === 'object' && 'status' in error && error.status === 409) {
+        descriptionError = (error as { message?: string }).message || "Cette catégorie existe déjà.";
       }
       toast({
         title: "Erreur",

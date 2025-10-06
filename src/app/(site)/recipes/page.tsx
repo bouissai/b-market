@@ -276,7 +276,7 @@ export default function RecipesPage() {
 						</h1>
 						<p className="text-muted-foreground mb-6">
 							Découvrez notre sélection de recettes délicieuses préparées
-							avec nos viandes de qualité. De l'entrée au plat principal,
+							avec nos viandes de qualité. De l&apos;entrée au plat principal,
 							pour le quotidien ou pour vos événements spéciaux.
 						</p>
 						<div className="flex flex-wrap gap-4">
@@ -363,7 +363,7 @@ export default function RecipesPage() {
 			<section className="py-12 bg-primary/10">
 				<div className="container mx-auto px-4 text-center">
 					<h2 className="text-2xl font-bold mb-4">
-						Besoin d'inspiration pour un événement spécial ?
+						Besoin d&apos;inspiration pour un événement spécial ?
 					</h2>
 					<p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
 						Consultez notre page événements pour découvrir nos services de

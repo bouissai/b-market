@@ -1,6 +1,5 @@
 'use client';
 
-import { Toaster } from '../ui/toaster';
 import { FooterSite } from './footer/footer-site';
 import { HeaderSite } from './header/header-site';
 

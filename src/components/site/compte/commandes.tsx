@@ -21,7 +21,7 @@ export function Commandes() {
 		if (!session?.user?.id) return;
 
 		fetchOrdersDetailsByUserId(session.user.id);
-	}, [session?.user?.id]);
+	}, [session?.user?.id, fetchOrdersDetailsByUserId]);
 
 	const filteredOrders = ordersDetails.filter(
 		order =>
@@ -77,7 +77,7 @@ export function Commandes() {
 							Mes commandes
 						</h1>
 						<p className="text-muted-foreground mb-6">
-							Consultez l'historique et le statut de vos commandes
+							Consultez l&apos;historique et le statut de vos commandes
 						</p>
 					</div>
 				</div>

@@ -12,7 +12,6 @@ import { RevenueGrowth } from '@/components/admin/stats/statsGraph/revenuegrowth
 import { OrderShortCut } from '@/components/admin/stats/statsShortcut/orderShortCut';
 import { OrderTableStats } from '@/components/admin/stats/statsTable/orderTableStats';
 import { TopArticles } from '@/components/admin/stats/statsTable/topArticles';
-import { TopCategories } from '@/components/admin/stats/statsTable/topCategories';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
@@ -67,7 +66,7 @@ export default function AdminHome() {
       </div>
       <Tabs defaultValue={period ?? ""} className="mb-6" onValueChange={(p) => setPeriod(p as StatsPeriod)}>
         <TabsList>
-          <TabsTrigger value="today">Aujourd'hui</TabsTrigger>
+          <TabsTrigger value="today">Aujourd&apos;shui</TabsTrigger>
           <TabsTrigger value="week">Cette semaine</TabsTrigger>
           <TabsTrigger value="month">Ce mois</TabsTrigger>
           <TabsTrigger value="year">Cette année</TabsTrigger>

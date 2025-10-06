@@ -1,10 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { CategoryStats, StatsPeriod, StatsResponse } from "@/types/stats";
-import { Ban, FileX2, Plus, Table } from "lucide-react";
-import router from "next/router";
+import { CategoryStats, StatsResponse } from "@/types/stats";
+import { Plus } from "lucide-react";
 import { NoSalesStates } from "../statsFallBackUI/NoSalesStates";
-import { RevenueGrowth } from "./revenuegrowth";
 import { useRouter } from "next/navigation";
 
 interface StatsProps {

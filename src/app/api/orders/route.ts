@@ -71,13 +71,14 @@ export async function POST(request: NextRequest) {
 		);
 
 		return NextResponse.json(newOrder, { status: 201 });
-	} catch (error: any) {
+	} catch (error: unknown) {
+		const errorMessage = error instanceof Error ? error.message : String(error);
 		console.error(
 			'❌ [POST] Erreur lors de la création de la commande :',
-			error.message || error,
+			errorMessage,
 		);
 		return NextResponse.json(
-			{ message: 'Erreur serveur', error: error.message || error },
+			{ message: 'Erreur serveur', error: errorMessage },
 			{ status: 500 },
 		);
 	}

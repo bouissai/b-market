@@ -30,8 +30,9 @@ export const useReviewsStore = create<ReviewsStore>((set) => ({
       const data: Review[] = await res.json();
       const filtered = data.filter((r) => r.rating >= 4);
       set({ reviews: filtered, loading: false });
-    } catch (error: any) {
-      set({ error: error.message || 'Erreur inconnue', loading: false });
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
+      set({ error: errorMessage, loading: false });
     }
   },
 }));

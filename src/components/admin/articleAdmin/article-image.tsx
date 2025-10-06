@@ -111,7 +111,7 @@ export function ArticleImage({
 
   return (
     <div className="space-y-2">
-      <Label htmlFor="imageUrl">Image de l'article</Label>
+      <Label htmlFor="imageUrl">Image de l&apos;article</Label>
 
       <div className="my-2 relative">
         <div className="relative w-[150px] h-[150px]">

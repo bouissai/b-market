@@ -11,7 +11,7 @@ export function MapComponent() {
 			{!mapLoaded ? (
 				<div className="text-center p-6">
 					<p className="text-lg text-gray-700 mb-4">
-						Pour voir la carte, acceptez l'affichage de Google Maps.
+						Pour voir la carte, acceptez l&apos;affichage de Google Maps.
 					</p>
 					<button
 						onClick={() => setMapLoaded(true)}

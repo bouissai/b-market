@@ -20,7 +20,7 @@ export async function getAllOrders(): Promise<orderDTO[]> {
 				status: order.status as keyof typeof OrderStatus,
 			};
 		});
-	} catch (error) {
+	} catch {
 		throw new Error('Impossible de récupérer les commandes.');
 	}
 }
@@ -60,6 +60,7 @@ export async function getOrderById(
 			promoDiscount: order.promoCode?.discount ?? null,
 			items: order.items.map(item => ({
 				id: item.id,
+				image: item.article?.image,
 				name: item.article?.name ?? 'Article inconnu',
 				quantity: item.quantity,
 				price: item.price,
@@ -215,6 +216,7 @@ export async function getOrdersByUserId(
 				items: order.items.map(item => ({
 					id: item.id,
 					name: item.article.name,
+					image: item.article.image ?? '/placeholder.svg',
 					quantity: item.quantity,
 					price: item.price,
 				})),

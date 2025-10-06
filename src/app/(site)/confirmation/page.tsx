@@ -80,7 +80,7 @@ export default function ConfirmationPage() {
 
         <div className="flex justify-center mt-8 gap-4">
           <Button asChild variant="outline">
-            <Link href="/">Retour à l'accueil</Link>
+            <Link href="/">Retour à l&apos;saccueil</Link>
           </Button>
           <Button asChild>
             <Link href="/compte">Voir mes commandes</Link>

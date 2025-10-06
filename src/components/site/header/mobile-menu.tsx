@@ -8,7 +8,7 @@ interface MobileMenuProps {
 	goTo: (href: string) => void;
 }
 
-export const MobileMenu = ({ isOpen, onClose, goTo }: MobileMenuProps) => {
+export const MobileMenu = ({ isOpen, goTo }: MobileMenuProps) => {
 	const pathname = usePathname();
 
 	if (!isOpen) return null;

@@ -29,7 +29,7 @@ export async function addOrUpdateCartItem(
 		} else {
 			return await addCartItemToCart(cart.id, articleId, quantity);
 		}
-	} catch (error) {
+	} catch {
 		throw new Error("Erreur lors de la modification d'un panier");
 	}
 }
@@ -102,7 +102,7 @@ export async function removeCartItemByUserId(
 				},
 			},
 		});
-	} catch (error) {
+	} catch {
 		throw new Error("Erreur lors de la suppression de l'article du panier");
 	}
 }

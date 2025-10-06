@@ -84,19 +84,19 @@ export default function InfoOrderStep({
 	const confirmOrder = async () => {
 		try {
 			const orderData = {
-				userId: session!.user.id,
+				userId: session?.user?.id ?? '',
 				firstname: otherPerson
 					? otherInfoForm.getValues().firstName
-					: session?.user?.firstname!,
+					: session?.user?.firstname ?? '',
 				lastname: otherPerson
 					? otherInfoForm.getValues().lastName
-					: session?.user?.lastname!,
+					: session?.user?.lastname ?? '',
 				email: otherPerson
 					? otherInfoForm.getValues().email
-					: session?.user?.email!,
+					: session?.user?.email ?? '',
 				phone: otherPerson
 					? otherInfoForm.getValues().phone
-					: session?.user?.phone!,
+					: session?.user?.phone ?? '',
 				status: 'PENDING' as const,
 				note: '',
 				total: total,
@@ -140,7 +140,7 @@ export default function InfoOrderStep({
 					onChange={e => setOtherPerson(e.target.checked)}
 				/>
 				<label htmlFor="otherPerson" className="cursor-pointer">
-					Ce n'est pas moi qui viens récupérer la commande
+					Ce n&apos;est pas moi qui viens récupérer la commande
 				</label>
 			</div>
 

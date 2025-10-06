@@ -1,5 +1,3 @@
-import { toast } from "@/hooks/use-toast";
-import type { Category } from "@/types/category";
 import { ContactDto, ContactQuoteDto } from "@/types/contact";
 import { create } from "zustand";
 
@@ -10,7 +8,7 @@ type ContactStore = {
 };
 
 
-export const useContactStore = create<ContactStore>((set, get) => ({
+export const useContactStore = create<ContactStore>(() => ({
 
     async sendContact(contact: ContactDto): Promise<{ success: boolean; message: string }> {
         try {

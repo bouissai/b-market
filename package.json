@@ -61,19 +61,21 @@
 	},
 	"devDependencies": {
 		"@eslint/eslintrc": "^3",
+		"@eslint/js": "^9.36.0",
 		"@sentry/cli": "^2.43.0",
 		"@types/node": "^20",
 		"@types/nodemailer": "^6.4.17",
 		"@types/react": "^18",
 		"@types/react-dom": "^18",
 		"eslint": "^9",
-		"eslint-config-next": "15.5.4",
-		"eslint-plugin-eslint-comments": "^3.2.0",
+		"eslint-config-next": "^15",
+		"eslint-plugin-eslint-comments": "^3",
 		"postcss": "^8",
 		"prettier": "3.5.3",
 		"prisma": "^6.5.0",
 		"require-in-the-middle": "7.5.2",
 		"tailwindcss": "^3.4.1",
-		"typescript": "^5"
+		"typescript": "^5",
+		"typescript-eslint": "^8.45.0"
 	}
 }

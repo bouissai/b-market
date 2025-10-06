@@ -222,7 +222,7 @@ export const useArticleStore = create<ArticleStore>((set, get) => ({
 				await deleteImage(publicId);
 			}
 			return true;
-		} catch (error) {
+		} catch {
 			toast({
 				title: 'Erreur',
 				description: 'Une erreur est survenue lors de la suppression',

@@ -27,7 +27,7 @@ export function NoSalesStates({ period }: NoSalesStatesProps) {
         <div className="text-center">
             <FileX2 className="h-full w-16 text-muted-foreground mx-auto mb-2" />
             <p className="text-muted-foreground">Pas de ventes pour {date} </p>
-            <p className="text-xs text-muted-foreground mt-1">Voir sur d'autres periodes</p>
+            <p className="text-xs text-muted-foreground mt-1">Voir sur d&apos;sautres periodes</p>
         </div>
     </div>)
 }

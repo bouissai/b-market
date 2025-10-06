@@ -115,7 +115,7 @@ export default function OrderDetailPage() {
 								Commande introuvable
 							</h3>
 							<p className="text-muted-foreground mt-2">
-								Cette commande n'existe pas ou a été supprimée.
+								Cette commande n&apos;existe pas ou a été supprimée.
 							</p>
 							<Button
 								onClick={() => router.push('/admin/orders')}

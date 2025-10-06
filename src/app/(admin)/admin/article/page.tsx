@@ -25,7 +25,6 @@ export default function ArticlePage() {
 	const {
 		articles,
 		isLoading,
-		error,
 		selectedArticle,
 		mode,
 		setSelectedArticle,
