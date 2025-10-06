@@ -98,7 +98,7 @@ export function FooterSite() {
 					<div>
 						<h3 className="text-lg font-semibold mb-6 flex items-center">
 							<span className="w-8 h-0.5 bg-boucherie-red mr-3"></span>
-							Horaires d'Ouverture
+							Horaires d&apos;Ouverture
 						</h3>
 						<ul className="space-y-3">
 							{GENERAL_INFO.openingHours.map((item, index) => (
@@ -137,7 +137,7 @@ export function FooterSite() {
 								className="flex-grow px-4 py-3 rounded-md bg-gray-900 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-boucherie-red border border-boucherie-red/30"
 							/>
 							<button type="submit" className="boucherie-button">
-								S'inscrire
+								S&apos;inscrire
 							</button>
 						</form>
 					</div>

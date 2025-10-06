@@ -15,7 +15,7 @@ interface StatsTableProps {
 
 
 export function OrderTableStats({ stats }: StatsTableProps) {
-    const { orders, fetchOrders, init , isLoading } = useOrderStore()
+    const { orders, fetchOrders, init } = useOrderStore()
     const router = useRouter()
     
     useEffect(() => {

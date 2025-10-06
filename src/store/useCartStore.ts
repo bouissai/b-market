@@ -311,12 +311,12 @@ export const useCartStore = create<CartStore>((set, get) => ({
 	) => {
 		switch (option) {
 			case 'merge':
-				try {
-					await overwriteRemoteCart(mergedCarts);
-				} catch (error: any) {
+			try {
+				await overwriteRemoteCart(mergedCarts);
+			} catch (error: unknown) {
 					toast({
 						title: 'Erreur lors de la mise à jour du panier',
-						description: error.message,
+						description: error instanceof Error ? error.message : String(error),
 						variant: 'destructive',
 					});
 				}
@@ -325,12 +325,12 @@ export const useCartStore = create<CartStore>((set, get) => ({
 				set({ cartItems: get().remoteCart });
 				break;
 			case 'local':
-				try {
-					await overwriteRemoteCart(getLocalCart());
-				} catch (error: any) {
+			try {
+				await overwriteRemoteCart(getLocalCart());
+			} catch (error: unknown) {
 					toast({
 						title: 'Erreur lors de la mise à jour du panier',
-						description: error.message,
+						description: error instanceof Error ? error.message : String(error),
 						variant: 'destructive',
 					});
 				}
@@ -355,7 +355,7 @@ const syncCartToLocalStorage = (cartItems: CartItem[]) => {
 };
 
 const calculateTotals = (cartItems: CartItem[]) => {
-	const totalCartItems = cartItems.reduce((sum, _) => sum + 1, 0);
+	const totalCartItems = cartItems.length;
 	const totalPrice = cartItems.reduce(
 		(sum, item) => sum + (item.article.price ?? 0) * item.quantity,
 		0,

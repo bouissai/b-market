@@ -75,7 +75,7 @@ export function DataTable<TData>({
 				.getColumn('status')
 				?.setFilterValue(initialStatus === 'ALL' ? '' : initialStatus);
 		}
-	}, [table, initialStatus]);
+	}, [table, initialStatus, pathname]);
 
 	return (
 		<>

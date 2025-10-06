@@ -1,4 +1,3 @@
-import { FAQ_DATA } from '@/constants';
 
 export default function FaqPage() {
 	return (

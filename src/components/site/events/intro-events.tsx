@@ -30,7 +30,7 @@ export function IntroEvent() {
                         <div className="bg-background p-4 rounded-lg shadow-sm">
                             <p className="text-3xl font-bold text-primary mb-2">15+</p>
                             <p className="text-sm text-muted-foreground">
-                                Années d'expérience
+                                Années d&apos;expérience
                             </p>
                         </div>
                         <div className="bg-background p-4 rounded-lg shadow-sm">

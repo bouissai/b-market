@@ -14,7 +14,7 @@ interface OrderTableProps {
 	onDelete: (Order: orderDTO) => void;
 }
 
-export function OrderTable({ data, onEdit, onDelete }: OrderTableProps) {
+export function OrderTable({ data }: OrderTableProps) {
 	const router = useRouter();
 
 	function handleRowClick(row: orderDTO): void {

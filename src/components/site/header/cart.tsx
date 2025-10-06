@@ -39,7 +39,7 @@ export const Cart = ({ className = '' }: CartProps) => {
 
 	useEffect(() => {
 		fetchCartItems();
-	}, []);
+	}, [fetchCartItems]);
 
 	return (
 		<div>

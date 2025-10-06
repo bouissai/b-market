@@ -95,7 +95,7 @@ export const animations = {
   },
 
   // 🎯 Fonction pour modifier le délai d'une animation
-  withDelay: (animation: any, delay: number) => ({
+  withDelay: (animation: { visible: { transition?: Record<string, unknown> }; [key: string]: unknown }, delay: number) => ({
     ...animation,
     visible: {
       ...animation.visible,
@@ -107,7 +107,7 @@ export const animations = {
   }),
 
   // 🎯 Fonction pour modifier la durée d'une animation
-  withDuration: (animation: any, duration: number) => ({
+  withDuration: (animation: { visible: { transition?: Record<string, unknown> }; [key: string]: unknown }, duration: number) => ({
     ...animation,
     visible: {
       ...animation.visible,
@@ -119,7 +119,7 @@ export const animations = {
   }),
 
   // 🎯 Fonction combinée pour modifier simultanément le délai et la durée
-  withCustomTransition: (animation: any, duration: number, delay: number) => ({
+  withCustomTransition: (animation: { visible: { transition?: Record<string, unknown> }; [key: string]: unknown }, duration: number, delay: number) => ({
     ...animation,
     visible: {
       ...animation.visible,

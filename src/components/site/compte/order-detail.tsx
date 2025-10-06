@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useOrderStore } from '@/store/useOrderStore';
 import { toast } from '@/hooks/use-toast';
+import Image from 'next/image';
 
 type OrderDetailProps = {
 	order: OrderDetailsDTO;
@@ -199,9 +200,11 @@ export function OrderDetail({ order }: OrderDetailProps) {
 								className="flex gap-4 py-3 border-b last:border-0">
 								<div className="flex-shrink-0">
 									{item && (
-										<img
-											src={'/placeholder.svg'}
+										<Image
+											src={item.image || '/placeholder.svg'}
 											alt={item.name}
+											height={80}
+											width={80}
 											className="w-20 h-20 object-cover rounded-md border"
 										/>
 									)}
@@ -314,11 +317,6 @@ export function OrderDetail({ order }: OrderDetailProps) {
 						Annuler la commande
 					</Button>
 				)}
-				{/* TODO: à faire si y'a le temps */}
-				{/*<Button>*/}
-				{/*	<Calendar className="h-4 w-4 mr-2" />*/}
-				{/*	Commander à nouveau*/}
-				{/*</Button>*/}
 			</div>
 		</div>
 	);

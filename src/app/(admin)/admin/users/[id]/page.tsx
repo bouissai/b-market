@@ -20,7 +20,7 @@ export default function UserDetailsPage() {
 		<div className="p-6 space-y-6">
 			<Card>
 				<CardHeader>
-					<CardTitle>Commandes de l'utilisateur #{id}</CardTitle>
+					<CardTitle>Commandes de l&apos;utilisateur #{id}</CardTitle>
 				</CardHeader>
 				<CardContent>
 					{userOrders && userOrders.length > 0 ? (

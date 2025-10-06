@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { ArticleGetDto, Article } from '@/types/article';
+import { ArticleGetDto } from '@/types/article';
 import { z } from 'zod';
 
 const MAX_LIMIT = 1000;
@@ -29,7 +29,7 @@ export async function GET(req: Request) {
 		}
 
 		const { categoryId, page, limit } = result.data;
-		const whereClause: any = {};
+		const whereClause: { categoryId?: string } = {};
 
 		if (categoryId) {
 			const categoryExists = await prisma.category.findUnique({
@@ -71,7 +71,8 @@ export async function GET(req: Request) {
 			prisma.article.count({ where: whereClause }),
 		]);
 
-		const articlesDto: ArticleGetDto[] = articles.map((article: any) => ({
+
+		const articlesDto: ArticleGetDto[] = articles.map(article => ({
 			id: article.id,
 			name: article.name,
 			unit: article.unit,
@@ -80,7 +81,8 @@ export async function GET(req: Request) {
 			description: article.description || '',
 			categoryId: article.categoryId,
 			categoryName: article.category?.name || 'Sans catégorie',
-		}));
+		  }));
+		  
 
 		return NextResponse.json(
 			{ articles: articlesDto, total },

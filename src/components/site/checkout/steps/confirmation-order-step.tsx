@@ -168,7 +168,7 @@ export default function ConfirmationOrderStep() {
 					variant="default"
 					className="flex-1"
 					onClick={() => router.push('/')}>
-					Retour à l'accueil
+					Retour à l&apos;accueil
 				</Button>
 			</div>
 		</div>

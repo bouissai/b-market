@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatsResponse } from "@/types/stats";
-import { ChartBarStacked, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { NoSalesStates } from "../statsFallBackUI/NoSalesStates";
 import { useRouter } from "next/navigation";
 

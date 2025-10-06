@@ -166,7 +166,7 @@ export default function ContactFormEvent() {
             name="eventType"
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <FormLabel>Type d'événement</FormLabel>
+                <FormLabel>Type d&apos;événement</FormLabel>
                 <Select 
                   onValueChange={field.onChange} 
                   defaultValue={field.value}
@@ -179,7 +179,7 @@ export default function ContactFormEvent() {
                   <SelectContent>
                     <SelectItem value="wedding">Mariage</SelectItem>
                     <SelectItem value="religious">Fête religieuse</SelectItem>
-                    <SelectItem value="corporate">Événement d'entreprise</SelectItem>
+                    <SelectItem value="corporate">Événement d&apos;entreprise</SelectItem>
                     <SelectItem value="family">Célébration familiale</SelectItem>
                     <SelectItem value="other">Autre</SelectItem>
                   </SelectContent>
@@ -194,7 +194,7 @@ export default function ContactFormEvent() {
             name="date"
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <FormLabel>Date de l'événement</FormLabel>
+                <FormLabel>Date de l&apos;événement</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -232,7 +232,7 @@ export default function ContactFormEvent() {
             name="guests"
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <FormLabel>Nombre d'invités</FormLabel>
+                <FormLabel>Nombre d&apos;invités</FormLabel>
                 <FormControl>
                   <Input type="number" placeholder="Nombre approximatif" {...field} />
                 </FormControl>

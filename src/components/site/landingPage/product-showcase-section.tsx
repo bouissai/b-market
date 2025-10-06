@@ -5,32 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect } from 'react';
 
-const products = [
-	{
-		name: 'Bœuf',
-		image: 'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=500&h=300&fit=crop&auto=format&q=80',
-		description:
-			'Côtes, entrecôtes, filets, bavettes et autres morceaux de choix.',
-	},
-	{
-		name: 'Agneau',
-		image: 'https://images.unsplash.com/photo-1608500218890-c4f9019eef7f?w=500&h=300&fit=crop&auto=format&q=80',
-		description:
-			'Gigots, côtelettes, épaules et colliers pour vos plats traditionnels.',
-	},
-	{
-		name: 'Volaille',
-		image: 'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=500&h=300&fit=crop&auto=format&q=80',
-		description:
-			'Poulets fermiers, pintades, dindes et canards de qualité supérieure.',
-	},
-	{
-		name: 'Préparations',
-		image: 'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=500&h=300&fit=crop&auto=format&q=80',
-		description:
-			'Brochettes marinées, kefta, merguez maison et autres spécialités.',
-	},
-];
 
 export function ProductsShowcaseSection() {
 	const { categories, fetchCategories } = useCategoryStore();
@@ -57,7 +31,7 @@ export function ProductsShowcaseSection() {
 				</div>
 
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-					{featuredCategories.map((category, index) => (
+					{featuredCategories.map((category) => (
 						<div
 							key={category.id}
 							className="boucherie-card overflow-hidden group hover-lift">

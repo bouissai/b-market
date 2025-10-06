@@ -35,7 +35,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 		},
 		async session({ session, token }) {
 			if (token.user) {
-				// @ts-ignore
+				// @ts-expect-error - NextAuth type limitation
 				session.user = token.user;
 			}
 			return session;

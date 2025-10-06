@@ -14,7 +14,7 @@ export function OrdersCount(stats : StatsResponse | null){
         <CardContent>
           <div className="text-2xl font-bold">{stats?.totalOrders}</div>
           <p className="text-xs text-muted-foreground flex items-center mt-1">
-            <TrendIndicator value={Number(stats?.ordersGrowth?.toFixed(2)) ?? 0} />
+            <TrendIndicator value={stats?.ordersGrowth ? Number(stats.ordersGrowth.toFixed(2)) : 0} />
             <span className="ml-1">par rapport à la période précédente</span>
           </p>
         </CardContent>

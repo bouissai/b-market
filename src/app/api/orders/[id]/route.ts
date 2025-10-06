@@ -106,7 +106,7 @@ export async function PATCH(
 					{ status: 400 },
 				);
 			}
-		} catch (err) {
+		} catch {
 			return NextResponse.json(
 				{ message: 'JSON du body invalide ou vide' },
 				{ status: 400 },

@@ -94,7 +94,7 @@ export function CartMergeDialog() {
 					</DialogTitle>
 					<DialogDescription>
 						Nous avons trouvé un panier sauvegardé dans votre compte ainsi
-						qu'un panier local. Que souhaitez-vous faire?
+						qu&apos;un panier local. Que souhaitez-vous faire?
 					</DialogDescription>
 				</DialogHeader>
 

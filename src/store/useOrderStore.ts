@@ -71,7 +71,7 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
 				throw new Error('Erreur lors de la récupération de la commande');
 			const data = await response.json();
 			set({ orderDetails: data, isLoading: false }); // 🔥 Mise à jour globale du store
-		} catch (error) {
+		} catch {
 			set({ error: 'Commande introuvable', isLoading: false });
 		}
 	},
@@ -164,7 +164,7 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
 				orderDetails: null,
 			}));
 			return true;
-		} catch (error) {
+		} catch {
 			toast({
 				title: 'Erreur',
 				description: 'Une erreur est survenue lors de la suppression',
@@ -207,7 +207,7 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
 			});
 
 			return true;
-		} catch (error) {
+		} catch {
 			toast({
 				title: 'Erreur',
 				description: 'Impossible de mettre à jour la commande',

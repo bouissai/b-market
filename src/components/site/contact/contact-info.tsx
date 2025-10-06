@@ -45,7 +45,7 @@ export default function ContactInfo() {
 				<div className="flex items-start">
 					<Clock className="h-6 w-6 text-boucherie-red shrink-0 mt-0.5 mr-3" />
 					<div>
-						<h3 className="font-semibold mb-1">Horaires d'ouverture</h3>
+						<h3 className="font-semibold mb-1">Horaires d&apos;ouverture</h3>
 						<div className="text-gray-400">
 							{GENERAL_INFO.openingHours.map((item, index) => (
 								<div key={index}>

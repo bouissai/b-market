@@ -11,22 +11,40 @@ export async function GET() {
       max_results: 100,
     });
 
-    const images: ArticleImageDetails[] = result.resources.map((img: any) => ({
-      asset_id: img.asset_id,
-      public_id: img.public_id,
-      format: img.format,
-      version: img.version,
-      resource_type: img.resource_type,
-      type: img.type,
-      created_at: img.created_at,
-      bytes: img.bytes,
-      width: img.width,
-      height: img.height,
-      asset_folder: img.folder,
-      display_name: img.original_filename,
-      url: img.url,
-      secure_url: img.secure_url,
-    }));
+const images: ArticleImageDetails[] = result.resources.map(
+  (img: {
+    asset_id: string
+    public_id: string
+    url: string
+    created_at: string
+    width: number
+    height: number
+    format: string
+    version: number
+    resource_type: string
+    type: string
+    bytes: number
+    folder?: string
+    original_filename?: string
+    secure_url?: string
+  }) => ({
+    asset_id: img.asset_id,
+    public_id: img.public_id,
+    format: img.format,
+    version: img.version,
+    resource_type: img.resource_type,
+    type: img.type,
+    created_at: img.created_at,
+    bytes: img.bytes,
+    width: img.width,
+    height: img.height,
+    asset_folder: img.folder,
+    display_name: img.original_filename,
+    url: img.url,
+    secure_url: img.secure_url,
+  })
+)
+
 
     return NextResponse.json({ images });
   } catch (error) {

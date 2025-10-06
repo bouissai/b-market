@@ -13,7 +13,7 @@ export function TestimonialsSection() {
 
 	useEffect(() => {
 		fetchReviews();
-	}, []);
+	}, [fetchReviews]);
 
 	useEffect(() => {
 		let interval: NodeJS.Timeout;
@@ -104,13 +104,13 @@ export function TestimonialsSection() {
 										</div>
 										<div className="relative">
 											<div className="absolute -top-2 -left-2 text-5xl text-boucherie-red opacity-20">
-												"
+												&quot;
 											</div>
 											<blockquote className="text-gray-300 italic relative z-10 pl-4">
 												{testimonial.quote}
 											</blockquote>
 											<div className="absolute -bottom-4 -right-2 text-5xl text-boucherie-red opacity-20">
-												"
+												&quot;
 											</div>
 										</div>
 									</div>

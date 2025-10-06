@@ -58,8 +58,8 @@ export function ArticleForm({
 	const [imageUrl, setImageUrl] = useState(article?.image || '');
 
 	// To manage uploading file if the form is submit or canceled
-	const [hasNewImage, setHasNewImage] = useState(false);
-	const [previousImageUrl, setPreviousImageUrl] = useState(
+	const [, setHasNewImage] = useState(false);
+	const [, setPreviousImageUrl] = useState(
 		article?.image || '',
 	);
 	const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([]);

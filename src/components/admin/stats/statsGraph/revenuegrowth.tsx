@@ -25,7 +25,7 @@ export function RevenueGrowth({ period, totalRevenue, revenueGrowth, revenueByPe
         <div className="flex justify-between items-center">
           <div>
             <CardTitle>Évolution des ventes</CardTitle>
-            <CardDescription>Chiffre d'affaires sur la période</CardDescription>
+            <CardDescription>Chiffre d&apos;affaires sur la période</CardDescription>
           </div>
           <div className={`text-right ${growthColor} font-semibold`}>
             {formatGrowth(revenueGrowth ?? 0)}

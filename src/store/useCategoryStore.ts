@@ -85,7 +85,7 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
             }));
 
             return true;
-        } catch (error) {
+        } catch {
             toast({
                 title: "Erreur",
                 description: "Une erreur est survenue lors de la suppression",
@@ -110,8 +110,6 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
             }
 
             return await response.json();
-        } catch (error) {
-            throw error;
         } finally {
             set({ isSubmitting: false });
         }
