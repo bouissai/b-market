@@ -51,8 +51,7 @@ async function main() {
   }
 
   // --- Articles avec prix réalistes (indicatifs TTC)
-  type A = { id: string; name: string; unit: string; price: number; image: string; description: string; categoryId: string }
-  const articles: A[] = [
+  const articles = [
     // Bœuf
     { id: 'art-entrecote', name: 'Entrecôte de bœuf', unit: 'kg', price: 29.9, image: '/images/no-img.png', description: 'Entrecôte tendre, idéale à griller.', categoryId: 'cat-boeuf' },
     { id: 'art-bavette', name: 'Bavette d’aloyau', unit: 'kg', price: 21.9, image: '/images/no-img.png', description: 'Goût marqué, cuisson rapide.', categoryId: 'cat-boeuf' },
