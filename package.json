@@ -9,7 +9,7 @@
 		"lint": "next lint"
 	},
 	"prisma": {
-		"seed": "node prisma/seed.js"
+		"seed": "tsx prisma/seed.ts"
 	},
 	"dependencies": {
 		"@auth/prisma-adapter": "^2.8.0",
