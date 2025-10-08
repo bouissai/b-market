@@ -35,7 +35,6 @@ RUN \
 # ✅ Étape finale – image de production minimale
 FROM base AS runner
 WORKDIR /app
-COPY package.json ./
 
 ENV NODE_ENV=production
 
@@ -53,12 +52,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/prisma ./prisma
-
-# Tools to run TypeScript seeds (ts-node) at runtime
-# We install them globally so `npx prisma db seed` can call `ts-node`
-RUN npm install -g ts-node typescript
-RUN npm install --omit=dev @prisma/client bcryptjs
-ENV TS_NODE_COMPILER_OPTIONS='{"module":"CommonJS","target":"ES2020","lib":["ES2020"]}'
 
 # Sécurité
 USER nextjs
