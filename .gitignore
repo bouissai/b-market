@@ -61,3 +61,7 @@ deploy_key.pub
 # lockfiles à ignorer
 package-lock.json
 yarn.lock
+
+
+
+docker-compose.yml
