@@ -9,7 +9,7 @@
 		"lint": "next lint"
 	},
 	"prisma": {
-		"seed": "tsx prisma/seed.ts"
+		"seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
 	},
 	"dependencies": {
 		"@auth/prisma-adapter": "^2.8.0",
@@ -78,6 +78,7 @@
 		"prisma": "^6.5.0",
 		"require-in-the-middle": "7.5.2",
 		"tailwindcss": "^3.4.1",
+		"ts-node": "^10.9.2",
 		"tsx": "^4.20.6",
 		"typescript": "^5",
 		"typescript-eslint": "^8.45.0"
