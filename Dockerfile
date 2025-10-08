@@ -53,6 +53,10 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/prisma ./prisma
 
+# Tools to run TypeScript seeds (ts-node) at runtime
+# We install them globally so `npx prisma db seed` can call `ts-node`
+RUN npm install -g ts-node typescript
+
 # Sécurité
 USER nextjs
 
