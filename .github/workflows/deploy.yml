@@ -64,9 +64,6 @@ jobs:
             echo "🚀 Démarrage des nouveaux conteneurs"
             docker-compose up -d
 
-            echo "⏳ Attente Postgres (15s)..."
-            sleep 15
-
             echo "📂 Prisma migrate deploy"
             APP_ID=$(docker-compose ps -q bmarket)
             docker exec $APP_ID npx prisma migrate deploy || echo "⚠️ Prisma migration skipped"
