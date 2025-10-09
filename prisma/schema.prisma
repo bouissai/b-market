@@ -12,6 +12,10 @@ datasource prisma {
   url      = env("DATABASE_URL")
 }
 
+// Enable Prisma seeding with tsx runner
+// See: https://pris.ly/d/seeding
+// prisma seed command is configured in package.json scripts
+
 model User {
   id            String          @id @default(cuid())
   firstname     String

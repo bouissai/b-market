@@ -71,7 +71,8 @@ jobs:
             APP_ID=$(docker-compose ps -q bmarket)
             docker exec $APP_ID npx prisma migrate deploy || echo "⚠️ Prisma migration skipped"
 
-            echo "🌱 Prisma seed"
+            echo "🌱 Prisma db seed"
             docker exec $APP_ID npx prisma db seed || echo "⚠️ Prisma seed skipped"
+
 
             echo "✅ Déploiement terminé !"

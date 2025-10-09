@@ -1,130 +1,295 @@
-// prisma/seed.ts
-import { PrismaClient } from '@prisma/client'
-import * as bcrypt from 'bcryptjs'
+import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
-async function main() {
-  // --- Catégories (boucherie halal)
-  const categories = [
-    {
-      id: 'cat-boeuf',
-      name: 'Bœuf',
-      image: 'https://res.cloudinary.com/ddqrywesr/image/upload/v1743627027/eg5ec1vc9bscz1gimopj.png',
-      featured: true,
-      description: 'Côtes, entrecôtes, bavettes, filets… bœuf frais et halal.',
-    },
-    {
-      id: 'cat-agneau',
-      name: 'Agneau',
-      image: 'https://res.cloudinary.com/ddqrywesr/image/upload/v1743626541/hcutdkicydtpwwt5epcj.png',
-      featured: true,
-      description: 'Gigot, épaule, côtelettes — tendre et savoureux.',
-    },
-    {
-      id: 'cat-volaille',
-      name: 'Volaille',
-      image: 'https://res.cloudinary.com/ddqrywesr/image/upload/v1743627357/bq5g4kl4eka5b7s9gcih.png',
-      featured: true,
-      description: 'Poulet fermier, dinde, pintade — 100% halal.',
-    },
-    {
-      id: 'cat-epicerie',
-      name: 'Épicerie',
-      image: 'https://res.cloudinary.com/ddqrywesr/image/upload/v1743632470/rn3bmgelf47dbfvm8mcn.png',
-      featured: false,
-      description: 'Épices et produits d’accompagnement.',
-    },
-  ]
+async function main(): Promise<void> {
+  // Clean in dependency order to respect foreign keys
+  await prisma.orderItem.deleteMany();
+  await prisma.order.deleteMany();
+  await prisma.cartItem.deleteMany();
+  await prisma.cart.deleteMany();
+  await prisma.article.deleteMany();
+  await prisma.category.deleteMany();
+  await prisma.user.deleteMany();
+  await prisma.promoCode.deleteMany();
 
-  for (const c of categories) {
-    await prisma.category.upsert({
-      where: { id: c.id },
-      update: {
-        name: c.name,
-        image: c.image,
-        featured: c.featured,
-        description: c.description,
+  // Categories
+  await prisma.category.createMany({
+    data: [
+      {
+        id: "cat1",
+        name: "Boeuf",
+        image:
+          "https://res.cloudinary.com/ddqrywesr/image/upload/v1743627027/eg5ec1vc9bscz1gimopj.png",
+        featured: true,
+        description:
+          "Côtes, entrecôtes, bavettes, filets et autres morceaux nobles de bœuf, toujours frais et halal.",
       },
-      create: { ...c },
-    })
-  }
-
-  // --- Articles avec prix réalistes (indicatifs TTC)
-  type A = { id: string; name: string; unit: string; price: number; image: string; description: string; categoryId: string }
-  const articles: A[] = [
-    // Bœuf
-    { id: 'art-entrecote', name: 'Entrecôte de bœuf', unit: 'kg', price: 29.9, image: '/images/no-img.png', description: 'Entrecôte tendre, idéale à griller.', categoryId: 'cat-boeuf' },
-    { id: 'art-bavette', name: 'Bavette d’aloyau', unit: 'kg', price: 21.9, image: '/images/no-img.png', description: 'Goût marqué, cuisson rapide.', categoryId: 'cat-boeuf' },
-    { id: 'art-hache-boeuf', name: 'Steak haché (pur bœuf)', unit: 'kg', price: 14.9, image: '/images/no-img.png', description: 'Hachage du jour, 100% bœuf.', categoryId: 'cat-boeuf' },
-
-    // Agneau
-    { id: 'art-cote-agneau', name: 'Côtelettes d’agneau', unit: 'kg', price: 24.9, image: '/images/no-img.png', description: 'À la poêle ou au grill.', categoryId: 'cat-agneau' },
-    { id: 'art-gigot-agneau', name: 'Gigot d’agneau', unit: 'kg', price: 22.9, image: '/images/no-img.png', description: 'Rôti fondant au four.', categoryId: 'cat-agneau' },
-    { id: 'art-epaule-agneau', name: 'Épaule d’agneau', unit: 'kg', price: 18.9, image: '/images/no-img.png', description: 'Parfait pour tajines et mijotés.', categoryId: 'cat-agneau' },
-
-    // Volaille
-    { id: 'art-poulet-entier', name: 'Poulet fermier entier', unit: 'pièce', price: 10.9, image: '/images/no-img.png', description: 'Abattage halal certifié.', categoryId: 'cat-volaille' },
-    { id: 'art-escalope-poulet', name: 'Escalopes de poulet', unit: 'kg', price: 13.9, image: '/images/no-img.png', description: 'Prêtes à cuisiner.', categoryId: 'cat-volaille' },
-
-    // Épicerie
-    { id: 'art-ras-el-hanout', name: 'Ras el hanout', unit: '100g', price: 3.5, image: '/images/no-img.png', description: 'Mélange d’épices traditionnel.', categoryId: 'cat-epicerie' },
-    { id: 'art-cumin', name: 'Cumin moulu', unit: '100g', price: 2.2, image: '/images/no-img.png', description: 'Arôme chaud et terreux.', categoryId: 'cat-epicerie' },
-    { id: 'art-semoule', name: 'Semoule fine', unit: 'kg', price: 2.8, image: '/images/no-img.png', description: 'Couscous et pâtisseries.', categoryId: 'cat-epicerie' },
-    { id: 'art-huile-olive', name: 'Huile d’olive extra vierge', unit: 'litre', price: 8.9, image: '/images/no-img.png', description: 'Pression à froid.', categoryId: 'cat-epicerie' },
-  ]
-
-  for (const a of articles) {
-    await prisma.article.upsert({
-      where: { id: a.id },
-      update: {
-        name: a.name, unit: a.unit, price: a.price,
-        image: a.image, description: a.description, categoryId: a.categoryId,
+      {
+        id: "cat2",
+        name: "Agneau",
+        image:
+          "https://res.cloudinary.com/ddqrywesr/image/upload/v1743626541/hcutdkicydtpwwt5epcj.png",
+        featured: true,
+        description:
+          "Gigots savoureux, côtelettes tendres et épaule d'agneau pour vos plats mijotés.",
       },
-      create: a,
-    })
-  }
+      {
+        id: "cat3",
+        name: "Volaille",
+        image:
+          "https://res.cloudinary.com/ddqrywesr/image/upload/v1743627357/bq5g4kl4eka5b7s9gcih.png",
+        featured: true,
+        description:
+          "Poulet fermier, dinde, pintade et canard pour des recettes traditionnelles ou festives.",
+      },
+      {
+        id: "cat4",
+        name: "Épices",
+        image:
+          "https://res.cloudinary.com/ddqrywesr/image/upload/v1743632470/rn3bmgelf47dbfvm8mcn.png",
+        featured: true,
+        description:
+          "Un assortiment d'épices authentiques pour relever vos viandes et plats maison.",
+      },
+    ],
+    skipDuplicates: true,
+  });
 
-  // --- Codes promo
-  const promos = [
-    { id: 'promo10', code: 'BIENVENUE10', discount: 10, startDate: new Date(), endDate: new Date(Date.now() + 30*24*3600*1000), maxUses: 200, useCount: 0, active: true },
-    { id: 'promo20', code: 'EID20', discount: 20, startDate: new Date(), endDate: new Date(Date.now() + 15*24*3600*1000), maxUses: 50, useCount: 0, active: true },
-  ]
-  for (const p of promos) {
-    await prisma.promoCode.upsert({
-      where: { id: p.id },
-      update: { ...p },
-      create: p,
-    })
-  }
+  // Articles
+  await prisma.article.createMany({
+    data: [
+      {
+        id: "art1",
+        name: "Entrecôte de boeuf",
+        unit: "kg",
+        price: 39.9,
+        image: "/images/no-img.png",
+        description: "Entrecôte de boeuf maturée.",
+        categoryId: "cat1",
+      },
+      {
+        id: "art2",
+        name: "Steak haché",
+        unit: "kg",
+        price: 15.9,
+        image: "/images/no-img.png",
+        description: "Steak haché pur boeuf.",
+        categoryId: "cat1",
+      },
+      {
+        id: "art3",
+        name: "Boeuf à bourguignon",
+        unit: "kg",
+        price: 16.9,
+        image: "/images/no-img.png",
+        description: "Morceaux de boeuf pour bourguignon.",
+        categoryId: "cat1",
+      },
+      {
+        id: "art4",
+        name: "Côtelettes d'agneau",
+        unit: "kg",
+        price: 29.9,
+        image: "/images/no-img.png",
+        description: "Côtelettes d'agneau fraîches.",
+        categoryId: "cat2",
+      },
+      {
+        id: "art5",
+        name: "Gigot d'agneau",
+        unit: "kg",
+        price: 24.9,
+        image: "/images/no-img.png",
+        description: "Gigot d'agneau entier.",
+        categoryId: "cat2",
+      },
+      {
+        id: "art6",
+        name: "Poulet entier",
+        unit: "pièce",
+        price: 12.9,
+        image: "/images/no-img.png",
+        description: "Poulet fermier entier.",
+        categoryId: "cat3",
+      },
+      {
+        id: "art7",
+        name: "Escalopes de poulet",
+        unit: "kg",
+        price: 15.9,
+        image: "/images/no-img.png",
+        description: "Escalopes de poulet fraîches.",
+        categoryId: "cat3",
+      },
+      {
+        id: "art8",
+        name: "Mélange Ras el hanout",
+        unit: "100g",
+        price: 3.5,
+        image: "/images/no-img.png",
+        description: "Mélange d'épices traditionnel.",
+        categoryId: "cat4",
+      },
+      {
+        id: "art9",
+        name: "Cumin moulu",
+        unit: "100g",
+        price: 2.5,
+        image: "/images/no-img.png",
+        description: "Cumin moulu de qualité.",
+        categoryId: "cat4",
+      },
+      {
+        id: "art10",
+        name: "Semoule fine",
+        unit: "kg",
+        price: 3.9,
+        image: "/images/no-img.png",
+        description: "Semoule fine de qualité supérieure.",
+        categoryId: "cat4",
+      },
+      {
+        id: "art11",
+        name: "Huile d'olive",
+        unit: "litre",
+        price: 8.9,
+        image: "/images/no-img.png",
+        description: "Huile d'olive extra vierge.",
+        categoryId: "cat4",
+      },
+    ],
+    skipDuplicates: true,
+  });
 
-  // --- Admin (mot de passe haché)
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@bmarket.fr'
-  const adminPass = process.env.ADMIN_PASSWORD || 'ChangeMoi!2025'
-  const hashed = await bcrypt.hash(adminPass, 12)
+  // Promo codes
+  await prisma.promoCode.createMany({
+    data: [
+      {
+        id: "promo1",
+        code: "PROMO10",
+        discount: 10,
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        maxUses: 100,
+        useCount: 0,
+        active: true,
+      },
+      {
+        id: "promo2",
+        code: "PROMO20",
+        discount: 20,
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
+        maxUses: 50,
+        useCount: 0,
+        active: true,
+      },
+    ],
+    skipDuplicates: true,
+  });
 
-  await prisma.user.upsert({
-    where: { email: adminEmail },
-    update: { isAdmin: true },
-    create: {
-      id: 'user-admin',
-      firstname: 'Admin',
-      lastname: 'Bmarket',
-      email: adminEmail,
-      phone: '+33123456789',
-      password: hashed,
-      isAdmin: true,
-    },
-  })
+  // Users (passwords already bcrypt-hashed in SQL example)
+  const hashed = "$2a$12$LQV3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPHAF9fLJgJ2.";
+  await prisma.user.createMany({
+    data: [
+      {
+        id: "user1",
+        firstname: "Mohammed",
+        lastname: "Benali",
+        email: "mohammed.benali@example.com",
+        phone: "+33123456789",
+        password: hashed,
+        isAdmin: false,
+      },
+      {
+        id: "user2",
+        firstname: "Sarah",
+        lastname: "Dubois",
+        email: "sarah.dubois@example.com",
+        phone: "+33987654321",
+        password: hashed,
+        isAdmin: false,
+      },
+      {
+        id: "user3",
+        firstname: "Admin",
+        lastname: "User",
+        email: "admin@example.com",
+        phone: "+33123123123",
+        password: hashed,
+        isAdmin: true,
+      },
+    ],
+    skipDuplicates: true,
+  });
+
+  // Carts
+  await prisma.cart.createMany({
+    data: [
+      { id: "cart1", userId: "user1" },
+      { id: "cart2", userId: "user2" },
+    ],
+    skipDuplicates: true,
+  });
+
+  // Cart items
+  await prisma.cartItem.createMany({
+    data: [
+      { id: "ci1", cartId: "cart1", articleId: "art1", quantity: 2 },
+      { id: "ci2", cartId: "cart1", articleId: "art2", quantity: 1 },
+    ],
+    skipDuplicates: true,
+  });
+
+  // Orders (explicit IDs to mirror SQL)
+  await prisma.order.createMany({
+    data: [
+      {
+        id: 1,
+        userId: "user1",
+        total: 95.7,
+        status: "PENDING",
+        firstname: "Mohammed",
+        lastname: "Benali",
+        email: "mohammed.benali@example.com",
+        phone: "+33123456789",
+        promoCodeId: "promo1",
+      },
+      {
+        id: 2,
+        userId: "user2",
+        total: 47.85,
+        status: "COMPLETED",
+        firstname: "Sarah",
+        lastname: "Dubois",
+        email: "sarah.dubois@example.com",
+        phone: "+33987654321",
+        promoCodeId: "promo2",
+      },
+    ],
+    skipDuplicates: true,
+  });
+
+  // Order items (respect composite unique constraint)
+  await prisma.orderItem.createMany({
+    data: [
+      { id: "oi1", orderId: 1, articleId: "art1", quantity: 2, price: 39.9 },
+      { id: "oi2", orderId: 1, articleId: "art2", quantity: 1, price: 15.9 },
+      { id: "oi3", orderId: 2, articleId: "art2", quantity: 3, price: 15.9 },
+    ],
+    skipDuplicates: true,
+  });
 }
 
 main()
   .then(async () => {
-    console.log('✅ Seed terminé')
-    await prisma.$disconnect()
+    await prisma.$disconnect();
   })
-  .catch(async (e) => {
-    console.error('❌ Seed failed', e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
+  .catch(async (error) => {
+    console.error(error);
+    await prisma.$disconnect();
+    process.exit(1);
+  });
+
+
