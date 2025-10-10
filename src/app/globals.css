@@ -38,7 +38,7 @@ html {
 		--radius: 0.5rem;
 	}
 	.dark {
-		--background: 0 0% 8%;
+		--background: 240 10% 3.9%;
 		--foreground: 0 0% 95%;
 	  
 		--card: 0 0% 12%;
@@ -106,9 +106,6 @@ html {
 		@apply text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-tight;
 	}
 
-	.boucherie-card {
-		@apply bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden dark:bg-boucherie-black dark:border dark:border-boucherie-red/30;
-	}
 
 	.btn-primary {
 		@apply bg-boucherie-red text-white hover:bg-boucherie-red-light px-6 py-3 rounded-md font-semibold transition-all duration-300 shadow-md hover:shadow-lg;
@@ -139,18 +136,17 @@ html {
 	@apply bg-boucherie-black border border-boucherie-red/30 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden;
 }
 
-.boucherie-gradient-text {
-	@apply bg-clip-text text-transparent bg-red-gradient animate-shimmer bg-[length:200%_auto];
+.line-clamp-2 {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
 }
 
-.boucherie-section {
-	@apply bg-boucherie-black text-white;
+.line-clamp-3 {
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
 }
 
-.boucherie-button {
-	@apply bg-boucherie-red text-white hover:bg-boucherie-red-light px-6 py-3 rounded-md font-semibold transition-all duration-300 shadow-md hover:shadow-lg;
-}
-
-.boucherie-button-outline {
-	@apply bg-transparent text-boucherie-red hover:bg-boucherie-red/10 px-6 py-3 rounded-md font-semibold transition-all duration-300 border border-boucherie-red;
-}

@@ -5,7 +5,7 @@ import { GENERAL_INFO, MENU_ITEMS } from '@/constants';
 
 export function FooterSite() {
 	return (
-		<footer className="bg-boucherie-black text-white pt-20 pb-10 border-t border-boucherie-red/20">
+		<footer className="pt-20 pb-10 border-t ">
 			<div className="container-custom">
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
 					<div>

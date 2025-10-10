@@ -1,7 +1,7 @@
 # Allumer Docker avant d'exécuter cette commande
 # TODO: Ajouter les commande de migration et generation avec better auth
 start:
-	docker-compose up -d
+	docker-compose up -d postgres
 	npx prisma migrate reset
 	npx prisma migrate dev --name init
 	npx prisma generate
