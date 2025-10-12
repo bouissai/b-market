@@ -11,42 +11,42 @@ import {
 
 export default function ContactInfo() {
 	return (
-		<div className="boucherie-card p-8 shadow-salon">
-			<h2 className="heading-md mb-6 flex items-center">
-				<span className="w-8 h-0.5 bg-boucherie-red mr-2"></span>
+		<div className="p-8 shadow-salon">
+			<h2 className="mb-6 flex items-center">
+				<span className="w-8 h-0.5  mr-2"></span>
 				Nos Coordonnées
 			</h2>
 
 			<div className="space-y-6">
 				<div className="flex items-start">
-					<MapPin className="h-6 w-6 text-boucherie-red shrink-0 mt-0.5 mr-3" />
+					<MapPin className="h-6 w-6 shrink-0 mt-0.5 mr-3" />
 					<div>
 						<h3 className="font-semibold mb-1">Adresse</h3>
-						<p className="text-gray-400">{GENERAL_INFO.address}</p>
+						<p >{GENERAL_INFO.address}</p>
 					</div>
 				</div>
 
 				<div className="flex items-start">
-					<Phone className="h-6 w-6 text-boucherie-red shrink-0 mt-0.5 mr-3" />
+					<Phone className="h-6 w-6  shrink-0 mt-0.5 mr-3" />
 					<div>
 						<h3 className="font-semibold mb-1">Téléphone</h3>
-						<p className="text-gray-400">{GENERAL_INFO.phone}</p>
+						<p >{GENERAL_INFO.phone}</p>
 					</div>
 				</div>
 
 				<div className="flex items-start">
-					<Mail className="h-6 w-6 text-boucherie-red shrink-0 mt-0.5 mr-3" />
+					<Mail className="h-6 w-6  shrink-0 mt-0.5 mr-3" />
 					<div>
 						<h3 className="font-semibold mb-1">Email</h3>
-						<p className="text-gray-400">{GENERAL_INFO.email}</p>
+						<p >{GENERAL_INFO.email}</p>
 					</div>
 				</div>
 
 				<div className="flex items-start">
-					<Clock className="h-6 w-6 text-boucherie-red shrink-0 mt-0.5 mr-3" />
+					<Clock className="h-6 w-6  shrink-0 mt-0.5 mr-3" />
 					<div>
 						<h3 className="font-semibold mb-1">Horaires d&apos;ouverture</h3>
-						<div className="text-gray-400">
+						<div >
 							{GENERAL_INFO.openingHours.map((item, index) => (
 								<div key={index}>
 									<p>

@@ -18,7 +18,9 @@ VALUES ('cat1', 'Boeuf', 'https://res.cloudinary.com/ddqrywesr/image/upload/v174
        ('cat3', 'Volaille', 'https://res.cloudinary.com/ddqrywesr/image/upload/v1743627357/bq5g4kl4eka5b7s9gcih.png',
         true, 'Poulet fermier, dinde, pintade et canard pour des recettes traditionnelles ou festives.', NOW(), NOW()),
        ('cat4', 'Épices', 'https://res.cloudinary.com/ddqrywesr/image/upload/v1743632470/rn3bmgelf47dbfvm8mcn.png',
-        true, 'Un assortiment d''épices authentiques pour relever vos viandes et plats maison.', NOW(), NOW());
+        true, 'Un assortiment d''épices authentiques pour relever vos viandes et plats maison.', NOW(), NOW()),
+       ('cat5', 'Veau', 'https://res.cloudinary.com/ddqrywesr/image/upload/v1760002096/laglrvpk94jhc5xssyj3.png',
+        true, 'Nos viandes de veau et plats maison.', NOW(), NOW());
 
 -- Insérer des articles
 INSERT INTO "Article" (id, name, unit, price, image, description, "createdAt", "updatedAt", "categoryId")

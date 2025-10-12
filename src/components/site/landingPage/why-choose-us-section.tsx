@@ -1,97 +1,83 @@
-import { Award, Clock, ThumbsUp } from 'lucide-react';
-import Image from 'next/image';
-
-const features = [
-	{
-		icon: <Award className="h-8 w-8 text-boucherie-red" />,
-		title: 'Qualité Garantie',
-		description:
-			'Viandes sélectionnées avec soin, 100% halal et traçabilité garantie pour une qualité irréprochable.',
-		image: 'https://images.unsplash.com/photo-1551446591-142875a901a1?w=600&h=400&fit=crop&crop=focalpoint&auto=format&q=80',
-	},
-	{
-		icon: <ThumbsUp className="h-8 w-8 text-boucherie-red" />,
-		title: 'Savoir-faire Artisanal',
-		description:
-			'Nos bouchers expérimentés perpétuent un savoir-faire traditionnel depuis plus de 40 ans.',
-		image: 'https://images.unsplash.com/photo-1542528180-a1208c5169a5?w=600&h=400&fit=crop&crop=focalpoint&auto=format&q=80',
-	},
-	{
-		icon: <Clock className="h-8 w-8 text-boucherie-red" />,
-		title: 'Service Personnalisé',
-		description:
-			'Conseils sur mesure, découpes spéciales et préparations adaptées à vos besoins.',
-		image: 'https://images.unsplash.com/photo-1588168333986-5078d3ae3976?w=600&h=400&fit=crop&crop=focalpoint&auto=format&q=80',
-	},
-];
+import { Award, Heart, Users } from 'lucide-react';
+import { AnimatedSection } from '../animations/animated-section';
 
 export function WhyChooseUsSection() {
-	return (
-		<section className="section-padding bg-gray-950">
-			<div className="container-custom">
-				<div className="text-center mb-16">
-					<h2 className="heading-lg mb-4 text-white font-playfair">
-						Pourquoi Choisir B Market ?
-					</h2>
-					<p className="text-xl text-gray-400 max-w-3xl mx-auto">
-						Découvrez ce qui fait la différence de notre boucherie
-						artisanale depuis 1982.
-					</p>
-				</div>
+  return (
+    <section className="py-12 relative">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-muted/20 via-transparent to-transparent" />
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-20 items-center">
+            {/* Visual Left */}
+            <AnimatedSection className="order-2 lg:order-1">
+              <div className="relative h-[500px] rounded-lg overflow-hidden border border-border/30">
+                <img
+                  src="./images/pourquoi-choisir.png"
+                  alt="Pourquoi nous choisir"
+                  className="object-cover"
+                  style={{ objectFit: 'cover' }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
+              </div>
+            </AnimatedSection>
 
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-					{features.map((feature, index) => (
-						<div
-							key={index}
-							className="boucherie-card overflow-hidden group hover-lift">
-							<div className="relative h-48">
+            {/* Content Right */}
+            <AnimatedSection delay={200} className="order-1 lg:order-2">
+              <div className="space-y-12">
+                <div>
+                  <h2 className="text-sm font-light text-muted-foreground tracking-widest uppercase mb-6">
+                    Notre engagement
+                  </h2>
+                  <h3 className="text-4xl md:text-5xl font-light text-foreground tracking-tight leading-tight">
+                    Pourquoi choisir Bmarket ?
+                  </h3>
+                </div>
 
+                <div className="space-y-10">
+                  <div className="flex gap-6">
+                    <div className="flex-shrink-0">
+                      <Award className="w-10 h-10 text-foreground" />
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="text-xl font-light text-foreground">Qualité garantie</h4>
+                      <p className="text-muted-foreground font-light leading-relaxed">
+                        Nous sélectionnons rigoureusement nos viandes auprès d&apos;éleveurs locaux certifiés. Traçabilité
+                        totale de la ferme à votre assiette.
+                      </p>
+                    </div>
+                  </div>
 
-									<Image
-										src={feature.image || '/placeholder.svg'}
-										alt={feature.title}
-										fill
-										className="object-cover transition-transform duration-300 group-hover:scale-105  border border-boucherie-black "
-									/>
-									<div className="absolute inset-0 bg-gradient-to-t from-boucherie-black/90 to-transparent transition-transform duration-300 group-hover:scale-105"></div>
-								<div className="absolute bottom-4 left-4 right-4">
-									<div className="flex items-center">
-										<div className="p-2 bg-boucherie-black/90 border border-boucherie-red/30 rounded-full mr-3">
-											{feature.icon}
-										</div>
-										<h3 className="text-xl font-bold text-white">
-											{feature.title}
-										</h3>
-									</div>
-								</div>
-							</div>
-							<div className="p-6">
-								<p className="text-gray-400">{feature.description}</p>
-							</div>
-						</div>
-					))}
-				</div>
+                  <div className="flex gap-6">
+                    <div className="flex-shrink-0">
+                      <Users className="w-10 h-10 text-foreground" />
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="text-xl font-light text-foreground">Savoir-faire artisanal</h4>
+                      <p className="text-muted-foreground font-light leading-relaxed">
+                        Nos bouchers passionnés perpétuent les techniques traditionnelles de découpe et de préparation
+                        depuis trois générations.
+                      </p>
+                    </div>
+                  </div>
 
-				<div className="mt-16 text-center">
-					<a
-						href="/contact"
-						className="inline-flex items-center text-boucherie-red font-semibold hover:text-boucherie-red-light transition-colors">
-						Contactez-nous pour en savoir plus
-						<svg
-							className="ml-2 w-4 h-4"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-							xmlns="http://www.w3.org/2000/svg">
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth="2"
-								d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-						</svg>
-					</a>
-				</div>
-			</div>
-		</section>
-	);
+                  <div className="flex gap-6">
+                    <div className="flex-shrink-0">
+                      <Heart className="w-10 h-10 text-foreground" />
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="text-xl font-light text-foreground">Service personnalisé</h4>
+                      <p className="text-muted-foreground font-light leading-relaxed">
+                        Conseils sur mesure, découpes personnalisées et recommandations culinaires pour sublimer
+                        chaque pièce de viande.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </AnimatedSection>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }

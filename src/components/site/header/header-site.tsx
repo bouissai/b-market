@@ -47,7 +47,7 @@ export function HeaderSite() {
 								className="rounded-full object-cover bg-boucherie-red text-white"
 							/>
 						</div>
-						<span className="lg:text-2xl text-lg font-bold gradient-text font-playfair ">
+						<span className="lg:text-2xl text-lg font-bold font-playfair ">
 							B Market
 						</span>
 					</Link>

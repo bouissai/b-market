@@ -10,20 +10,16 @@ export default function Produits() {
 	return (
 		<div className="">
 			{/* Hero section */}
-			<section className="bg-muted/30 py-4 box-border">
-				<div className="container mx-auto px-4">
-					<div className="max-w-3xl">
-						<h1 className="text-3xl md:text-4xl font-bold mb-4">
-							Nos Produits
-						</h1>
-						<p className="text-muted-foreground mb-6">
-							Découvrez notre sélection de recettes délicieuses préparées
-							avec nos viandes de qualité. De l&apos;entrée au plat principal,
-							pour le quotidien ou pour vos événements spéciaux.
-						</p>
-					</div>
+			<header className="border-b border-border/50">
+				<div className="container mx-auto px-6 py-12 md:py-10">
+					<h1 className="font-sans text-4xl md:text-6xl lg:text-7xl font-light text-foreground text-center tracking-tight leading-tight">
+						Nos produits
+					</h1>
+					<p className="text-muted-foreground text-center mt-4 md:mt-6 text-base md:text-lg max-w-2xl mx-auto font-light tracking-wide">
+						Viandes de qualité supérieure, sélectionnées avec soin
+					</p>
 				</div>
-			</section>
+			</header>
 
 			{/* Tabs section */}
 			<section className="py-12 box-border">

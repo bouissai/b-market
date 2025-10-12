@@ -72,7 +72,7 @@ export default function ProductListing() {
 					  }
 					`}
 				>
-					Tout
+					Tous les produits
 				</button>
 				{categories.map((category) => (
 				<button

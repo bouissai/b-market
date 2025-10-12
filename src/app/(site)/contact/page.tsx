@@ -1,3 +1,4 @@
+import { AnimatedSection } from '@/components/site/animations/animated-section';
 import { ContactForm } from '@/components/site/contact/contact-form';
 import ContactInfo from '@/components/site/contact/contact-info';
 import { MapComponent } from '@/components/site/map-component';
@@ -5,25 +6,29 @@ import { MapComponent } from '@/components/site/map-component';
 export default function ContactPage() {
 	return (
 		<>
-			<div className="pt-5 pb-11">
-				<div className="container-custom">
-					<h1 className="heading-xl text-white text-center m-4">
-						Contactez-nous
+			<header className="border-b border-border/50">
+				<div className="container mx-auto px-6 py-12 md:py-10">
+					<h1 className="font-sans text-4xl md:text-6xl lg:text-7xl font-light text-foreground text-center tracking-tight leading-tight">
+					Contactez-nous
 					</h1>
-					<p className="text-xl text-white/90 text-center max-w-2xl mx-auto">
-						Nous sommes à votre disposition pour répondre à toutes vos
-						questions concernant nos produits et services.
+					<p className="text-muted-foreground text-center mt-4 md:mt-6 text-base md:text-lg max-w-2xl mx-auto font-light tracking-wide">
+					Nous sommes à votre disposition pour répondre à toutes vos
+					questions concernant nos produits et services.					
 					</p>
 				</div>
-			</div>
-			<div className="container-custom mb-20">
+			</header>
+			<div className="mb-20">
 				<div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
 					<ContactInfo />
 					<ContactForm />
 				</div>
-				<div className="mt-20">
-					<h2 className="heading-md mb-6">Nous trouver</h2>
-					<MapComponent />
+				<div className='p-8'>
+					
+				<AnimatedSection delay={200}>
+					<div className="relative h-[300px] lg:h-[400px] bg-muted/30 rounded-lg overflow-hidden border border-border/30 shadow-2xl">
+						<MapComponent></MapComponent>
+					</div>
+				</AnimatedSection>
 				</div>
 			</div>
 		</>
