@@ -4,6 +4,7 @@ import { HeroEvent } from '@/components/site/events/hero-events';
 import { IntroEvent } from '@/components/site/events/intro-events';
 import { ProcessEvents } from '@/components/site/events/process-event';
 import { ServiceEvents } from '@/components/site/events/service-events';
+import { SectionSeparator } from '@/components/site/section-separator';
 import { TestimonialsSection } from '@/components/site/testimonials-section';
 import { eventTypes } from '@/constants';
 
@@ -23,27 +24,33 @@ export default function EventsPage() {
 				<HeroEvent />
 			</section>
 
-			<section className="py-16 bg-muted/30">
+			<section className="bg-muted/30 py-6">
 				<IntroEvent />
 			</section>
 
-			<section className="py-16">
+			<SectionSeparator variant="wave-reverse" />
+			<section id="services" className="py-16">
 				<ServiceEvents eventTypes={eventTypes} />
 			</section>
-
-			<section className="py-16 bg-muted/30">
+			<SectionSeparator variant="diagonal" />
+			<section className="py-16">
 				<ProcessEvents />
 			</section>
+			<SectionSeparator variant="wave" />
 
-			<section className="py-16">
+			<section className="py-16  bg-muted/30">
 				<TestimonialsSection />
 			</section>
+			
+			<SectionSeparator variant="diagonal" />
 
 			<section className="py-16">
 				<ContactEvents />
 			</section>
 
-			<section className="py-16 bg-primary/10">
+			<SectionSeparator variant="wave" />
+
+			<section className="py-16 bg-muted/30">
 				<CtaEvents />
 			</section>
 		</div>

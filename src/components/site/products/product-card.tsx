@@ -1,6 +1,7 @@
 import { Loading } from '@/components/loading';
 import { Button } from '@/components/ui/button';
 import { ArticleGetDto } from '@/types/article';
+import { Loader2, ShoppingBag } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 
@@ -28,18 +29,24 @@ export function ProductCard({ article, onAddToCart }: ProductCardProps) {
 				</h3>
 				<p className="text-sm text-muted-foreground font-light line-clamp-2 leading-relaxed">{article.description}</p>
 				<div className="flex items-baseline gap-2 pt-1">
-					<span className="text-xl md:text-2xl font-light text-foreground tracking-wide">{article.price}€</span>
-					<span className="text-sm text-muted-foreground font-light">/ {article.unit}</span>
-					<Button
-						disabled={isLoadingAddCartItem}
-						onClick={() => {
-							setIslLoadingAddCartItem(true);
-							onAddToCart(article).finally(() =>
-								setIslLoadingAddCartItem(false),
-							);
-						}}>
-						{isLoadingAddCartItem ? <Loading /> : 'Ajouter au panier'}
-					</Button>
+					<div>
+						<span className="text-xl md:text-2xl font-light text-foreground tracking-wide">{article.price}€</span>
+						<span className="text-sm text-muted-foreground font-light">/ {article.unit}</span>
+					</div>
+					<div className='flex'>
+						<Button
+							disabled={isLoadingAddCartItem}
+							onClick={() => {
+								setIslLoadingAddCartItem(true);
+								onAddToCart(article).finally(() =>
+									setIslLoadingAddCartItem(false),
+								);
+							}}>
+							{isLoadingAddCartItem ? <Loader2 className="h-8 w-8 animate-spin" /> : <ShoppingBag />}
+						</Button>
+
+
+					</div>
 				</div>
 
 			</div>

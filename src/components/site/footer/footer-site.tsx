@@ -1,14 +1,14 @@
-import Link from 'next/link';
-import { Facebook, Instagram, MapPin, Phone, Mail, Clock } from 'lucide-react';
-import Image from 'next/image';
-import { GENERAL_INFO, MENU_ITEMS } from '@/constants';
 import { Button } from '@/components/ui/button';
+import { GENERAL_INFO } from '@/constants';
+import { Clock, Facebook, Instagram, Mail, MapPin, Phone } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export function FooterSite() {
 	return (
-		<footer className="pt-20 pb-10 border-t ">
-			<div className="container-custom">
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+		<footer className="px-8 pt-20 pb-10 border-t ">
+			<div>
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16">
 					<div>
 						<div className="flex items-center mb-6">
 							<Link
@@ -35,39 +35,27 @@ export function FooterSite() {
 						</p>
 						<div className="flex space-x-4">
 							<a
-								href="https://instagram.com"
+								href="https://www.instagram.com/bmarket_38/?hl=fr"
 								target="_blank"
-								rel="noopener noreferrer">
-								<Instagram className="h-6 w-6" />
+								rel="noopener noreferrer"
+								className="p-2 rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+								aria-label="Instagram">
+								<Instagram className="h-5 w-5" />
 							</a>
 							<a
-								href="https://facebook.com"
+								href="https://www.facebook.com/boucherieimene/?locale=fr_FR"
 								target="_blank"
-								rel="noopener noreferrer">
-								<Facebook className="h-6 w-6" />
+								rel="noopener noreferrer"
+								className="p-2 rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+								aria-label="Facebook">
+								<Facebook className="h-5 w-5" />
 							</a>
 						</div>
 					</div>
 
 					<div>
 						<h3 className="text-lg font-semibold mb-6 flex items-center">
-							<span className="w-8 h-0.5  mr-3"></span>
-							Liens Rapides
-						</h3>
-						<ul className="space-y-3">
-							{MENU_ITEMS.map(item => (
-								<li key={item.href}>
-									<Link href={item.href}>
-										{item.label}
-									</Link>
-								</li>
-							))}
-						</ul>
-					</div>
-
-					<div>
-						<h3 className="text-lg font-semibold mb-6 flex items-center">
-							<span className="w-8 h-0.5  mr-3"></span>
+							<span className="w-8 h-0.5  mr-3 bg-primary"></span>
 							Nous Contacter
 						</h3>
 						<ul className="space-y-4">
@@ -94,7 +82,7 @@ export function FooterSite() {
 
 					<div>
 						<h3 className="text-lg font-semibold mb-6 flex items-center">
-							<span className="w-8 h-0.5  mr-3"></span>
+							<span className="w-8 h-0.5 mr-3 bg-primary"></span>
 							Horaires d&apos;Ouverture
 						</h3>
 						<ul className="space-y-3">

@@ -11,9 +11,9 @@ import {
 
 export default function ContactInfo() {
 	return (
-		<div className="p-8 shadow-salon">
+		<div className="space-y-6 bg-background p-6 rounded-lg shadow-sm border">
 			<h2 className="mb-6 flex items-center">
-				<span className="w-8 h-0.5  mr-2"></span>
+				<span className="w-8 h-0.5 mr-2 bg-primary"></span>
 				Nos Coordonnées
 			</h2>
 
@@ -59,32 +59,24 @@ export default function ContactInfo() {
 				</div>
 			</div>
 
-			<div className="mt-8 pt-6 border-t border-gray-800">
+			<div className="mt-8 pt-6 border-t border-primary">
 				<h3 className="font-semibold mb-3">Suivez-nous</h3>
 				<div className="flex space-x-4">
 					<a
-						href="https://instagram.com"
+						href="https://www.instagram.com/bmarket_38/?hl=fr"
 						target="_blank"
 						rel="noopener noreferrer"
-						className="bg-gray-900 p-2 rounded-full hover:bg-boucherie-red hover:text-white transition-colors"
+						className="p-2 rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
 						aria-label="Instagram">
 						<Instagram className="h-5 w-5" />
 					</a>
 					<a
-						href="https://facebook.com"
+						href="https://www.facebook.com/boucherieimene/?locale=fr_FR"
 						target="_blank"
 						rel="noopener noreferrer"
-						className="bg-gray-900 p-2 rounded-full hover:bg-boucherie-red hover:text-white transition-colors"
+						className="p-2 rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
 						aria-label="Facebook">
 						<Facebook className="h-5 w-5" />
-					</a>
-					<a
-						href="https://twitter.com"
-						target="_blank"
-						rel="noopener noreferrer"
-						className="bg-gray-900 p-2 rounded-full hover:bg-boucherie-red hover:text-white transition-colors"
-						aria-label="Twitter">
-						<Twitter className="h-5 w-5" />
 					</a>
 				</div>
 			</div>

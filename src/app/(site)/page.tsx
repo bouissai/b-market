@@ -14,11 +14,11 @@ export default function Home() {
 			<ServicesOverviewSection />
 			<SectionSeparator variant="diagonal" />
 			<WhyChooseUsSection />
-			<SectionSeparator />
-			<ProductsShowcaseSection />
 			<SectionSeparator  variant="wave"/>
+			<ProductsShowcaseSection />
+			<SectionSeparator variant='diagonal'/>
 			<TestimonialsSection/>
-			<SectionSeparator  variant="diagonal"/>
+			<SectionSeparator  variant="wave"/>
 			<CTASection />
 		</div>
 	);

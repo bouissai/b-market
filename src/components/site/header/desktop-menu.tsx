@@ -17,8 +17,8 @@ export function DesktopMenu({ goTo }: { goTo: (href: string) => void }) {
 						onClick={() => goTo(item.href)}
 						className={`px-4 py-2 rounded-md text-sm font-medium transition-colors hover:scale-105 transform ${
 							pathname === item.href
-								? 'text-boucherie-white bg-boucherie-red shadow-md'
-								: 'text-boucherie-white hover:bg-boucherie-red'
+								? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md'
+								: 'hover:text-primary-foreground hover:bg-primary/70 shadow-md'
 						}`}>
 						{item.label}
 					</Link>

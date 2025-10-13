@@ -1,4 +1,4 @@
-export function SectionSeparator({ variant = "default" }: { variant?: "default" | "wave" | "diagonal" }) {
+export function SectionSeparator({ variant = "default" }: { variant?: "default" | "wave" | "wave-reverse" | "diagonal" }) {
     if (variant === "wave") {
       return (
         <div className="relative h-24 overflow-hidden">
@@ -18,6 +18,26 @@ export function SectionSeparator({ variant = "default" }: { variant?: "default" 
         </div>
       )
     }
+
+  if (variant === "wave-reverse") {
+    return (
+      <div className="relative h-24 overflow-hidden">
+        <svg
+          className="absolute bottom-0 w-full h-24 transform -scale-y-100"
+          viewBox="0 0 1200 120"
+          preserveAspectRatio="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M0,0 C300,80 600,80 900,40 C1050,20 1150,0 1200,0 L1200,120 L0,120 Z" className="fill-muted/20" />
+          <path
+            d="M0,20 C300,100 600,100 900,60 C1050,40 1150,20 1200,20 L1200,120 L0,120 Z"
+            className="fill-muted/10"
+            opacity="0.5"
+          />
+        </svg>
+      </div>
+    )
+  }
   
     if (variant === "diagonal") {
       return (

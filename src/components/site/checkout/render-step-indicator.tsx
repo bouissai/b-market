@@ -16,11 +16,11 @@ export default function RenderStepIndicator({
 						<div
 							className={`flex h-12 w-12 flex-col items-center justify-center rounded-full border-2 ${
 								currentStep === step.key
-									? 'border-boucherie-red bg-boucherie-red text-boucherie-white'
+									? 'border-accent bg-accent text-primary-foreground'
 									: CHECKOUT_STEPS.findIndex(
 												s => s.key === currentStep,
 										  ) > index
-										? 'border-boucherie-red  bg-boucherie-red text-boucherie-white'
+										? 'border-accent bg-accent text-primary-foreground'
 										: 'border-gray-700 text-gray-500'
 							}`}>
 							{CHECKOUT_STEPS.findIndex(s => s.key === currentStep) >
@@ -36,7 +36,7 @@ export default function RenderStepIndicator({
 						<div
 							className={`ml-2 text-sm font-medium ${
 								currentStep === step.key
-									? 'text-boucherie-red font-bold'
+									? 'text-accent font-bold'
 									: 'text-gray-500'
 							}`}>
 							{step.title}
@@ -47,7 +47,7 @@ export default function RenderStepIndicator({
 									CHECKOUT_STEPS.findIndex(
 										s => s.key === currentStep,
 									) > index
-										? 'bg-boucherie-red '
+										? 'bg-accent'
 										: 'bg-gray-700'
 								}`}
 							/>

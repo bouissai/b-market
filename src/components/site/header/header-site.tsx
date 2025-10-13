@@ -1,13 +1,13 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
-import { Menu, X } from 'lucide-react';
-import { MobileMenu } from './mobile-menu';
-import { DesktopMenu } from './desktop-menu';
 import { Button } from '@/components/ui/button';
+import { Menu, X } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { Cart } from './cart';
+import { DesktopMenu } from './desktop-menu';
+import { MobileMenu } from './mobile-menu';
 import { ProfileButton } from './profile-button';
 
 export function HeaderSite() {
@@ -28,23 +28,22 @@ export function HeaderSite() {
 
 	return (
 		<header
-			className={`sticky top-0 w-full z-50 transition-all duration-300 animate-fadeIn ${
-				isScrolled
+			className={`sticky px-4 top-0 w-full z-50 transition-all duration-300 animate-fadeIn ${isScrolled
 					? 'backdrop-blur-md py-2'
 					: 'bg-transparent py-4'
-			}`}>
-			<div className="container-custom">
+				}`}>
+			<div>
 				<div className="flex items-center justify-between">
 					<Link
 						href="/"
 						className="flex items-center space-x-2 transition-transform hover:scale-105">
-						<div className="w-12 h-12 rounded-full overflow-hidden border border-boucherie-red/50">
+						<div className="w-12 h-12 rounded-full overflow-hidden border border-primary/50">
 							<Image
 								src="/images/logo.png"
 								alt="B Market Logo"
 								width={48}
 								height={48}
-								className="rounded-full object-cover bg-boucherie-red text-white"
+								className="rounded-full object-cover bg-primary"
 							/>
 						</div>
 						<span className="lg:text-2xl text-lg font-bold font-playfair ">
@@ -61,7 +60,7 @@ export function HeaderSite() {
 						</div>
 						<Button
 							size="icon"
-							className="lg:hidden bg-boucherie-red text-white hover:bg-boucherie-red-light"
+							className="lg:hidden"
 							onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
 							aria-label="Toggle menu">
 							{isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}

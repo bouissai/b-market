@@ -49,7 +49,7 @@ export function ProductsShowcaseSection() {
 						size="lg"
 						className="text-base px-8 py-6 h-auto bg-background/50 backdrop-blur"
 					>
-						<Link href="/produits" className="flex items-center gap-2">
+						<Link href="/products" className="flex items-center gap-2">
 							Voir tous les produits
 							<ArrowRight className="w-5 h-5" />
 						</Link>

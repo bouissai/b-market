@@ -29,9 +29,9 @@ export function HeroSection() {
           <Button
             asChild
             size="lg"
-            className="bg-accent text-accent-foreground hover:bg-accent/90 text-base px-8 py-6 h-auto"
+            variant='accent'
           >
-            <Link href="/produits" className="flex items-center gap-2">
+            <Link href="/products" className="flex items-center gap-2">
               Commander maintenant
               <ArrowRight className="w-5 h-5" />
             </Link>
