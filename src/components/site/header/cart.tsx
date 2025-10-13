@@ -49,7 +49,7 @@ export const Cart = ({ className = '' }: CartProps) => {
 				className={`relative ${className}`}>
 				<Sheet open={open} onOpenChange={setOpen}>
 					<SheetTrigger asChild>
-						<Button variant="ghost" size="icon" className="relative">
+						<Button variant="link" size="icon" className="relative">
 							<ShoppingBag className="h-5 w-5" />
 							<AnimatePresence>
 								{totalCartItems > 0 && (
@@ -57,7 +57,7 @@ export const Cart = ({ className = '' }: CartProps) => {
 										key={totalCartItems}
 										initial={{ scale: 0.6, opacity: 0 }}
 										animate={{ scale: 1, opacity: 1 }}
-										className="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-primary rounded-full">
+										className="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-xs font-bold text-accent-foreground bg-accent rounded-full">
 										{totalCartItems}
 									</motion.div>
 								)}

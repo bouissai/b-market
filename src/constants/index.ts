@@ -48,7 +48,7 @@ export const CHECKOUT_STEPS = [
 export const GENERAL_INFO = {
 	address: '39 Avenue du Vercors, 38600 Fontaine',
 	phone: '04 38 86 15 65',
-	email: 'bouissailyass@gmail.com',
+	email: 'contact@bmarket.fr',
 	openingHours: [
 		{
 			days: 'Mardi - Dimanche',

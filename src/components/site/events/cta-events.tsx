@@ -4,7 +4,7 @@ import Link from "next/link";
 export function CtaEvents() {
     return (
         <>
-            <div className="container mx-auto px-4 text-center">
+            <div className="container mx-auto px-4 text-center ">
                 <h2 className="text-3xl font-bold mb-4">
                     Prêt à organiser votre événement ?
                 </h2>
@@ -16,7 +16,7 @@ export function CtaEvents() {
                     <Button asChild size="lg">
                         <Link href="#contact">Demander un devis</Link>
                     </Button>
-                    <Button asChild variant="outline" size="lg">
+                    <Button asChild variant="secondary" size="lg">
                         <Link href="tel:0438861565">Nous appeler</Link>
                     </Button>
                 </div>

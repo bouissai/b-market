@@ -18,13 +18,15 @@ VALUES ('cat1', 'Boeuf', 'https://res.cloudinary.com/ddqrywesr/image/upload/v174
        ('cat3', 'Volaille', 'https://res.cloudinary.com/ddqrywesr/image/upload/v1743627357/bq5g4kl4eka5b7s9gcih.png',
         true, 'Poulet fermier, dinde, pintade et canard pour des recettes traditionnelles ou festives.', NOW(), NOW()),
        ('cat4', 'Épices', 'https://res.cloudinary.com/ddqrywesr/image/upload/v1743632470/rn3bmgelf47dbfvm8mcn.png',
-        true, 'Un assortiment d''épices authentiques pour relever vos viandes et plats maison.', NOW(), NOW());
+        true, 'Un assortiment d''épices authentiques pour relever vos viandes et plats maison.', NOW(), NOW()),
+       ('cat5', 'Veau', 'https://res.cloudinary.com/ddqrywesr/image/upload/v1760002096/laglrvpk94jhc5xssyj3.png',
+        true, 'Nos viandes de veau et plats maison.', NOW(), NOW());
 
 -- Insérer des articles
 INSERT INTO "Article" (id, name, unit, price, image, description, "createdAt", "updatedAt", "categoryId")
 VALUES
     -- Boeuf
-    ('art1', 'Entrecôte de boeuf', 'kg', 39.90, '/images/no-img.png', 'Entrecôte de boeuf maturée.', NOW(), NOW(),
+    ('art1', 'Entrecôte de boeuf', 'kg', 39.90, 'https://res.cloudinary.com/ddqrywesr/image/upload/v1760002156/g7xdahozfjf37yzmkiri.png', 'Entrecôte de boeuf maturée.', NOW(), NOW(),
      'cat1'),
     ('art2', 'Steak haché', 'kg', 15.90, '/images/no-img.png', 'Steak haché pur boeuf.', NOW(), NOW(), 'cat1'),
     ('art3', 'Boeuf à bourguignon', 'kg', 16.90, '/images/no-img.png', 'Morceaux de boeuf pour bourguignon.', NOW(),
@@ -55,22 +57,9 @@ VALUES ('user1', 'Mohammed', 'Benali', 'mohammed.benali@example.com', '+33123456
        ('user3', 'Admin', 'User', 'admin@example.com', '+33123123123', '$2a$12$LQV3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPHAF9fLJgJ2.', true, NOW(), NOW());
 
 -- Insérer les paniers
-INSERT INTO "Cart" (id, "userId", "createdAt", "updatedAt")
-VALUES ('cart1', 'user1', NOW(), NOW()),
-       ('cart2', 'user2', NOW(), NOW());
-
--- Insérer des articles dans les paniers
-INSERT INTO "CartItem" (id, "cartId", "articleId", quantity, "createdAt")
-VALUES ('ci1', 'cart1', 'art1', 2, NOW()),
-       ('ci2', 'cart1', 'art2', 1, NOW());
-
 -- Insérer des commandes
 INSERT INTO "Order" (id, "userId", total, status, "createdAt", "updatedAt", firstname, lastname, email, phone, "promoCodeId")
 VALUES (1, 'user1', 95.70, 'PENDING', NOW(), NOW(), 'Mohammed', 'Benali', 'mohammed.benali@example.com', '+33123456789', 'promo1'),
        (2, 'user2', 47.85, 'COMPLETED', NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day', 'Sarah', 'Dubois', 'sarah.dubois@example.com', '+33987654321', 'promo2');
 
 -- Insérer des articles dans les commandes
-INSERT INTO "OrderItem" (id, "orderId", "articleId", quantity, price)
-VALUES ('oi1', 1, 'art1', 2, 39.90),
-       ('oi2', 1, 'art2', 1, 15.90),
-       ('oi3', 2, 'art2', 3, 15.90);
