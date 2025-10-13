@@ -1,11 +1,10 @@
 "use client"
 import { Button } from '@/components/ui/button';
 import { useCategoryStore } from '@/store/useCategoryStore';
-import Image from 'next/image';
+import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { AnimatedSection } from '../animations/animated-section';
-import { ArrowRight } from 'lucide-react';
 import { CategoryCard } from './category-card';
 
 
@@ -32,6 +31,7 @@ export function ProductsShowcaseSection() {
 				<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
 					{featuredCategories.map(category => (
 						<CategoryCard
+							key={category.id}
 							title={category.name}
 							image={category.image}
 							href={`/products#${category.name.toLowerCase()}`}

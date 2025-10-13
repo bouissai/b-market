@@ -1,9 +1,11 @@
 'use client';
 import { useEffect, useState } from 'react';
 
-import { Button } from '@/components/ui/button';
+import { ProductCard } from '@/components/site/products/product-card';
 import { useArticleStore } from '@/store/useArticleStore';
+import { useCartStore } from '@/store/useCartStore';
 import { useCategoryStore } from '@/store/useCategoryStore';
+import { Loading } from '../../loading';
 import {
 	Pagination,
 	PaginationContent,
@@ -12,9 +14,6 @@ import {
 	PaginationNext,
 	PaginationPrevious,
 } from '../../ui/pagination';
-import { Loading } from '../../loading';
-import { useCartStore } from '@/store/useCartStore';
-import { ProductCard } from '@/components/site/products/product-card';
 
 const MAX_ARTICLES_PER_PAGE = 9;
 
@@ -59,37 +58,35 @@ export default function ProductListing() {
 			{/* Category filter buttons */}
 			<div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-border/30">
 				<div className="container mx-auto px-6 py-6">
-				<div className="flex gap-8 overflow-x-auto pb-2 scrollbar-hide justify-center">
-				{/* Bouton "Tout" pour afficher tous les articles */}
-				<button
-					onClick={() => setSelectedCategory(null, null)}
-					className={`
+					<div className="flex gap-8 overflow-x-auto pb-2 scrollbar-hide justify-center">
+						{/* Bouton "Tout" pour afficher tous les articles */}
+						<button
+							onClick={() => setSelectedCategory(null, null)}
+							className={`
 					  whitespace-nowrap text-sm md:text-base font-light tracking-wide transition-all duration-300
-					  ${
-						selectedCategory === null
-						  ? "text-foreground border-b-2 border-foreground pb-1"
-						  : "text-muted-foreground hover:text-foreground pb-1"
-					  }
+					  ${selectedCategory === null
+									? "text-foreground border-b-2 border-foreground pb-1"
+									: "text-muted-foreground hover:text-foreground pb-1"
+								}
 					`}
-				>
-					Tous les produits
-				</button>
-				{categories.map((category) => (
-				<button
-				key={category.id}
-				onClick={() => setSelectedCategory(category,null)}
-				className={`
+						>
+							Tous les produits
+						</button>
+						{categories.map((category) => (
+							<button
+								key={category.id}
+								onClick={() => setSelectedCategory(category, null)}
+								className={`
 				  whitespace-nowrap text-sm md:text-base font-light tracking-wide transition-all duration-300
-				  ${
-					selectedCategory?.id === category.id
-					  ? "text-foreground border-b-2 border-foreground pb-1"
-					  : "text-muted-foreground hover:text-foreground pb-1"
-				  }
+				  ${selectedCategory?.id === category.id
+										? "text-foreground border-b-2 border-foreground pb-1"
+										: "text-muted-foreground hover:text-foreground pb-1"
+									}
 				`}
-			  >
-				{category.name}
-			  </button>
-				))}
+							>
+								{category.name}
+							</button>
+						))}
 					</div>
 				</div>
 			</div>

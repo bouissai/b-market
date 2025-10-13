@@ -13,15 +13,21 @@ interface AnimatedSectionProps {
 export function AnimatedSection({ children, className = "", delay = 0 }: AnimatedSectionProps) {
   const [isVisible, setIsVisible] = useState(false)
   const sectionRef = useRef<HTMLDivElement>(null)
+  const timeoutIdRef = useRef<number | null>(null)
 
   useEffect(() => {
+    const node = sectionRef.current
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setTimeout(() => {
+            // Plan the reveal with an optional delay and stop observing afterwards
+            timeoutIdRef.current = window.setTimeout(() => {
               setIsVisible(true)
             }, delay)
+
+            observer.unobserve(entry.target)
           }
         })
       },
@@ -31,13 +37,17 @@ export function AnimatedSection({ children, className = "", delay = 0 }: Animate
       },
     )
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current)
+    if (node) {
+      observer.observe(node)
     }
 
     return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current)
+      if (node) {
+        observer.unobserve(node)
+      }
+      if (timeoutIdRef.current !== null) {
+        window.clearTimeout(timeoutIdRef.current)
+        timeoutIdRef.current = null
       }
     }
   }, [delay])

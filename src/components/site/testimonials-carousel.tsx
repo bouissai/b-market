@@ -22,7 +22,7 @@ export function TestimonialsCarousel({ reviews }: ReviewProps) {
     }, 5000)
 
     return () => clearInterval(interval)
-  }, [isAutoPlaying])
+  }, [isAutoPlaying, reviews.length])
 
   const goToPrevious = () => {
     setIsAutoPlaying(false)
@@ -42,7 +42,7 @@ export function TestimonialsCarousel({ reviews }: ReviewProps) {
         <Quote className="w-12 h-12 text-muted-foreground/30 mb-8" />
 
         <blockquote className="text-xl md:text-2xl font-light text-foreground leading-relaxed mb-8 text-balance">
-          "{currentTestimonial.quote}"
+          &quot;{currentTestimonial.quote}&quot;
         </blockquote>
 
         <div className="flex items-center justify-between">

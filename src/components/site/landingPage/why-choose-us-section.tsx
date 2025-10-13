@@ -1,5 +1,6 @@
 import { Award, Heart, Users } from 'lucide-react';
 import { AnimatedSection } from '../animations/animated-section';
+import Image from 'next/image';
 
 export function WhyChooseUsSection() {
   return (
@@ -11,11 +12,13 @@ export function WhyChooseUsSection() {
             {/* Visual Left */}
             <AnimatedSection className="order-2 lg:order-1">
               <div className="relative h-[500px] rounded-lg overflow-hidden border border-border/30">
-                <img
-                  src="./images/pourquoi-choisir.png"
+                <Image
+                  src="/images/pourquoi-choisir.png"
                   alt="Pourquoi nous choisir"
                   className="object-cover"
                   style={{ objectFit: 'cover' }}
+                  width={700}
+                  height={200}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
               </div>

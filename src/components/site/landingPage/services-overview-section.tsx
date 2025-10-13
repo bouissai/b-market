@@ -1,5 +1,6 @@
 import { Calendar, ChefHat, Clock } from 'lucide-react';
 import { AnimatedSection } from '../animations/animated-section';
+import Image from 'next/image';
 
 
 export function ServicesOverviewSection() {
@@ -70,11 +71,13 @@ export function ServicesOverviewSection() {
               {/* Visual Right */}
               <AnimatedSection delay={200}>
                 <div className="relative h-[500px] rounded-lg overflow-hidden border border-border/30">
-                  <img
-                    src="./images/beef-tenderloin-fillet-on-marble-surface.png"
+                  <Image
+                    src="/images/beef-tenderloin-fillet-on-marble-surface.png"
                     alt="Nos services"
-                    className="object-cover w-full h-full absolute inset-0"
-                    style={{ objectFit: 'cover' }}
+                    className="object-cover"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    priority
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
                 </div>

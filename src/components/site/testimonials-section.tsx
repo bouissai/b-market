@@ -1,43 +1,19 @@
 'use client';
 
 import { useReviewsStore } from '@/store/useReviewStore';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { AnimatedSection } from './animations/animated-section';
 import { TestimonialsCarousel } from './testimonials-carousel';
 
 
 export function TestimonialsSection() {
-	const [currentIndex, setCurrentIndex] = useState(0);
-	const [autoplay, setAutoplay] = useState(true);
 	const { reviews, fetchReviews, loading } = useReviewsStore();
 
 	useEffect(() => {
 		fetchReviews();
-	}, [fetchReviews]);
+	}, [fetchReviews, reviews]);
 
-	useEffect(() => {
-		let interval: NodeJS.Timeout;
-		if (autoplay && reviews.length > 0) {
-			interval = setInterval(() => {
-				setCurrentIndex((prev) => (prev + 1) % reviews.length);
-			}, 5000);
-		}
-		return () => clearInterval(interval);
-	}, [autoplay, reviews]);
 	if (loading || reviews.length === 0) return null;
-
-	const handlePrev = () => {
-		setAutoplay(false);
-		setCurrentIndex(
-			prevIndex =>
-				(prevIndex - 1 + reviews.length) % reviews.length,
-		);
-	};
-
-	const handleNext = () => {
-		setAutoplay(false);
-		setCurrentIndex(prevIndex => (prevIndex + 1) % reviews.length);
-	};
 
 	return (
 		<section className="py-12 relative">

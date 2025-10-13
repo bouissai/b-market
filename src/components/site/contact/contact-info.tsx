@@ -5,8 +5,7 @@ import {
 	Instagram,
 	Mail,
 	MapPin,
-	Phone,
-	Twitter,
+	Phone
 } from 'lucide-react';
 
 export default function ContactInfo() {

@@ -1,4 +1,3 @@
-import { Loading } from '@/components/loading';
 import { Button } from '@/components/ui/button';
 import { ArticleGetDto } from '@/types/article';
 import { Loader2, ShoppingBag } from 'lucide-react';
