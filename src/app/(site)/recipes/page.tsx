@@ -360,7 +360,7 @@ export default function RecipesPage() {
 			</section>
 
 			{/* CTA section */}
-			<section className="py-12 bg-primary/10">
+			<section className="py-12">
 				<div className="container mx-auto px-4 text-center">
 					<h2 className="text-2xl font-bold mb-4">
 						Besoin d&apos;inspiration pour un événement spécial ?

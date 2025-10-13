@@ -1,7 +1,7 @@
 // src/store/useReviewsStore.ts
 import { create } from 'zustand';
 
-type Review = {
+export type Review = {
   id: number;
   name: string;
   role: string;

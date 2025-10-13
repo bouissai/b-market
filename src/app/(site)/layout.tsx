@@ -11,7 +11,7 @@ export default function SiteLayout({
 	return (
 		<>
 			<ThemeProvider forcedTheme={'dark'}>
-				<div className="font-sans bg-boucherie-black text-white">
+				<div className="font-sans">
 					<HeaderSite />
 					<main>{children}</main>
 					<CartMergeDialog />
