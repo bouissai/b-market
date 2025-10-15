@@ -11,8 +11,8 @@ export function TestimonialsSection() {
 
 	useEffect(() => {
 		fetchReviews();
-	}, [fetchReviews, reviews]);
-
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 	if (loading || reviews.length === 0) return null;
 
 	return (
