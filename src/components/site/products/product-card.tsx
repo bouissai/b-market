@@ -27,12 +27,12 @@ export function ProductCard({ article, onAddToCart }: ProductCardProps) {
 					{article.name}
 				</h3>
 				<p className="text-sm text-muted-foreground font-light line-clamp-2 leading-relaxed">{article.description}</p>
-				<div className="flex items-baseline gap-2 pt-1">
+				<div className="flex justify-between items-baseline gap-2 pt-1">
 					<div>
 						<span className="text-xl md:text-2xl font-light text-foreground tracking-wide">{article.price}€</span>
 						<span className="text-sm text-muted-foreground font-light">/ {article.unit}</span>
 					</div>
-					<div className='flex'>
+					<div>
 						<Button
 							disabled={isLoadingAddCartItem}
 							onClick={() => {
@@ -43,11 +43,8 @@ export function ProductCard({ article, onAddToCart }: ProductCardProps) {
 							}}>
 							{isLoadingAddCartItem ? <Loader2 className="h-8 w-8 animate-spin" /> : <ShoppingBag />}
 						</Button>
-
-
 					</div>
 				</div>
-
 			</div>
 		</div>
 	)

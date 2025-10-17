@@ -1,3 +1,4 @@
+import { AnimatedSection } from '@/components/site/animations/animated-section';
 import { ContactForm } from '@/components/site/contact/contact-form';
 import ContactInfo from '@/components/site/contact/contact-info';
 import { MapComponent } from '@/components/site/map-component';
@@ -18,13 +19,19 @@ export default function ContactPage() {
 			</header>
 			<div className="mb-20">
 				<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mx-8">
-					<ContactInfo />
-					<ContactForm />
+					<AnimatedSection>
+						<ContactInfo />
+					</AnimatedSection>
+					<AnimatedSection delay={200}>
+						<ContactForm />
+					</AnimatedSection>
 				</div>
 				<div className='p-8'>
-					<div className="relative h-[300px] lg:h-[400px] bg-muted/30 rounded-lg overflow-hidden border border-border/30 shadow-2xl">
-						<MapComponent></MapComponent>
-					</div>
+					<AnimatedSection>
+						<div className="relative h-[300px] lg:h-[400px] bg-muted/30 rounded-lg overflow-hidden border border-border/30 shadow-2xl">
+							<MapComponent></MapComponent>
+						</div>
+					</AnimatedSection>
 				</div>
 			</div>
 		</>

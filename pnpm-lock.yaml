@@ -125,6 +125,9 @@ importers:
       nodemailer:
         specifier: ^6.10.0
         version: 6.10.1
+      nuqs:
+        specifier: ^2.7.1
+        version: 2.7.1(next@15.5.4(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -3808,6 +3811,27 @@ packages:
       - treeverse
       - validate-npm-package-name
       - which
+
+  nuqs@2.7.1:
+    resolution: {integrity: sha512-3WDgrOZWat0QyOheyljTlXK4TGFh1JKSLvXMgusMDcTyMJXe1xL8+q3zuQ6ke1vyeGnpJwztlZl2aDkMW2eIUg==}
+    peerDependencies:
+      '@remix-run/react': '>=2'
+      '@tanstack/react-router': ^1
+      next: '>=14.2.0'
+      react: '>=18.2.0 || ^19.0.0-0'
+      react-router: ^6 || ^7
+      react-router-dom: ^6 || ^7
+    peerDependenciesMeta:
+      '@remix-run/react':
+        optional: true
+      '@tanstack/react-router':
+        optional: true
+      next:
+        optional: true
+      react-router:
+        optional: true
+      react-router-dom:
+        optional: true
 
   nypm@0.6.2:
     resolution: {integrity: sha512-7eM+hpOtrKrBDCh7Ypu2lJ9Z7PNZBdi/8AT3AX8xoCj43BBVHD0hPSTEvMtkMpfs8FCqBGhxB+uToIQimA111g==}
@@ -8723,6 +8747,13 @@ snapshots:
   normalize-path@3.0.0: {}
 
   npm@11.6.2: {}
+
+  nuqs@2.7.1(next@15.5.4(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1):
+    dependencies:
+      '@standard-schema/spec': 1.0.0
+      react: 18.3.1
+    optionalDependencies:
+      next: 15.5.4(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
   nypm@0.6.2:
     dependencies:

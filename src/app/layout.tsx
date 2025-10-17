@@ -2,6 +2,7 @@ import '@/app/globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { SessionProvider } from 'next-auth/react';
 import { Montserrat, Playfair_Display } from 'next/font/google';
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
 const playfair = Playfair_Display({
 	subsets: ['latin'],
@@ -63,7 +64,11 @@ export default function RootLayout({
 		<html lang="fr" className={`${playfair.variable} ${montserrat.variable}`}>
 			<body>
 				<Toaster />
-				<SessionProvider>{children}</SessionProvider>
+				<SessionProvider>
+					<NuqsAdapter>
+						{children}
+					</NuqsAdapter>
+				</SessionProvider>
 			</body>
 		</html>
 	);

@@ -1,11 +1,12 @@
 import { CheckCircle } from "lucide-react";
 import ContactFormEvent from "./contact-form-events";
+import { AnimatedSection } from "../animations/animated-section";
 
 export function ContactEvents() {
     return (
-        <>
-            <div className="container mx-auto px-4">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <AnimatedSection>
                     <div>
                         <h2 className="text-3xl font-bold mb-6">
                             Contactez-nous pour votre événement
@@ -122,12 +123,16 @@ export function ContactEvents() {
                             </ul>
                         </div>
                     </div>
+                </AnimatedSection>
 
+
+                <AnimatedSection delay={200}>
                     <div>
                         <ContactFormEvent />
+
                     </div>
-                </div>
+                </AnimatedSection>
             </div>
-        </>
+        </div>
     )
 }

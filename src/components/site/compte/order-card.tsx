@@ -20,13 +20,13 @@ type OrderCardProps = {
 
 export function OrderCard({ order }: OrderCardProps) {
 	return (
-		<Card key={order.id} className="w-full overflow-hidden">
+        <Card key={order.id} className="w-full overflow-hidden break-words">
 			<CardContent className="p-0">
 				<div className="p-6">
-					<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-						<div>
-							<div className="flex items-center gap-2">
-								<h3 className="font-semibold">Commande {order.id}</h3>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 min-w-0">
+                        <div className="min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <h3 className="font-semibold truncate">Commande {order.id}</h3>
 								<StatusBadge status={order.status} />
 							</div>
 							<div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
@@ -34,20 +34,20 @@ export function OrderCard({ order }: OrderCardProps) {
 								<span>{formatDate(order.date)}</span>
 							</div>
 						</div>
-						<div className="flex items-center gap-4">
-							<p className="font-bold">{order.total.toFixed(2)} €</p>
-							<Button asChild variant="outline" size="sm">
+                        <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
+                            <p className="font-bold whitespace-nowrap">{order.total.toFixed(2)} €</p>
+                            <Button asChild variant="outline" size="sm" className="shrink-0">
 								<Link href={`/order-history/${order.id}`}>Détails</Link>
 							</Button>
 						</div>
 					</div>
-					<div className="text-sm">
+                    <div className="text-sm min-w-0">
 						{order.items.slice(0, 2).map((item, index) => (
-							<div key={index} className="flex justify-between py-1">
-								<span>
+                            <div key={index} className="flex justify-between items-start gap-2 py-1">
+                                <span className="truncate min-w-0">
 									{item.quantity} × {item.name}
 								</span>
-								<span>{(item.price * item.quantity).toFixed(2)} €</span>
+                                <span className="whitespace-nowrap">{(item.price * item.quantity).toFixed(2)} €</span>
 							</div>
 						))}
 						{order.items.length > 2 && (
