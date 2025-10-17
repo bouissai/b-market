@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Package, Search } from 'lucide-react';
 import Link from 'next/link';
@@ -11,8 +12,20 @@ import { OrderDetailsDTO } from '@/types/order';
 import { useOrderStore } from '@/store/useOrderStore';
 import { useSession } from 'next-auth/react';
 
+type StatusFilter = 'all' | OrderDetailsDTO['status'];
+
+const statusOptions = [
+	{ value: 'all', label: 'Toutes' },
+	{ value: 'PENDING', label: 'En attente' },
+	{ value: 'PREPARING', label: 'En préparation' },
+	{ value: 'READY', label: 'Prêtes' },
+	{ value: 'COMPLETED', label: 'Complétées' },
+	{ value: 'CANCELLED', label: 'Annulées' },
+] as const;
+
 export function Commandes() {
 	const [searchTerm, setSearchTerm] = useState('');
+	const [mobileFilter, setMobileFilter] = useState<StatusFilter>('PENDING');
 	const { data: session } = useSession();
 
 	const { ordersDetails, fetchOrdersDetailsByUserId } = useOrderStore();
@@ -68,11 +81,16 @@ export function Commandes() {
 		);
 	};
 
+	const renderMobileContent = () => {
+		const statusFilter = mobileFilter === 'all' ? undefined : mobileFilter;
+		return renderTabContent(statusFilter as OrderDetailsDTO['status']);
+	};
+
 	return (
 		<>
 			<section>
 				<div>
-					<div className="max-w-3xl">
+					<div className="w-full max-w-2xl mx-auto">
 						<h1 className="text-3xl md:text-4xl font-bold mb-4  ">
 							Mes commandes
 						</h1>
@@ -83,7 +101,7 @@ export function Commandes() {
 				</div>
 			</section>
 
-			<div className="mb-6 relative">
+			<div className="mb-6 relative w-full max-w-2xl mx-auto">
 				<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 				<Input
 					placeholder="Rechercher une commande..."
@@ -93,47 +111,51 @@ export function Commandes() {
 				/>
 			</div>
 
-			<Tabs
-				defaultValue="pending"
-				className="w-full max-w-2xl mx-auto min-w-[650px]">
-				<TabsList className="mb-6">
+			{/* Mobile filter */}
+			<div className="md:hidden w-full max-w-2xl mx-auto">
+				<Select value={mobileFilter} onValueChange={value => setMobileFilter(value as StatusFilter)}>
+					<SelectTrigger className="mb-6">
+						<SelectValue placeholder="Filtrer par statut" />
+					</SelectTrigger>
+					<SelectContent>
+						{statusOptions.map(option => (
+							<SelectItem key={option.value} value={option.value}>
+								{option.label}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+				{renderMobileContent()}
+			</div>
+
+			{/* Desktop tabs */}
+			<Tabs defaultValue="PENDING" className="hidden md:block w-full max-w-2xl mx-auto">
+				<TabsList className="mb-6 grid w-full grid-cols-6">
 					<TabsTrigger value="all">Toutes</TabsTrigger>
-					<TabsTrigger value="pending">En attente</TabsTrigger>
-					<TabsTrigger value="preparing">En préparation</TabsTrigger>
-					<TabsTrigger value="ready">Prêtes</TabsTrigger>
-					<TabsTrigger value="completed">Complétées</TabsTrigger>
-					<TabsTrigger value="cancelled">Annulées</TabsTrigger>
+					<TabsTrigger value="PENDING">En attente</TabsTrigger>
+					<TabsTrigger value="PREPARING">En prép.</TabsTrigger>
+					<TabsTrigger value="READY">Prêtes</TabsTrigger>
+					<TabsTrigger value="COMPLETED">Complétées</TabsTrigger>
+					<TabsTrigger value="CANCELLED">Annulées</TabsTrigger>
 				</TabsList>
 
 				<TabsContent value="all">
-					<div className="w-full max-w-2xl mx-auto min-w-[650px]">
-						{renderTabContent()}
-					</div>
+					<div className="w-full max-w-2xl mx-auto">{renderTabContent()}</div>
 				</TabsContent>
-				<TabsContent value="pending">
-					<div className="w-full max-w-2xl mx-auto min-w-[650px]">
-						{renderTabContent('PENDING')}
-					</div>
+				<TabsContent value="PENDING">
+					<div className="w-full max-w-2xl mx-auto">{renderTabContent('PENDING')}</div>
 				</TabsContent>
-				<TabsContent value="preparing">
-					<div className="w-full max-w-2xl mx-auto min-w-[650px]">
-						{renderTabContent('PREPARING')}
-					</div>
+				<TabsContent value="PREPARING">
+					<div className="w-full max-w-2xl mx-auto">{renderTabContent('PREPARING')}</div>
 				</TabsContent>
-				<TabsContent value="ready">
-					<div className="w-full max-w-2xl mx-auto min-w-[650px]">
-						{renderTabContent('READY')}
-					</div>
+				<TabsContent value="READY">
+					<div className="w-full max-w-2xl mx-auto">{renderTabContent('READY')}</div>
 				</TabsContent>
-				<TabsContent value="completed">
-					<div className="w-full max-w-2xl mx-auto min-w-[650px]">
-						{renderTabContent('COMPLETED')}
-					</div>
+				<TabsContent value="COMPLETED">
+					<div className="w-full max-w-2xl mx-auto">{renderTabContent('COMPLETED')}</div>
 				</TabsContent>
-				<TabsContent value="cancelled">
-					<div className="w-full max-w-2xl mx-auto min-w-[650px]">
-						{renderTabContent('CANCELLED')}
-					</div>
+				<TabsContent value="CANCELLED">
+					<div className="w-full max-w-2xl mx-auto">{renderTabContent('CANCELLED')}</div>
 				</TabsContent>
 			</Tabs>
 		</>

@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { AnimatedSection } from "../animations/animated-section";
 
 export function CtaEvents() {
     return (
-        <>
+        <AnimatedSection>
             <div className="container mx-auto px-4 text-center ">
                 <h2 className="text-3xl font-bold mb-4">
                     Prêt à organiser votre événement ?
@@ -21,6 +22,6 @@ export function CtaEvents() {
                     </Button>
                 </div>
             </div>
-        </>
+        </AnimatedSection>
     )
 }

@@ -1,3 +1,5 @@
+import { CountingNumber } from "@/components/ui/shadcn-io/counting-number";
+
 export function IntroEvent() {
 
     return (
@@ -7,25 +9,45 @@ export function IntroEvent() {
 
                     <div className=" max-w-3xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
                         <div >
-                            <p className="text-6xl font-bold text-primary mb-2">50+</p>
+                            <p className="text-6xl font-bold text-primary mb-2">
+                                <CountingNumber
+                                    number={50}
+                                    inView
+                                />+</p>
                             <p className="text-sm text-muted-foreground">
                                 Événements servis
                             </p>
                         </div>
                         <div >
-                            <p className="text-6xl font-bold text-primary mb-2">100%</p>
+                            <p className="text-6xl font-bold text-primary mb-2">
+                                <CountingNumber
+                                    number={100}
+                                    inView
+                                />%
+                            </p>
                             <p className="text-sm text-muted-foreground">
                                 Satisfaction client
                             </p>
                         </div>
                         <div >
-                            <p className="text-6xl font-bold text-primary mb-2">15+</p>
+                            <p className="text-6xl font-bold text-primary mb-2">
+                            <CountingNumber
+                                    number={15}
+                                    inView
+                                />+
+                            </p>
                             <p className="text-sm text-muted-foreground">
                                 Années d&apos;expérience
                             </p>
                         </div>
                         <div >
-                            <p className="text-6xl font-bold text-primary mb-2">48h</p>
+                            <p className="text-6xl font-bold text-primary mb-2">
+                            <CountingNumber
+                                    number={48}
+                                    fromNumber={72}
+                                    inView
+                                />H
+                            </p>
                             <p className="text-sm text-muted-foreground">
                                 Délai de livraison
                             </p>

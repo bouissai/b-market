@@ -29,7 +29,7 @@ export default function EventsPage() {
 			</section>
 
 			<SectionSeparator variant="wave-reverse" />
-			<section id="services" className="py-16">
+			<section id="services" className="pt-16">
 				<ServiceEvents eventTypes={eventTypes} />
 			</section>
 			<SectionSeparator variant="diagonal" />
@@ -41,14 +41,12 @@ export default function EventsPage() {
 			<section className="py-16  bg-muted/30">
 				<TestimonialsSection />
 			</section>
-			
+
 			<SectionSeparator variant="diagonal" />
 
-			<section className="py-16">
+			<section id="contact" className="py-16">
 				<ContactEvents />
 			</section>
-
-			<SectionSeparator variant="wave" />
 
 			<section className="py-16 bg-muted/30">
 				<CtaEvents />

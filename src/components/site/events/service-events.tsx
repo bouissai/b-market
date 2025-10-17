@@ -1,3 +1,4 @@
+import { AnimatedSection } from '../animations/animated-section';
 import EventCard from './event-card';
 
 type EventType = {
@@ -14,7 +15,7 @@ type ServiceEventsProps = {
 
 export function ServiceEvents(events: ServiceEventsProps) {
 	return (
-		<>
+		<AnimatedSection>
 			<div className="container mx-auto px-4">
 				<div className="text-center mb-12">
 					<h2 className="text-3xl font-bold mb-4">
@@ -32,6 +33,6 @@ export function ServiceEvents(events: ServiceEventsProps) {
 					))}
 				</div>
 			</div>
-		</>
+		</AnimatedSection>
 	);
 }
