@@ -1,5 +1,7 @@
+import { Loading } from '@/components/loading';
 import TabsProduit from '@/components/site/products/products';
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
 	title: 'Nos produits | Votre Boucherie',
@@ -8,6 +10,9 @@ export const metadata: Metadata = {
 
 export default function Produits() {
 	return (
+		<Suspense fallback={<Loading/>}>
+
+
 		<div className="">
 			{/* Hero section */}
 			<header className="border-b border-border/50">
@@ -28,5 +33,7 @@ export default function Produits() {
 				</div>
 			</section>
 		</div>
+		</Suspense>
+
 	);
 }
