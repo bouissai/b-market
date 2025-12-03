@@ -5,7 +5,6 @@ import { Review } from "@/store/useReviewStore"
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react"
 import { useEffect, useState } from "react"
 
-
 type ReviewProps = {
   reviews: Review[];
 }
@@ -38,14 +37,21 @@ export function TestimonialsCarousel({ reviews }: ReviewProps) {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="relative bg-muted/20 rounded-2xl p-12 md:p-16">
+      <div className="relative bg-muted/20 rounded-2xl p-12 md:p-16 min-h-[350px] flex flex-col justify-between">
+        {/* ✅ Icône quote */}
         <Quote className="w-12 h-12 text-muted-foreground/30 mb-8" />
 
-        <blockquote className="text-xl md:text-2xl font-light text-foreground leading-relaxed mb-8 text-balance">
+        {/* ✅ Bloc du texte avec hauteur fixe pour éviter les décalages */}
+        <blockquote className="
+          text-xl md:text-2xl font-light text-foreground leading-relaxed text-balance 
+          flex items-center justify-center text-center 
+          min-h-[120px] md:min-h-[160px]
+        ">
           &quot;{currentTestimonial.quote}&quot;
         </blockquote>
 
-        <div className="flex items-center justify-between">
+        {/* ✅ Auteur + note alignés en bas */}
+        <div className="flex items-center justify-between mt-8">
           <div>
             <div className="font-light text-foreground text-lg">{currentTestimonial.name}</div>
             <div className="text-sm text-muted-foreground font-light">{currentTestimonial.role}</div>
@@ -61,7 +67,7 @@ export function TestimonialsCarousel({ reviews }: ReviewProps) {
         </div>
       </div>
 
-      {/* Navigation */}
+      {/* ✅ Navigation */}
       <div className="flex items-center justify-center gap-4 mt-8">
         <Button variant="ghost" size="icon" onClick={goToPrevious} className="rounded-full">
           <ChevronLeft className="w-5 h-5" />
@@ -75,8 +81,7 @@ export function TestimonialsCarousel({ reviews }: ReviewProps) {
                 setIsAutoPlaying(false)
                 setCurrentIndex(index)
               }}
-              className={`w-2 h-2 rounded-full transition-all ${index === currentIndex ? "bg-foreground w-8" : "bg-muted-foreground/30"
-                }`}
+              className={`w-2 h-2 rounded-full transition-all ${index === currentIndex ? "bg-foreground w-8" : "bg-muted-foreground/30"}`}
             />
           ))}
         </div>
