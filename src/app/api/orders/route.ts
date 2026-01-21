@@ -4,8 +4,14 @@ import {
 	getOrdersByUserId,
 } from '@/services/orderService';
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAdmin } from '@/lib/auth-guards';
 
 export async function GET(req: Request) {
+	const adminCheck = await requireAdmin();
+	if (adminCheck instanceof NextResponse) {
+		return adminCheck;
+	}
+
 	try {
 		const { searchParams } = new URL(req.url);
 		const userId = searchParams.get('userId');
@@ -27,6 +33,11 @@ export async function GET(req: Request) {
 }
 
 export async function POST(request: NextRequest) {
+	const adminCheck = await requireAdmin();
+	if (adminCheck instanceof NextResponse) {
+		return adminCheck;
+	}
+
 	try {
 		const {
 			userId,
