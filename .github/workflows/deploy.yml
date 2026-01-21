@@ -39,7 +39,7 @@ jobs:
 
       - name: 📄 Copier le docker-compose.yml sur le serveur
         run: |
-          scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USER }}@${{ secrets.SERVER_IP }}:/root/bmarket/docker-compose.yml
+          scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USER }}@${{ secrets.SERVER_IP }}:/home/deploy/bmarket/docker-compose.yml
 
       - name: 📡 Connexion SSH et déploiement
         uses: appleboy/ssh-action@master
@@ -50,7 +50,7 @@ jobs:
           script: |
             set -e
             echo "📌 Passage au dossier..."
-            cd /root/bmarket
+            cd /home/deploy/bmarket
 
             echo "🔐 Connexion à GHCR"
             docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} -p ${{ secrets.GHCR_TOKEN }}
