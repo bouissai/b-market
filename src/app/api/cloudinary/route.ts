@@ -1,9 +1,16 @@
 import { ArticleImageDetails } from "@/types/image"
 import { NextRequest, NextResponse } from "next/server"
 import cloudinary from "@/lib/cloudinary";
+import { requireAdmin } from "@/lib/auth-guards";
 
+const PUBLIC_ID_REGEX = /^[A-Za-z0-9/_-]{1,200}$/;
 
 export async function GET() {
+  const adminCheck = await requireAdmin();
+  if (adminCheck instanceof NextResponse) {
+    return adminCheck;
+  }
+
   try {
     const result = await cloudinary.api.resources({
       type: "upload", // on ne récupère que les fichiers uploadés
@@ -59,6 +66,11 @@ const images: ArticleImageDetails[] = result.resources.map(
 
 
 export async function DELETE(request: NextRequest) {
+  const adminCheck = await requireAdmin();
+  if (adminCheck instanceof NextResponse) {
+    return adminCheck;
+  }
+
   try {
     // Récupérer le publicId depuis l'URL de la requête
     const { searchParams } = new URL(request.url);
@@ -70,6 +82,12 @@ export async function DELETE(request: NextRequest) {
       console.log("API: Missing publicId in request");
       return NextResponse.json(
         { message: 'Public ID is required' },
+        { status: 400 }
+      );
+    }
+    if (!PUBLIC_ID_REGEX.test(publicId)) {
+      return NextResponse.json(
+        { message: 'Public ID invalide' },
         { status: 400 }
       );
     }
@@ -99,11 +117,19 @@ export async function DELETE(request: NextRequest) {
 
 
 export async function PATCH(req: NextRequest) {
+  const adminCheck = await requireAdmin();
+  if (adminCheck instanceof NextResponse) {
+    return adminCheck;
+  }
+
   try {
     const { publicId, updates } = await req.json()
 
     if (!publicId || !updates || typeof updates !== "object") {
       return NextResponse.json({ message: "Données invalides" }, { status: 400 })
+    }
+    if (!PUBLIC_ID_REGEX.test(publicId)) {
+      return NextResponse.json({ message: "Public ID invalide" }, { status: 400 })
     }
 
     // Exemple : ajout de tags et de contexte (comme alt text et caption)

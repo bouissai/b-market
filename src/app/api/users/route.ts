@@ -1,7 +1,13 @@
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAdmin } from '@/lib/auth-guards';
 
 export async function GET() {
+	const adminCheck = await requireAdmin();
+	if (adminCheck instanceof NextResponse) {
+		return adminCheck;
+	}
+
 	try {
 		const users = await prisma.user.findMany({
 			select: {
@@ -22,6 +28,11 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+	const adminCheck = await requireAdmin();
+	if (adminCheck instanceof NextResponse) {
+		return adminCheck;
+	}
+
 	try {
 		const { firstname, lastname, email, phone } = await req.json();
 

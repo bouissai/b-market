@@ -1,12 +1,18 @@
 import { prisma } from '@/lib/prisma';
 import { getOrderById } from '@/services/orderService'; // Assurez-vous d'importer correctement votre service
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAdmin } from '@/lib/auth-guards';
 
 // 🔴 DELETE → Supprimer une commande avec ses `OrderItems`
 export async function DELETE(
 	req: NextRequest,
 	{ params }: { params: Promise<{ id: string }> },
 ) {
+	const adminCheck = await requireAdmin();
+	if (adminCheck instanceof NextResponse) {
+		return adminCheck;
+	}
+
 	try {
 		const id = (await params).id;
 		const numericId = Number(id);
@@ -51,6 +57,11 @@ export async function GET(
 	req: NextRequest,
 	{ params }: { params: Promise<{ id: string }> },
 ) {
+	const adminCheck = await requireAdmin();
+	if (adminCheck instanceof NextResponse) {
+		return adminCheck;
+	}
+
 	try {
 		const id = (await params).id;
 		const numericId = Number(id);
@@ -86,6 +97,11 @@ export async function PATCH(
 	req: NextRequest,
 	{ params }: { params: Promise<{ id: string }> },
 ) {
+	const adminCheck = await requireAdmin();
+	if (adminCheck instanceof NextResponse) {
+		return adminCheck;
+	}
+
 	try {
 		const { id } = await params;
 		const numericId = Number(id);

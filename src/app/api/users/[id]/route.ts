@@ -1,18 +1,15 @@
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
+import { requireAdmin } from '@/lib/auth-guards';
 
 export async function DELETE(
 	req: NextRequest,
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
-		const session = await auth();
-		if (!session || !session.user.isAdmin) {
-			return NextResponse.json(
-				{ message: 'action non autorisée' },
-				{ status: 403 },
-			);
+		const adminCheck = await requireAdmin();
+		if (adminCheck instanceof NextResponse) {
+			return adminCheck;
 		}
 		const userId = (await params).id;
 
@@ -43,6 +40,10 @@ export async function PUT(
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
+		const adminCheck = await requireAdmin();
+		if (adminCheck instanceof NextResponse) {
+			return adminCheck;
+		}
 		const userId = (await params).id;
 		const { firstname, lastname, email, phone } = await req.json();
 
