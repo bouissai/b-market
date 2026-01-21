@@ -37,12 +37,12 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-      - name: 📄 Copier le docker-compose.yml sur le serveur
+      - name: 📄 Copier le docker compose.yml sur le serveur
         run: |
-          scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USER }}@${{ secrets.SERVER_IP }}:/home/deploy/bmarket/docker-compose.yml
+          scp -o StrictHostKeyChecking=no docker compose.yml ${{ secrets.VPS_USER }}@${{ secrets.SERVER_IP }}:/home/deploy/bmarket/docker compose.yml
 
       - name: 📡 Connexion SSH et déploiement
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.VPS_USER }}
@@ -53,19 +53,19 @@ jobs:
             cd /home/deploy/bmarket
 
             echo "🔐 Connexion à GHCR"
-            docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} -p ${{ secrets.GHCR_TOKEN }}
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
             echo "📦 Pull de la nouvelle image"
-            docker-compose pull
+            docker compose pull
 
             echo "🛑 Arrêt des anciens conteneurs"
-            docker-compose down || echo "⚠️ Aucun conteneur à stopper"
+            docker compose down || echo "⚠️ Aucun conteneur à stopper"
 
             echo "🚀 Démarrage des nouveaux conteneurs"
-            docker-compose up -d
+            docker compose up -d
 
             echo "📂 Prisma migrate deploy"
-            APP_ID=$(docker-compose ps -q bmarket)
+            APP_ID=$(docker compose ps -q bmarket)
             docker exec $APP_ID npx prisma migrate deploy || echo "⚠️ Prisma migration skipped"
 
 
