@@ -10,8 +10,18 @@ RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
 
+# 🔧 AJOUT : activer corepack (pnpm/yarn)
+RUN corepack enable
+
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
-RUN npm install
+
+# 🔧 MODIF MINIMALE : installer selon le lockfile
+RUN \
+  if [ -f yarn.lock ]; then yarn install --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci; \
+  elif [ -f pnpm-lock.yaml ]; then pnpm install --frozen-lockfile; \
+  else npm install; \
+  fi
 
 # ✅ Étape de build du projet Next.js
 FROM base AS builder
@@ -28,7 +38,7 @@ RUN npx prisma generate
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
   elif [ -f package-lock.json ]; then npm run build; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
+  elif [ -f pnpm-lock.yaml ]; then pnpm run build; \
   else echo "Lockfile not found." && exit 1; \
   fi
 
