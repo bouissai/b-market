@@ -1,92 +1,74 @@
 # syntax=docker.io/docker/dockerfile:1
 
-# ✅ Base commune (Node Alpine léger)
 FROM node:18-alpine AS base
+WORKDIR /app
 
 # ------------------------------
-# ✅ Stage deps: installation des dépendances
+# deps: install dependencies
 # ------------------------------
 FROM base AS deps
 
 RUN apk add --no-cache libc6-compat
-WORKDIR /app
-
-# Active corepack pour pnpm/yarn (si utilisé)
 RUN corepack enable
 
-# Copie des fichiers de lock uniquement
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+COPY package.json pnpm-lock.yaml* package-lock.json* yarn.lock* .npmrc* ./
 
-# Installe selon le lockfile présent
 RUN \
-  if [ -f yarn.lock ]; then yarn install --frozen-lockfile; \
+  if [ -f pnpm-lock.yaml ]; then pnpm install --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then pnpm install --frozen-lockfile; \
+  elif [ -f yarn.lock ]; then yarn install --frozen-lockfile; \
   else npm install; \
   fi
 
 # ------------------------------
-# ✅ Stage builder: build Next.js + Prisma
+# builder: build next + prisma
 # ------------------------------
 FROM base AS builder
-WORKDIR /app
 
-# IMPORTANT: pnpm n'existe pas ici sinon on réactive corepack
 RUN corepack enable
 
-# Copie node_modules depuis deps
 COPY --from=deps /app/node_modules ./node_modules
-
-# Copie du code
 COPY . .
 
-# Copie prisma (si besoin explicitement)
-COPY prisma ./prisma
-
-# Génération Prisma Client
-RUN npx prisma generate
-
-# Build Next.js (standalone)
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Prisma client generation
+RUN npx prisma generate
+
+# Build
 RUN \
-  if [ -f yarn.lock ]; then yarn run build; \
+  if [ -f pnpm-lock.yaml ]; then pnpm run build; \
   elif [ -f package-lock.json ]; then npm run build; \
-  elif [ -f pnpm-lock.yaml ]; then pnpm run build; \
-  else echo "Lockfile not found." && exit 1; \
+  elif [ -f yarn.lock ]; then yarn run build; \
+  else npm run build; \
   fi
 
 # ------------------------------
-# ✅ Stage runner: image finale minimaliste
+# runner: production image
 # ------------------------------
-FROM base AS runner
+FROM node:18-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# User non-root
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# user non-root
+RUN addgroup --system --gid 1001 nodejs \
+  && adduser --system --uid 1001 nextjs
 
-# Copie des assets publics
+# ✅ Copier le standalone Next
 COPY --from=builder /app/public ./public
-
-# Copie du build Next standalone
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Prisma runtime (client + engines)
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+# ✅ IMPORTANT: copier node_modules en entier (Prisma + engines inclus, compatible pnpm)
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/prisma ./prisma
 
-# Sécurité: exécution en non-root
 USER nextjs
 
-# Port Next.js
 EXPOSE 3000
 ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
+ENV HOSTNAME=0.0.0.0
 
 CMD ["node", "server.js"]
