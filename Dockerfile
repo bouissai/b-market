@@ -1,21 +1,23 @@
 # syntax=docker.io/docker/dockerfile:1
 
-# ✅ Étape de base commune avec Node.js Alpine (léger)
+# ✅ Base commune (Node Alpine léger)
 FROM node:18-alpine AS base
 
-# ✅ Étape pour installer les dépendances (sans copier tout le code)
+# ------------------------------
+# ✅ Stage deps: installation des dépendances
+# ------------------------------
 FROM base AS deps
 
 RUN apk add --no-cache libc6-compat
-
 WORKDIR /app
 
-# 🔧 AJOUT : activer corepack (pnpm/yarn)
+# Active corepack pour pnpm/yarn (si utilisé)
 RUN corepack enable
 
+# Copie des fichiers de lock uniquement
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
 
-# 🔧 MODIF MINIMALE : installer selon le lockfile
+# Installe selon le lockfile présent
 RUN \
   if [ -f yarn.lock ]; then yarn install --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci; \
@@ -23,18 +25,30 @@ RUN \
   else npm install; \
   fi
 
-# ✅ Étape de build du projet Next.js
+# ------------------------------
+# ✅ Stage builder: build Next.js + Prisma
+# ------------------------------
 FROM base AS builder
 WORKDIR /app
 
+# IMPORTANT: pnpm n'existe pas ici sinon on réactive corepack
+RUN corepack enable
+
+# Copie node_modules depuis deps
 COPY --from=deps /app/node_modules ./node_modules
+
+# Copie du code
 COPY . .
+
+# Copie prisma (si besoin explicitement)
 COPY prisma ./prisma
 
-# Prisma client
+# Génération Prisma Client
 RUN npx prisma generate
 
 # Build Next.js (standalone)
+ENV NEXT_TELEMETRY_DISABLED=1
+
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
   elif [ -f package-lock.json ]; then npm run build; \
@@ -42,28 +56,32 @@ RUN \
   else echo "Lockfile not found." && exit 1; \
   fi
 
-# ✅ Étape finale – image de production minimale
+# ------------------------------
+# ✅ Stage runner: image finale minimaliste
+# ------------------------------
 FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
+# User non-root
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy static assets
+# Copie des assets publics
 COPY --from=builder /app/public ./public
 
-# Copy build
+# Copie du build Next standalone
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy prisma client & schema
+# Prisma runtime (client + engines)
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/prisma ./prisma
 
-# Sécurité
+# Sécurité: exécution en non-root
 USER nextjs
 
 # Port Next.js
