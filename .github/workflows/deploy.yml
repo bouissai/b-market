@@ -39,7 +39,7 @@ jobs:
 
       - name: 📄 Copier le docker compose.yml sur le serveur
         run: |
-          scp -o StrictHostKeyChecking=no docker compose.yml ${{ secrets.VPS_USER }}@${{ secrets.SERVER_IP }}:/home/deploy/bmarket/docker compose.yml
+          scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USER }}@${{ secrets.SERVER_IP }}:/home/deploy/bmarket/docker-compose.yml
 
       - name: 📡 Connexion SSH et déploiement
         uses: appleboy/ssh-action@v1.0.3
