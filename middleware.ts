@@ -1,48 +1,49 @@
-import { auth } from '@/lib/auth';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
 export async function middleware(req: NextRequest) {
-	const { pathname } = req.nextUrl;
+  const { pathname } = req.nextUrl;
 
-	const publicApiPrefixes = [
-		'/api/auth',
-		'/api/google-reviews',
-		'/api/contact',
-		'/api/promo-codes/validate',
-	];
+  const publicApiPrefixes = [
+    "/api/auth",
+    "/api/google-reviews",
+    "/api/contact",
+    "/api/promo-codes/validate",
+  ];
 
-	if (pathname.startsWith('/api')) {
-		if (publicApiPrefixes.some(prefix => pathname.startsWith(prefix))) {
-			return NextResponse.next();
-		}
+  // /api/*
+  if (pathname.startsWith("/api")) {
+    if (publicApiPrefixes.some((prefix) => pathname.startsWith(prefix))) {
+      return NextResponse.next();
+    }
 
-		const session = await auth();
-		if (!session) {
-			return NextResponse.json(
-				{ message: 'Non authentifié' },
-				{ status: 401 },
-			);
-		}
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    if (!token) {
+      return NextResponse.json({ message: "Non authentifié" }, { status: 401 });
+    }
 
-		return NextResponse.next();
-	}
+    return NextResponse.next();
+  }
 
-	if (pathname.startsWith('/admin')) {
-		const session = await auth();
+  // /admin/*
+  if (pathname.startsWith("/admin")) {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-		if (!session) {
-			return NextResponse.redirect(new URL('/auth/signin', req.url));
-		}
+    if (!token) {
+      return NextResponse.redirect(new URL("/auth/signin", req.url));
+    }
 
-		if (!session.user?.isAdmin) {
-			return NextResponse.redirect(new URL('/', req.url));
-		}
-	}
+    // IMPORTANT: il faut que ton JWT contienne isAdmin
+    // (via callbacks.jwt + callbacks.session côté NextAuth)
+    if ((token as any).isAdmin !== true) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+  }
 
-	return NextResponse.next();
+  return NextResponse.next();
 }
 
 export const config = {
-	matcher: ['/admin/:path*', '/api/:path*'],
+  matcher: ["/admin/:path*", "/api/:path*"],
 };
