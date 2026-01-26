@@ -5,19 +5,19 @@ import { StatsResponse } from "@/types/stats";
 
 export function RevenueGrowth({ period, totalRevenue, revenueGrowth, revenueByPeriod }: StatsResponse) {
   // Formatage des chiffres en euros
-  const formatEuro = (value : number) => {
+  const formatEuro = (value: number) => {
     return `${value.toFixed(2)} €`;
   };
 
   // Formatage du pourcentage de croissance avec le bon signe
-  const formatGrowth = (growth : number) => {
+  const formatGrowth = (growth: number) => {
     if (growth === null) return "N/A";
     const sign = growth >= 0 ? "+" : "";
     return `${sign}${growth.toFixed(2)}%`;
   };
 
   // Définition de la couleur en fonction de la croissance
-  const growthColor = (revenueGrowth?? 0) >= 0 ? "text-green-600" : "text-red-600";
+  const growthColor = (revenueGrowth ?? 0) >= 0 ? "text-green-600" : "text-red-600";
 
   return (
     <Card className="col-span-1">
@@ -43,7 +43,9 @@ export function RevenueGrowth({ period, totalRevenue, revenueGrowth, revenueByPe
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis tickFormatter={formatEuro} />
-                <Tooltip formatter={(value : number) => [`${formatEuro(value)}`, "CA"]} />
+                <Tooltip
+                  formatter={(value) => [`${formatEuro(Number(value ?? 0))}`, "CA"]}
+                />
                 <Bar dataKey="revenue" fill="#3B82F6" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
