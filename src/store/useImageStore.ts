@@ -9,6 +9,7 @@ type ImageStore = {
   updateImage: (publicId: string, updates: Partial<ArticleImageDetails>) => Promise<void>;
   uploadArticleImage: (file: File) => Promise<string | null>;
   uploadCategoryImage: (file: File) => Promise<string | null>;
+  uploadRecipeImage: (file: File) => Promise<string | null>;
 };
 
 export const useImageStore = create<ImageStore>((set) => ({
@@ -81,6 +82,36 @@ export const useImageStore = create<ImageStore>((set) => ({
       }
     } catch (error) {
       console.error("Erreur uploadCategoryImage:", error);
+      return null;
+    }
+  },
+
+  uploadRecipeImage: async (file: File) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "products");
+
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/ddqrywesr/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.secure_url) {
+        set((state) => ({
+          images: [...state.images, { ...data, public_id: data.public_id }],
+        }));
+        return data.secure_url;
+      } else {
+        throw new Error("Erreur lors du téléversement");
+      }
+    } catch (error) {
+      console.error("Erreur uploadRecipeImage:", error);
       return null;
     }
   },

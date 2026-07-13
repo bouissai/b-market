@@ -1,52 +1,44 @@
-type NutritionInfo = {
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-};
+import type { RecipeNutritionDto } from '@/types/recipe';
 
 type RecipeNutritionProps = {
-  nutrition: NutritionInfo;
-  servings: number;
+	nutrition: RecipeNutritionDto;
+	servings: number;
 };
 
 export default function RecipeNutrition({
-  nutrition,
-  servings,
+	nutrition,
+	servings,
 }: RecipeNutritionProps) {
-  // Calculer les valeurs par portion
-  const perServing = {
-    calories: Math.round(nutrition.calories / servings),
-    protein: Math.round(nutrition.protein / servings),
-    carbs: Math.round(nutrition.carbs / servings),
-    fat: Math.round(nutrition.fat / servings),
-  };
+	const fields = [
+		{ key: 'calories' as const, label: 'Calories', unit: 'kcal' },
+		{ key: 'protein' as const, label: 'Protéines', unit: 'g' },
+		{ key: 'carbs' as const, label: 'Glucides', unit: 'g' },
+		{ key: 'fat' as const, label: 'Lipides', unit: 'g' },
+	].filter(f => nutrition[f.key] != null);
 
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div className="bg-muted/20 p-4 rounded-lg text-center">
-        <p className="text-sm text-muted-foreground mb-1">Calories</p>
-        <p className="text-xl font-semibold">{perServing.calories} kcal</p>
-        <p className="text-xs text-muted-foreground">par portion</p>
-      </div>
+	if (fields.length === 0) return null;
 
-      <div className="bg-muted/20 p-4 rounded-lg text-center">
-        <p className="text-sm text-muted-foreground mb-1">Protéines</p>
-        <p className="text-xl font-semibold">{perServing.protein} g</p>
-        <p className="text-xs text-muted-foreground">par portion</p>
-      </div>
-
-      <div className="bg-muted/20 p-4 rounded-lg text-center">
-        <p className="text-sm text-muted-foreground mb-1">Glucides</p>
-        <p className="text-xl font-semibold">{perServing.carbs} g</p>
-        <p className="text-xs text-muted-foreground">par portion</p>
-      </div>
-
-      <div className="bg-muted/20 p-4 rounded-lg text-center">
-        <p className="text-sm text-muted-foreground mb-1">Lipides</p>
-        <p className="text-xl font-semibold">{perServing.fat} g</p>
-        <p className="text-xs text-muted-foreground">par portion</p>
-      </div>
-    </div>
-  );
+	return (
+		<div
+			className="grid grid-cols-2 sm:grid-cols-4 gap-4"
+			aria-label="Valeurs nutritionnelles">
+			{fields.map(field => {
+				const total = nutrition[field.key]!;
+				const perServing = Math.round(total / servings);
+				return (
+					<div
+						key={field.key}
+						className="bg-muted/20 p-4 rounded-lg text-center">
+						<p className="text-sm text-muted-foreground mb-1">
+							{field.label}
+						</p>
+						<p className="text-xl font-semibold">
+							{perServing} {field.unit}
+						</p>
+						<p className="text-xs text-muted-foreground">par portion</p>
+					</div>
+				);
+			})}
+		</div>
+	);
 }

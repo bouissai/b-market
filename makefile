@@ -1,7 +1,5 @@
 start:
-	docker-compose up -d postgres && \
-    npx prisma migrate reset && \
-    npx prisma migrate dev --name init && \
-    npx prisma generate && \
-    cat prisma/populate.sql | docker exec -i b-market_postgres_1 psql -U postgres -d bmarket && \
-    npm run dev
+	docker compose up -d postgres && \
+	pnpm exec prisma migrate reset --force && \
+	docker compose exec -T postgres psql -U postgres -d bmarket < prisma/populate.sql && \
+	pnpm run dev

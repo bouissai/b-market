@@ -4,6 +4,7 @@ import { useSession, signOut } from 'next-auth/react';
 import {
 	Beef,
 	ChartBarStacked,
+	ChefHat,
 	Home,
 	LogOutIcon,
 	ShoppingBag,
@@ -44,6 +45,11 @@ export function AppSidebar({ ...props }) {
 			title: 'Gestion des articles',
 			url: '/admin/article',
 			icon: Beef,
+		},
+		{
+			title: 'Gestion des recettes',
+			url: '/admin/recipes',
+			icon: ChefHat,
 		},
 		{
 			title: 'Gestion des catégories',
