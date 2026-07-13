@@ -66,7 +66,7 @@ export default function AdminHome() {
       </div>
       <Tabs defaultValue={period ?? ""} className="mb-6" onValueChange={(p) => setPeriod(p as StatsPeriod)}>
         <TabsList>
-          <TabsTrigger value="today">Aujourd&apos;shui</TabsTrigger>
+          <TabsTrigger value="today">Aujourd&apos;hui</TabsTrigger>
           <TabsTrigger value="week">Cette semaine</TabsTrigger>
           <TabsTrigger value="month">Ce mois</TabsTrigger>
           <TabsTrigger value="year">Cette année</TabsTrigger>
