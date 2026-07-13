@@ -39,18 +39,74 @@ model User {
 }
 
 model Article {
-  id          String      @id @default(cuid())
-  name        String      @unique
-  unit        String
-  price       Float
-  image       String
-  description String?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  categoryId  String
-  category    Category    @relation(fields: [categoryId], references: [id])
-  cartItems   CartItem[]
-  orderItems  OrderItem[]
+  id                String             @id @default(cuid())
+  name              String             @unique
+  unit              String
+  price             Float
+  image             String
+  description       String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  categoryId        String
+  category          Category           @relation(fields: [categoryId], references: [id])
+  cartItems         CartItem[]
+  orderItems        OrderItem[]
+  recipeIngredients RecipeIngredient[]
+}
+
+model Recipe {
+  id          String             @id @default(cuid())
+  title       String
+  description String
+  image       String             @default("/images/no-img.png")
+  category    String
+  prepTime    Int                @default(0)
+  cookTime    Int                @default(0)
+  servings    Int
+  difficulty  String
+  tags        String[]
+  featured    Boolean            @default(false)
+  forEvents   Boolean            @default(false)
+  calories    Int?
+  protein     Int?
+  carbs       Int?
+  fat         Int?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  ingredients RecipeIngredient[]
+  steps       RecipeStep[]
+
+  @@index([category])
+  @@index([difficulty])
+  @@index([featured])
+  @@index([forEvents])
+}
+
+model RecipeIngredient {
+  id              String   @id @default(cuid())
+  recipeId        String
+  recipe          Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  name            String
+  displayQuantity String
+  position        Int
+  articleId       String?
+  article         Article? @relation(fields: [articleId], references: [id], onDelete: SetNull)
+  cartQuantity    Int?
+
+  @@unique([recipeId, position])
+  @@index([recipeId])
+  @@index([articleId])
+}
+
+model RecipeStep {
+  id          String @id @default(cuid())
+  recipeId    String
+  recipe      Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  description String
+  position    Int
+
+  @@unique([recipeId, position])
+  @@index([recipeId])
 }
 
 model Category {
