@@ -10,6 +10,7 @@ FROM base AS deps
 
 RUN apk add --no-cache libc6-compat
 RUN corepack enable
+RUN corepack prepare pnpm@10.34.5 --activate
 
 COPY package.json pnpm-lock.yaml* package-lock.json* yarn.lock* .npmrc* ./
 
@@ -26,6 +27,7 @@ RUN \
 FROM base AS builder
 
 RUN corepack enable
+RUN corepack prepare pnpm@10.34.5 --activate
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .

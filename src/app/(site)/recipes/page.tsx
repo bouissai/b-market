@@ -3,6 +3,8 @@ import { Suspense } from 'react';
 import RecipesPageClient from '@/components/site/recipe/recipes-page-client';
 import { getRecipes } from '@/services/recipeService';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
 	title: 'Recettes | Votre Boucherie',
 	description:

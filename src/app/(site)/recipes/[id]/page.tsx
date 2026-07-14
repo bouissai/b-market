@@ -14,6 +14,8 @@ import RecipeSteps from '@/components/site/recipe/recipe-steps';
 import { getRecipeById, getRelatedRecipes } from '@/services/recipeService';
 import { ChefHat, ChevronLeft, Clock, Users } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 type Props = {
 	params: Promise<{ id: string }>;
 };
@@ -82,26 +84,45 @@ export default async function RecipeDetailPage({ params }: Props) {
 
 						<div className="flex flex-wrap gap-6 mb-6">
 							<div className="flex items-center gap-2">
-								<Clock className="h-5 w-5 text-primary" aria-hidden="true" />
+								<Clock
+									className="h-5 w-5 text-primary"
+									aria-hidden="true"
+								/>
 								<div>
-									<p className="text-sm text-muted-foreground">Temps total</p>
+									<p className="text-sm text-muted-foreground">
+										Temps total
+									</p>
 									<p className="font-medium">
 										{formatTime(recipe.prepTime + recipe.cookTime)}
 									</p>
 								</div>
 							</div>
 							<div className="flex items-center gap-2">
-								<Users className="h-5 w-5 text-primary" aria-hidden="true" />
+								<Users
+									className="h-5 w-5 text-primary"
+									aria-hidden="true"
+								/>
 								<div>
-									<p className="text-sm text-muted-foreground">Portions</p>
-									<p className="font-medium">{recipe.servings} personnes</p>
+									<p className="text-sm text-muted-foreground">
+										Portions
+									</p>
+									<p className="font-medium">
+										{recipe.servings} personnes
+									</p>
 								</div>
 							</div>
 							<div className="flex items-center gap-2">
-								<ChefHat className="h-5 w-5 text-primary" aria-hidden="true" />
+								<ChefHat
+									className="h-5 w-5 text-primary"
+									aria-hidden="true"
+								/>
 								<div>
-									<p className="text-sm text-muted-foreground">Difficulté</p>
-									<p className="font-medium capitalize">{recipe.difficulty}</p>
+									<p className="text-sm text-muted-foreground">
+										Difficulté
+									</p>
+									<p className="font-medium capitalize">
+										{recipe.difficulty}
+									</p>
 								</div>
 							</div>
 						</div>
@@ -122,7 +143,9 @@ export default async function RecipeDetailPage({ params }: Props) {
 
 					<div className="space-y-8">
 						<section aria-labelledby="recipe-steps-title">
-							<h2 id="recipe-steps-title" className="text-2xl font-semibold mb-4">
+							<h2
+								id="recipe-steps-title"
+								className="text-2xl font-semibold mb-4">
 								Préparation
 							</h2>
 							<RecipeSteps steps={recipe.steps} />
@@ -159,8 +182,12 @@ export default async function RecipeDetailPage({ params }: Props) {
 				</aside>
 			</div>
 
-			<section className="mt-12 print:hidden" aria-labelledby="related-recipes-title">
-				<h2 id="related-recipes-title" className="text-2xl font-semibold mb-6">
+			<section
+				className="mt-12 print:hidden"
+				aria-labelledby="related-recipes-title">
+				<h2
+					id="related-recipes-title"
+					className="text-2xl font-semibold mb-6">
 					Recettes similaires
 				</h2>
 				<RelatedRecipes recipes={relatedRecipes} />
