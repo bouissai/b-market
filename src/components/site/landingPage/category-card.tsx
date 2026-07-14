@@ -12,9 +12,10 @@ export function CategoryCard({ title, image, href }: CategoryCardProps) {
     <Link href={href} className="group block">
       <div className="relative aspect-[3/4] overflow-hidden bg-muted/30 mb-4 rounded-lg">
         <Image
-          src={image || "/placeholder.svg"}
+          src={image || "/images/no-img.png"}
           alt={title}
           fill
+          sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
           className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />

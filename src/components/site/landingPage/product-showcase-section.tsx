@@ -1,20 +1,17 @@
-"use client"
 import { Button } from '@/components/ui/button';
-import { useCategoryStore } from '@/store/useCategoryStore';
+import type { LandingCategory } from '@/services/landingService';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect } from 'react';
 import { AnimatedSection } from '../animations/animated-section';
 import { CategoryCard } from './category-card';
 
+type ProductsShowcaseSectionProps = {
+	categories: LandingCategory[];
+};
 
-export function ProductsShowcaseSection() {
-	const { categories, fetchCategories } = useCategoryStore();
-	const featuredCategories = categories.filter(c => c.featured);
-
-	useEffect(() => {
-		fetchCategories();
-	}, [fetchCategories]);
+export function ProductsShowcaseSection({
+	categories,
+}: ProductsShowcaseSectionProps) {
 	return (<section className="py-12 relative bg-muted/30">
 		<div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-muted/30 via-muted/20 to-transparent" />
 		<div className="container mx-auto px-6 relative z-10">
@@ -29,11 +26,11 @@ export function ProductsShowcaseSection() {
 
 			<AnimatedSection delay={200}>
 				<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
-					{featuredCategories.map(category => (
+					{categories.map(category => (
 						<CategoryCard
 							key={category.id}
 							title={category.name}
-							image={category.image}
+							image={category.image ?? ''}
 							href={`/products?category=${category.name}`}
 						/>
 					))}

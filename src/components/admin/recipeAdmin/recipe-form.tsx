@@ -1,15 +1,16 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { type FieldPath, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus, Trash } from 'lucide-react';
+import { ArrowDown, ArrowUp, Plus, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
 	Dialog,
 	DialogContent,
 	DialogDescription,
+	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog';
@@ -116,6 +117,7 @@ export function RecipeForm({ recipe, articles }: RecipeFormProps) {
 		fields: ingredientFields,
 		append: appendIngredient,
 		remove: removeIngredient,
+		move: moveIngredient,
 	} = useFieldArray({
 		control: form.control,
 		name: 'ingredients',
@@ -124,16 +126,29 @@ export function RecipeForm({ recipe, articles }: RecipeFormProps) {
 		fields: stepFields,
 		append: appendStep,
 		remove: removeStep,
+		move: moveStep,
 	} = useFieldArray({
 		control: form.control,
 		name: 'steps',
 	});
+	const pendingFocusRef = useRef<string | null>(null);
 
 	useEffect(() => {
 		form.reset(toFormValues(recipe));
 		setImageUrl(recipe?.image || defaultImageUrl);
 		setUploadedImageUrls([]);
 	}, [defaultImageUrl, form, recipe]);
+
+	useEffect(() => {
+		if (!pendingFocusRef.current) return;
+
+		const fieldName = pendingFocusRef.current;
+		pendingFocusRef.current = null;
+
+		requestAnimationFrame(() => {
+			form.setFocus(fieldName as FieldPath<RecipeFormValues>);
+		});
+	}, [form, ingredientFields.length, stepFields.length]);
 
 	const categories = useMemo(
 		() => [
@@ -158,7 +173,19 @@ export function RecipeForm({ recipe, articles }: RecipeFormProps) {
 		}
 	};
 
+	const hasUnsavedChanges = () =>
+		form.formState.isDirty || imageUrl !== (recipe?.image || defaultImageUrl);
+
 	const handleCancel = async () => {
+		if (
+			hasUnsavedChanges() &&
+			!window.confirm(
+				'Des modifications non enregistrées seront perdues. Fermer le formulaire ?',
+			)
+		) {
+			return;
+		}
+
 		await cleanupUploadedImages(recipe?.image || '', recipe?.image);
 		if (
 			imageUrl !== recipe?.image &&
@@ -169,6 +196,27 @@ export function RecipeForm({ recipe, articles }: RecipeFormProps) {
 			if (publicId) await deleteImage(publicId);
 		}
 		setSelectedRecipe(null, null);
+	};
+
+	const addIngredientAtEnd = () => {
+		const nextIndex = ingredientFields.length;
+		appendIngredient({
+			name: '',
+			displayQuantity: '',
+			position: nextIndex + 1,
+			articleId: null,
+			cartQuantity: null,
+		});
+		pendingFocusRef.current = `ingredients.${nextIndex}.name`;
+	};
+
+	const addStepAtEnd = () => {
+		const nextIndex = stepFields.length;
+		appendStep({
+			description: '',
+			position: nextIndex + 1,
+		});
+		pendingFocusRef.current = `steps.${nextIndex}.description`;
 	};
 
 	const handleSubmit = async (values: RecipeFormValues) => {
@@ -202,8 +250,8 @@ export function RecipeForm({ recipe, articles }: RecipeFormProps) {
 
 	return (
 		<Dialog open onOpenChange={open => !open && void handleCancel()}>
-			<DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-4xl">
-				<DialogHeader>
+			<DialogContent className="flex max-h-[92vh] flex-col gap-0 p-0 sm:max-w-4xl">
+				<DialogHeader className="border-b px-6 py-4">
 					<DialogTitle>
 						{isEdit ? 'Modifier la recette' : 'Ajouter une recette'}
 					</DialogTitle>
@@ -214,7 +262,10 @@ export function RecipeForm({ recipe, articles }: RecipeFormProps) {
 				</DialogHeader>
 
 				<Form {...form}>
-					<form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+					<form
+						onSubmit={form.handleSubmit(handleSubmit)}
+						className="flex min-h-0 flex-1 flex-col">
+						<div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-6 py-5">
 						<div className="grid gap-4 md:grid-cols-2">
 							<FormField
 								control={form.control}
@@ -444,22 +495,20 @@ export function RecipeForm({ recipe, articles }: RecipeFormProps) {
 
 						<section className="space-y-3">
 							<div className="flex items-center justify-between gap-4">
-								<h3 className="font-medium">Ingrédients</h3>
+								<div>
+									<h3 className="font-medium">Ingrédients</h3>
+									<p className="text-sm text-muted-foreground">
+										Ajoutez les produits liés seulement quand ils doivent pouvoir
+										être envoyés au panier.
+									</p>
+								</div>
 								<Button
 									type="button"
 									variant="outline"
 									size="sm"
-									onClick={() =>
-										appendIngredient({
-											name: '',
-											displayQuantity: '',
-											position: ingredientFields.length + 1,
-											articleId: null,
-											cartQuantity: null,
-										})
-									}>
+									onClick={addIngredientAtEnd}>
 									<Plus className="mr-2 h-4 w-4" aria-hidden="true" />
-									Ajouter
+									Ajouter un ingrédient
 								</Button>
 							</div>
 							{ingredientFields.map((field, index) => {
@@ -467,7 +516,27 @@ export function RecipeForm({ recipe, articles }: RecipeFormProps) {
 								return (
 									<div
 										key={field.id}
-										className="grid gap-3 rounded-md border p-3 md:grid-cols-[1fr_140px_1fr_120px_auto]">
+										className="grid gap-3 rounded-md border p-3 md:grid-cols-[auto_1fr_140px_1fr_120px_auto]">
+										<div className="flex items-start gap-1 pt-7">
+											<Button
+												type="button"
+												variant="ghost"
+												size="icon"
+												onClick={() => moveIngredient(index, index - 1)}
+												disabled={index === 0}
+												aria-label="Déplacer cet ingrédient vers le haut">
+												<ArrowUp className="h-4 w-4" aria-hidden="true" />
+											</Button>
+											<Button
+												type="button"
+												variant="ghost"
+												size="icon"
+												onClick={() => moveIngredient(index, index + 1)}
+												disabled={index === ingredientFields.length - 1}
+												aria-label="Déplacer cet ingrédient vers le bas">
+												<ArrowDown className="h-4 w-4" aria-hidden="true" />
+											</Button>
+										</div>
 										<FormField
 											control={form.control}
 											name={`ingredients.${index}.name`}
@@ -566,29 +635,57 @@ export function RecipeForm({ recipe, articles }: RecipeFormProps) {
 									</div>
 								);
 							})}
+							<Button
+								type="button"
+								variant="outline"
+								className="w-full justify-center"
+								onClick={addIngredientAtEnd}>
+								<Plus className="mr-2 h-4 w-4" aria-hidden="true" />
+								Ajouter un ingrédient
+							</Button>
 						</section>
 
 						<section className="space-y-3">
 							<div className="flex items-center justify-between gap-4">
-								<h3 className="font-medium">Étapes</h3>
+								<div>
+									<h3 className="font-medium">Étapes</h3>
+									<p className="text-sm text-muted-foreground">
+										L’ordre ci-dessous sera conservé sur la page publique.
+									</p>
+								</div>
 								<Button
 									type="button"
 									variant="outline"
 									size="sm"
-									onClick={() =>
-										appendStep({
-											description: '',
-											position: stepFields.length + 1,
-										})
-									}>
+									onClick={addStepAtEnd}>
 									<Plus className="mr-2 h-4 w-4" aria-hidden="true" />
-									Ajouter
+									Ajouter une étape
 								</Button>
 							</div>
 							{stepFields.map((field, index) => (
 								<div
 									key={field.id}
-									className="grid gap-3 rounded-md border p-3 md:grid-cols-[1fr_auto]">
+									className="grid gap-3 rounded-md border p-3 md:grid-cols-[auto_1fr_auto]">
+									<div className="flex items-start gap-1 pt-7">
+										<Button
+											type="button"
+											variant="ghost"
+											size="icon"
+											onClick={() => moveStep(index, index - 1)}
+											disabled={index === 0}
+											aria-label="Déplacer cette étape vers le haut">
+											<ArrowUp className="h-4 w-4" aria-hidden="true" />
+										</Button>
+										<Button
+											type="button"
+											variant="ghost"
+											size="icon"
+											onClick={() => moveStep(index, index + 1)}
+											disabled={index === stepFields.length - 1}
+											aria-label="Déplacer cette étape vers le bas">
+											<ArrowDown className="h-4 w-4" aria-hidden="true" />
+										</Button>
+									</div>
 									<FormField
 										control={form.control}
 										name={`steps.${index}.description`}
@@ -614,9 +711,19 @@ export function RecipeForm({ recipe, articles }: RecipeFormProps) {
 									</Button>
 								</div>
 							))}
+							<Button
+								type="button"
+								variant="outline"
+								className="w-full justify-center"
+								onClick={addStepAtEnd}>
+								<Plus className="mr-2 h-4 w-4" aria-hidden="true" />
+								Ajouter une étape
+							</Button>
 						</section>
 
-						<div className="flex justify-end gap-2 pt-2">
+						</div>
+
+						<DialogFooter className="border-t bg-background px-6 py-4">
 							<Button type="button" variant="outline" onClick={handleCancel}>
 								Annuler
 							</Button>
@@ -627,7 +734,7 @@ export function RecipeForm({ recipe, articles }: RecipeFormProps) {
 										? 'Modifier'
 										: 'Ajouter'}
 							</Button>
-						</div>
+						</DialogFooter>
 					</form>
 				</Form>
 			</DialogContent>

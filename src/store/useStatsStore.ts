@@ -7,7 +7,7 @@ interface StatsState {
   isLoading: boolean;
   error: string | null;
   setPeriod: (period: StatsPeriod) => void;
-  loadStats: (period?: StatsPeriod) => Promise<void>;
+  loadStats: (period?: StatsPeriod) => Promise<boolean>;
 }
 
 export const useStatsStore = create<StatsState>((set, get) => ({
@@ -19,21 +19,23 @@ export const useStatsStore = create<StatsState>((set, get) => ({
   setPeriod: (period) => set({ period }),
 
   loadStats: async (period) => {
-    const selectedPeriod = period || get().period;
+    const selectedPeriod = period || get().period || "today";
     set({ isLoading: true, error: null });
 
     try {
-      const statsReponse = await fetch(period ? `/api/stats?period=${period}` : `/api/stats`);
+      const statsReponse = await fetch(`/api/stats?period=${selectedPeriod}`);
       if (!statsReponse.ok) {
         throw new Error("Erreur lors de la récupération des statistiques");
       }
       const stats: StatsResponse = await statsReponse.json(); // 🔥 Convertir en JSON
 
       set({ stats, period: selectedPeriod, isLoading: false });
+      return true;
 
 
     } catch (error) {
       set({ error: error instanceof Error ? error.message : "Erreur inconnue", isLoading: false });
+      return false;
     }
   },
 

@@ -13,12 +13,11 @@ export function WhyChooseUsSection() {
             <AnimatedSection className="order-2 lg:order-1">
               <div className="relative h-[500px] rounded-lg overflow-hidden border border-border/30">
                 <Image
-                  src="/images/pourquoi-choisir.png"
+                  src="/images/viandes.png"
                   alt="Pourquoi nous choisir"
                   className="object-cover"
-                  style={{ objectFit: 'cover' }}
-                  width={700}
-                  height={200}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
               </div>

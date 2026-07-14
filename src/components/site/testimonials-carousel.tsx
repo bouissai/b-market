@@ -1,12 +1,12 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Review } from "@/store/useReviewStore"
+import type { LandingReview } from "@/services/landingService"
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react"
 import { useEffect, useState } from "react"
 
 type ReviewProps = {
-  reviews: Review[];
+  reviews: LandingReview[];
 }
 
 export function TestimonialsCarousel({ reviews }: ReviewProps) {
@@ -69,7 +69,12 @@ export function TestimonialsCarousel({ reviews }: ReviewProps) {
 
       {/* ✅ Navigation */}
       <div className="flex items-center justify-center gap-4 mt-8">
-        <Button variant="ghost" size="icon" onClick={goToPrevious} className="rounded-full">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={goToPrevious}
+          className="rounded-full"
+          aria-label="Afficher l'avis précédent">
           <ChevronLeft className="w-5 h-5" />
         </Button>
 
@@ -77,6 +82,9 @@ export function TestimonialsCarousel({ reviews }: ReviewProps) {
           {reviews.map((_, index) => (
             <button
               key={index}
+              type="button"
+              aria-label={`Afficher l'avis ${index + 1}`}
+              aria-current={index === currentIndex ? 'true' : undefined}
               onClick={() => {
                 setIsAutoPlaying(false)
                 setCurrentIndex(index)
@@ -86,7 +94,12 @@ export function TestimonialsCarousel({ reviews }: ReviewProps) {
           ))}
         </div>
 
-        <Button variant="ghost" size="icon" onClick={goToNext} className="rounded-full">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={goToNext}
+          className="rounded-full"
+          aria-label="Afficher l'avis suivant">
           <ChevronRight className="w-5 h-5" />
         </Button>
       </div>

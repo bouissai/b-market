@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Loading } from '@/components/loading';
+import { CsvImportExportPanel } from '@/components/admin/csv-import-export-panel';
 import { RecipeForm } from '@/components/admin/recipeAdmin/recipe-form';
 import { RecipeTable } from '@/components/admin/recipeAdmin/recipe-table';
 import {
@@ -91,7 +92,15 @@ export default function RecipesAdminPage() {
 			<Card>
 				<CardHeader className="flex flex-row items-center justify-between gap-4">
 					<CardTitle>Gestion des recettes</CardTitle>
-					<Button onClick={handleCreate}>Ajouter une recette</Button>
+					<div className="flex flex-wrap items-center justify-end gap-2">
+						<CsvImportExportPanel
+							title="Import CSV des recettes"
+							description="Le fichier utilise des colonnes JSON pour préserver les ingrédients et étapes sans ambiguïté."
+							endpoint="/api/admin/csv/recipes"
+							onImported={() => fetchRecipes()}
+						/>
+						<Button onClick={handleCreate}>Ajouter une recette</Button>
+					</div>
 				</CardHeader>
 				<CardContent>
 					{isPreparingForm && (

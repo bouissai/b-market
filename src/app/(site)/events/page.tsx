@@ -7,6 +7,7 @@ import { ServiceEvents } from '@/components/site/events/service-events';
 import { SectionSeparator } from '@/components/site/section-separator';
 import { TestimonialsSection } from '@/components/site/testimonials-section';
 import { eventTypes } from '@/constants';
+import { getLandingReviews } from '@/services/landingService';
 
 import { Metadata } from 'next';
 
@@ -16,7 +17,9 @@ export const metadata: Metadata = {
 		'Viande de qualité pour vos événements spéciaux - mariages, fêtes religieuses et célébrations',
 };
 
-export default function EventsPage() {
+export default async function EventsPage() {
+	const reviews = await getLandingReviews();
+
 	return (
 		<div >
 			<section className="relative">
@@ -39,7 +42,7 @@ export default function EventsPage() {
 			<SectionSeparator variant="wave" />
 
 			<section className="py-16  bg-muted/30">
-				<TestimonialsSection />
+				<TestimonialsSection reviews={reviews} />
 			</section>
 
 			<SectionSeparator variant="diagonal" />
