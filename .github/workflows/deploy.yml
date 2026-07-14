@@ -66,7 +66,7 @@ jobs:
 
             echo "📂 Prisma migrate deploy"
             APP_ID=$(docker compose ps -q bmarket)
-            docker exec $APP_ID npx prisma migrate deploy || echo "⚠️ Prisma migration skipped"
-
+            test -n "$APP_ID"
+            docker exec "$APP_ID" npx prisma migrate deploy
 
             echo "✅ Déploiement terminé !"

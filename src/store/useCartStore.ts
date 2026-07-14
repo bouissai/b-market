@@ -1,6 +1,7 @@
 import { CartGetDto, CartItem } from '@/types/cart';
 import { create } from 'zustand';
 import { ArticleGetDto } from '@/types/article';
+import type { BulkCartResult } from '@/types/recipe';
 import { getSession } from 'next-auth/react';
 import { toast } from '@/hooks/use-toast';
 
@@ -20,6 +21,9 @@ type CartStore = {
 	setShowMergePopup: (show: boolean) => void;
 	fetchCartItems: () => Promise<void>;
 	addCartItem: (newItem: Partial<ArticleGetDto>) => Promise<void>;
+	addRecipeItems: (
+		items: Array<{ article: ArticleGetDto; quantity: number }>,
+	) => Promise<BulkCartResult>;
 	removeFromCart: (item: Partial<ArticleGetDto>) => Promise<void>;
 	updateQuantity: (
 		item: Partial<ArticleGetDto>,
@@ -132,6 +136,100 @@ export const useCartStore = create<CartStore>((set, get) => ({
 			await updateQuantity(newItem, 1);
 			return;
 		}
+	},
+
+	addRecipeItems: async items => {
+		const result: BulkCartResult = {
+			added: [],
+			skipped: [],
+			errors: [],
+		};
+
+		if (items.length === 0) return result;
+
+		const session = await getSession();
+
+		if (session) {
+			const response = await fetch('/api/carts/items/bulk', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					items: items.map(i => ({
+						articleId: i.article.id,
+						quantity: i.quantity,
+					})),
+				}),
+			});
+
+			if (!response.ok) {
+				const data = await response.json().catch(() => ({}));
+				toast({
+					title: 'Erreur',
+					description:
+						data.message || 'Erreur lors de l\'ajout au panier',
+					variant: 'destructive',
+				});
+				for (const item of items) {
+					result.errors.push({
+						articleId: item.article.id,
+						reason: data.message || 'Erreur serveur',
+					});
+				}
+				return result;
+			}
+
+			const bulkResult = (await response.json()) as BulkCartResult;
+			await get().fetchCartItems();
+			return bulkResult;
+		}
+
+		const localCart = getLocalCart();
+		const updatedCart = [...localCart];
+
+		for (const item of items) {
+			const existingIndex = updatedCart.findIndex(
+				c => c.article.id === item.article.id,
+			);
+
+			if (existingIndex >= 0) {
+				const newQty = updatedCart[existingIndex].quantity + item.quantity;
+				if (newQty > 99) {
+					result.errors.push({
+						articleId: item.article.id,
+						reason: 'Quantité maximale dépassée (99)',
+					});
+					continue;
+				}
+				updatedCart[existingIndex] = {
+					...updatedCart[existingIndex],
+					quantity: newQty,
+				};
+			} else {
+				if (item.quantity > 99) {
+					result.errors.push({
+						articleId: item.article.id,
+						reason: 'Quantité maximale dépassée (99)',
+					});
+					continue;
+				}
+				updatedCart.push({
+					article: item.article,
+					quantity: item.quantity,
+				});
+			}
+
+			result.added.push({
+				articleId: item.article.id,
+				name: item.article.name,
+				quantity: item.quantity,
+			});
+		}
+
+		syncCartToLocalStorage(updatedCart);
+		const { totalCartItems, totalPrice } = calculateTotals(updatedCart);
+		set({ cartItems: updatedCart, totalCartItems, totalPrice });
+
+		return result;
 	},
 
 	updateQuantity: async (item, quantity) => {

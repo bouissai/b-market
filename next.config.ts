@@ -3,17 +3,17 @@ import type { NextConfig } from 'next'
 import { withSentryConfig } from '@sentry/nextjs'
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
+  output: process.platform === 'win32' ? undefined : 'standalone',
   productionBrowserSourceMaps: true,
   compress: true,
 
-  // ✅ Turbopack config au bon niveau (PAS dans "experimental")
-  // et syntaxe ESM-compatible (pas de __dirname en TS/ESM)
-  turbopack: {
-    root: new URL('.', import.meta.url).pathname,
-  },
 
   images: {
+    localPatterns: [
+      {
+        pathname: '/images/**',
+      },
+    ],
     remotePatterns: [
       {
         protocol: 'https',

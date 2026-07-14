@@ -13,7 +13,11 @@ const compat = new FlatCompat({
   recommendedConfig: js.configs.recommended,
 });
 
-export default [
+const eslintConfig = [
+  {
+    ignores: ['.next/**', 'node_modules/**', 'dist/**', 'coverage/**'],
+  },
+
   // Config de base d’ESLint
   js.configs.recommended,
 
@@ -35,3 +39,5 @@ export default [
     },
   },
 ];
+
+export default eslintConfig;
