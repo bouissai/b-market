@@ -49,8 +49,12 @@ export const Cart = ({ className = '' }: CartProps) => {
 				className={`relative ${className}`}>
 				<Sheet open={open} onOpenChange={setOpen}>
 					<SheetTrigger asChild>
-						<Button variant="link" size="icon" className="relative">
-							<ShoppingBag className="h-5 w-5" />
+						<Button
+							variant="link"
+							size="icon"
+							className="relative"
+							aria-label={`Ouvrir le panier (${totalCartItems} article${totalCartItems > 1 ? 's' : ''})`}>
+							<ShoppingBag className="h-5 w-5" aria-hidden="true" />
 							<AnimatePresence>
 								{totalCartItems > 0 && (
 									<motion.div

@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
     try {
 
         const { searchParams } = new URL(req.url);
-        const period = searchParams.get("period") as StatsPeriod;
+        const period = (searchParams.get("period") || "today") as StatsPeriod;
 
         const dateRanges = calculateDateRanges(period);
         if (!dateRanges) {

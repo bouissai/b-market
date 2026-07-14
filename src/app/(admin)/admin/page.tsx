@@ -17,7 +17,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
 import { useStatsStore } from '@/store/useStatsStore';
 import { StatsPeriod, StatsResponse } from '@/types/stats';
-import { Download, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { useEffect } from 'react';
 
 export default function AdminHome() {
@@ -29,7 +29,8 @@ export default function AdminHome() {
   const totalCatRevenue = stats?.topCategories.reduce((acc, category) => acc + category.totalRevenue, 0) ?? 0;
 
   const handleRefresh = async () => {
-    await loadStats();
+    const success = await loadStats(period);
+    if (!success) return;
     toast({
       title: "Actualisé",
       description: "Les données du tableau de bord ont été actualisées.",
@@ -58,9 +59,6 @@ export default function AdminHome() {
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={handleRefresh}>
             <RefreshCw className="mr-2 h-4 w-4" /> Actualiser
-          </Button>
-          <Button variant="outline" size="sm">
-            <Download className="mr-2 h-4 w-4" /> Exporter
           </Button>
         </div>
       </div>

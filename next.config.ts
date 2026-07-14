@@ -4,11 +4,12 @@ import { withSentryConfig } from '@sentry/nextjs'
 
 const nextConfig: NextConfig = {
   output: process.platform === 'win32' ? undefined : 'standalone',
-  productionBrowserSourceMaps: true,
+  productionBrowserSourceMaps: false,
   compress: true,
 
 
   images: {
+    qualities: [50, 65, 75],
     localPatterns: [
       {
         pathname: '/images/**',

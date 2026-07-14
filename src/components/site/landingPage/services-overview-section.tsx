@@ -72,12 +72,11 @@ export function ServicesOverviewSection() {
               <AnimatedSection delay={200}>
                 <div className="relative h-[500px] rounded-lg overflow-hidden border border-border/30">
                   <Image
-                    src="/images/beef-tenderloin-fillet-on-marble-surface.png"
+                    src="/images/experiences.png"
                     alt="Nos services"
                     className="object-cover"
                     fill
                     sizes="(max-width: 768px) 100vw, 50vw"
-                    priority
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
                 </div>

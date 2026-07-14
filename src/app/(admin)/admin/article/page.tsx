@@ -2,6 +2,7 @@
 
 import { ArticleForm } from '@/components/admin/articleAdmin/article-form';
 import { ArticleTable } from '@/components/admin/articleAdmin/article-table';
+import { CsvImportExportPanel } from '@/components/admin/csv-import-export-panel';
 import { Loading } from '@/components/loading';
 import {
 	AlertDialog,
@@ -56,9 +57,17 @@ export default function ArticlePage() {
 			<Card>
 				<CardHeader className="flex flex-row items-center justify-between">
 					<CardTitle>Gestion des Articles</CardTitle>
-					<Button onClick={() => setSelectedArticle(null, 'new')}>
-						Ajouter un article
-					</Button>
+					<div className="flex flex-wrap items-center justify-end gap-2">
+						<CsvImportExportPanel
+							title="Import CSV des articles"
+							description="Prévisualisez les créations et mises à jour avant de modifier le catalogue."
+							endpoint="/api/admin/csv/articles"
+							onImported={() => fetchArticles()}
+						/>
+						<Button onClick={() => setSelectedArticle(null, 'new')}>
+							Ajouter un article
+						</Button>
+					</div>
 				</CardHeader>
 				<CardContent>
 					<ArticleTable

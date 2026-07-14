@@ -5,20 +5,31 @@ import { ServicesOverviewSection } from '@/components/site/landingPage/services-
 import { TestimonialsSection } from '@/components/site/testimonials-section';
 import { WhyChooseUsSection } from '@/components/site/landingPage/why-choose-us-section';
 import { SectionSeparator } from '@/components/site/section-separator';
+import {
+	getFeaturedLandingCategories,
+	getLandingReviews,
+} from '@/services/landingService';
 
-export default function Home() {
+export const dynamic = 'force-dynamic';
+
+export default async function Home() {
+	const [categories, reviews] = await Promise.all([
+		getFeaturedLandingCategories(),
+		getLandingReviews(),
+	]);
+
 	return (
-		<div className='min-h-screen'>
+		<div className="min-h-screen">
 			<HeroSection />
 			<SectionSeparator variant="wave" />
 			<ServicesOverviewSection />
 			<SectionSeparator variant="diagonal" />
 			<WhyChooseUsSection />
-			<SectionSeparator  variant="wave"/>
-			<ProductsShowcaseSection />
-			<SectionSeparator variant='diagonal'/>
-			<TestimonialsSection/>
-			<SectionSeparator  variant="wave"/>
+			<SectionSeparator variant="wave" />
+			<ProductsShowcaseSection categories={categories} />
+			<SectionSeparator variant="diagonal" />
+			<TestimonialsSection reviews={reviews} />
+			<SectionSeparator variant="wave" />
 			<CTASection />
 		</div>
 	);

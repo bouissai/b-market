@@ -20,7 +20,9 @@ export const ProfileButton = ({ goTo }: { goTo: (href: string) => void }) => {
 		<div className="flex space-x-1 gap-4">
 			{session ? (
 				<DropdownMenu>
-					<DropdownMenuTrigger className="focus:outline-none">
+					<DropdownMenuTrigger
+						className="focus:outline-none"
+						aria-label="Ouvrir le menu du compte">
 						<Avatar className="h-9 w-9">
 							<AvatarImage
 								src="/placeholder.svg"
@@ -50,8 +52,9 @@ export const ProfileButton = ({ goTo }: { goTo: (href: string) => void }) => {
 				<Button
 					size="icon"
 					variant="ghost"
-					onClick={() => router.push('/auth')}>
-					<UserRound />
+					onClick={() => router.push('/auth')}
+					aria-label="Se connecter">
+					<UserRound aria-hidden="true" />
 				</Button>
 			)}
 		</div>

@@ -5,6 +5,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export function FooterSite() {
+	const developers = [
+		{ name: 'Ilyass B', href: 'https://github.com/bouissai' },
+		{
+			name: 'Yassine',
+			href: 'https://github.com/moslehy?tab=repositories',
+		},
+		{ name: 'Flavien', href: 'https://github.com/flavien-smn' },
+	];
+
 	return (
 		<footer className="px-8 pt-20 pb-10 border-t ">
 			<div>
@@ -133,6 +142,24 @@ export function FooterSite() {
 					<p>
 						&copy; {new Date().getFullYear()} Boucherie B Market. Tous
 						droits réservés.
+					</p>
+					<p className="mt-3 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-foreground/80">
+						<span>Développé par</span>
+						{developers.map((developer, index) => (
+							<span key={developer.href} className="inline-flex items-center gap-2">
+								<a
+									href={developer.href}
+									target="_blank"
+									rel="noopener noreferrer"
+									className="underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+									aria-label={`Voir le GitHub de ${developer.name}`}>
+									{developer.name}
+								</a>
+								{index < developers.length - 1 && (
+									<span aria-hidden="true">·</span>
+								)}
+							</span>
+						))}
 					</p>
 					<p className="mt-2">
 						<span className="inline-block">

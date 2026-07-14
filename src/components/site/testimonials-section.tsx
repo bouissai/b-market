@@ -1,19 +1,13 @@
-'use client';
-
-import { useReviewsStore } from '@/store/useReviewStore';
-import { useEffect } from 'react';
+import type { LandingReview } from '@/services/landingService';
 import { AnimatedSection } from './animations/animated-section';
 import { TestimonialsCarousel } from './testimonials-carousel';
 
+type TestimonialsSectionProps = {
+	reviews: LandingReview[];
+};
 
-export function TestimonialsSection() {
-	const { reviews, fetchReviews, loading } = useReviewsStore();
-
-	useEffect(() => {
-		fetchReviews();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-	if (loading || reviews.length === 0) return null;
+export function TestimonialsSection({ reviews }: TestimonialsSectionProps) {
+	if (reviews.length === 0) return null;
 
 	return (
 		<section className="py-12 relative">

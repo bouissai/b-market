@@ -64,7 +64,7 @@ export default function RootLayout({
 		<html lang="fr" className={`${playfair.variable} ${montserrat.variable}`}>
 			<body>
 				<Toaster />
-				<SessionProvider>
+				<SessionProvider refetchOnWindowFocus={false} refetchInterval={0}>
 					<NuqsAdapter>
 						{children}
 					</NuqsAdapter>
