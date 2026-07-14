@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { GENERAL_INFO } from '@/constants';
+import { BUSINESS_INFO } from '@/lib/site-seo';
 import { Clock, Facebook, Instagram, Mail, MapPin, Phone } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -15,7 +16,7 @@ export function FooterSite() {
 	];
 
 	return (
-		<footer className="px-8 pt-20 pb-10 border-t ">
+		<footer className="px-8 pt-20 pb-10 border-t">
 			<div>
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16">
 					<div>
@@ -23,7 +24,7 @@ export function FooterSite() {
 							<Link
 								href="/"
 								className="flex items-center space-x-2 transition-transform hover:scale-105">
-								<div className="w-12 h-12 rounded-full overflow-hidden border ">
+								<div className="w-12 h-12 rounded-full overflow-hidden border">
 									<Image
 										src="/images/logo.png"
 										alt="B Market Logo"
@@ -32,15 +33,15 @@ export function FooterSite() {
 										className="rounded-full object-cover"
 									/>
 								</div>
-								<span className="text-2xl font-bold font-playfair ">
+								<span className="text-2xl font-bold font-playfair">
 									B Market
 								</span>
 							</Link>
 						</div>
-						<p className=" mb-6">
-							Boucherie artisanale halal depuis 1982. Nous vous proposons
-							des viandes fraîches de qualité, découpées sur place par
-							nos bouchers expérimentés.
+						<p className="mb-6">
+							Boucherie halal artisanale près de Grenoble depuis 1982. Nous
+							vous proposons des viandes fraîches de qualité, découpées sur
+							place par nos bouchers expérimentés.
 						</p>
 						<div className="flex space-x-4">
 							<a
@@ -64,46 +65,38 @@ export function FooterSite() {
 
 					<div>
 						<h3 className="text-lg font-semibold mb-6 flex items-center">
-							<span className="w-8 h-0.5  mr-3 bg-primary"></span>
-							Nous Contacter
+							<span className="w-8 h-0.5 mr-3 bg-primary" />
+							Nous contacter
 						</h3>
 						<ul className="space-y-4">
 							<li className="flex items-start">
 								<MapPin className="h-6 w-6 shrink-0 mt-0.5 mr-3" />
-								<span >
-									<div>{GENERAL_INFO.address}</div>
-								</span>
+								<span>{GENERAL_INFO.address}</span>
 							</li>
 							<li className="flex items-center">
 								<Phone className="h-6 w-6 mr-3" />
-								<span >
-									{GENERAL_INFO.phone}
-								</span>
+								<span>{GENERAL_INFO.phone}</span>
 							</li>
 							<li className="flex items-center">
 								<Mail className="h-6 w-6 mr-3" />
-								<span >
-									{GENERAL_INFO.email}
-								</span>
+								<span>{GENERAL_INFO.email}</span>
 							</li>
 						</ul>
 					</div>
 
 					<div>
 						<h3 className="text-lg font-semibold mb-6 flex items-center">
-							<span className="w-8 h-0.5 mr-3 bg-primary"></span>
-							Horaires d&apos;Ouverture
+							<span className="w-8 h-0.5 mr-3 bg-primary" />
+							Horaires d&apos;ouverture
 						</h3>
 						<ul className="space-y-3">
 							{GENERAL_INFO.openingHours.map((item, index) => (
 								<li key={index} className="flex items-start">
 									<Clock className="h-6 w-6 shrink-0 mt-0.5 mr-3" />
 									<div>
-										<p >{item.days}:</p>
+										<p>{item.days}:</p>
 										{item.hours.map((hour, i) => (
-											<p
-												key={i}
-												className="font-semibold">
+											<p key={i} className="font-semibold">
 												{hour}
 											</p>
 										))}
@@ -114,11 +107,10 @@ export function FooterSite() {
 					</div>
 				</div>
 
-				{/* Newsletter Subscription */}
 				<div className="border-t pt-10 pb-8 mb-8">
 					<div className="max-w-2xl mx-auto text-center">
 						<h3 className="text-xl font-semibold mb-4 font-playfair">
-							Inscrivez-vous à Notre Newsletter
+							Inscrivez-vous à notre newsletter
 						</h3>
 						<p className="mb-6">
 							Recevez nos offres spéciales et nos nouvelles recettes
@@ -128,16 +120,13 @@ export function FooterSite() {
 							<input
 								type="email"
 								placeholder="Votre adresse email"
-								className="flex-grow px-4 py-3 rounded-md  focus:outline-none focus:ring-2"
+								className="flex-grow px-4 py-3 rounded-md focus:outline-none focus:ring-2"
 							/>
-							<Button type="submit">
-								S&apos;inscrire
-							</Button>
+							<Button type="submit">S&apos;inscrire</Button>
 						</form>
 					</div>
 				</div>
 
-				{/* Copyright */}
 				<div className="text-center text-sm">
 					<p>
 						&copy; {new Date().getFullYear()} Boucherie B Market. Tous
@@ -167,6 +156,24 @@ export function FooterSite() {
 						</span>
 						<span className="mx-2">|</span>
 						<span className="inline-block">Qualité et tradition</span>
+					</p>
+					<nav
+						aria-label="Informations légales"
+						className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+						<Link
+							href="/mentions-legales"
+							className="underline-offset-4 transition-colors hover:text-foreground hover:underline">
+							Mentions légales
+						</Link>
+						<Link
+							href="/politique-confidentialite"
+							className="underline-offset-4 transition-colors hover:text-foreground hover:underline">
+							Politique de confidentialité
+						</Link>
+					</nav>
+					<p className="mt-3 text-foreground/80">
+						{BUSINESS_INFO.legalName} ({BUSINESS_INFO.name}) - SIREN{' '}
+						{BUSINESS_INFO.siren}
 					</p>
 				</div>
 			</div>

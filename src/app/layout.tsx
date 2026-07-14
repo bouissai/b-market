@@ -1,8 +1,10 @@
 import '@/app/globals.css';
 import { Toaster } from '@/components/ui/toaster';
+import { BUSINESS_INFO, LOCAL_SEO_KEYWORDS, SITE_URL } from '@/lib/site-seo';
+import type { Metadata } from 'next';
 import { SessionProvider } from 'next-auth/react';
 import { Montserrat, Playfair_Display } from 'next/font/google';
-import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 const playfair = Playfair_Display({
 	subsets: ['latin'],
@@ -16,45 +18,59 @@ const montserrat = Montserrat({
 	variable: '--font-montserrat',
 });
 
-export const metadata = {
-	title: 'Boucherie Halal Grenoble - Viandes Fraîches & Qualité | BMarket',
+export const metadata: Metadata = {
+	metadataBase: new URL(SITE_URL),
+	applicationName: 'B Market Grenoble',
+	title: {
+		default: 'Boucherie halal Grenoble | B Market',
+		template: '%s | B Market Grenoble',
+	},
 	description:
-		'Découvrez BMarket, votre boucherie halal à Grenoble. Viandes fraîches, certifiées et de qualité. Commandez en ligne et récupérez en magasin !',
-	keywords: [
-		'boucherie halal Grenoble',
-		'viande halal Grenoble',
-		'boucherie Fontaine',
-		'boucherie Grenoble',
-		"boucherie Saint Martin d'Hères",
-		'boucherie Meylan',
-		'halal Grenoble',
-		'viande de qualité',
-	],
+		'B Market est votre boucherie halal proche de Grenoble, à Fontaine. Viandes fraîches, découpes artisanales, préparations maison, traiteur halal et click-and-collect.',
+	keywords: LOCAL_SEO_KEYWORDS,
+	alternates: {
+		canonical: '/',
+	},
+	robots: {
+		index: true,
+		follow: true,
+		googleBot: {
+			index: true,
+			follow: true,
+			'max-image-preview': 'large',
+			'max-snippet': -1,
+			'max-video-preview': -1,
+		},
+	},
+	authors: [{ name: BUSINESS_INFO.legalName }],
+	creator: 'B Market',
+	publisher: BUSINESS_INFO.legalName,
 	openGraph: {
 		type: 'website',
-		url: 'https://www.bmarket-grenoble.fr',
-		title: 'Boucherie Halal Grenoble - Viandes Fraîches & Qualité | BMarket',
+		url: SITE_URL,
+		locale: 'fr_FR',
+		title: 'Boucherie halal Grenoble | B Market',
 		description:
-			'Votre boucherie halal de référence à Grenoble. Viandes fraîches, certifiées, et click-and-collect disponible !',
+			'Boucherie halal artisanale près de Grenoble : viandes fraîches, découpes sur mesure, préparations maison et click-and-collect à Fontaine.',
 		images: [
 			{
-				url: 'https://www.bmarket-grenoble.fr/images/viande-halal.jpg',
+				url: '/images/devanture-bmarket-hero.webp',
 				width: 1200,
 				height: 630,
-				alt: 'Viande Halal de Qualité',
+				alt: 'Viande de boucherie halal B Market Grenoble',
 			},
 		],
-		siteName: 'BMarket - Boucherie Halal Grenoble',
+		siteName: 'B Market - Boucherie halal Grenoble',
 	},
 	twitter: {
 		card: 'summary_large_image',
-		title: 'Boucherie Halal Grenoble - Viandes Fraîches & Qualité | BMarket',
+		title: 'Boucherie halal Grenoble | B Market',
 		description:
-			'Trouvez la meilleure viande halal à Grenoble chez BMarket. Qualité supérieure et service rapide !',
-		images: ['https://www.bmarket-grenoble.fr/images/viande-halal.jpg'],
-		site: '@BMarketGrenoble',
+			'Viandes fraîches, boucherie halal artisanale et click-and-collect près de Grenoble.',
+		images: ['/images/devanture-bmarket-hero.webp'],
 	},
 };
+
 export default function RootLayout({
 	children,
 }: {
@@ -65,9 +81,7 @@ export default function RootLayout({
 			<body>
 				<Toaster />
 				<SessionProvider refetchOnWindowFocus={false} refetchInterval={0}>
-					<NuqsAdapter>
-						{children}
-					</NuqsAdapter>
+					<NuqsAdapter>{children}</NuqsAdapter>
 				</SessionProvider>
 			</body>
 		</html>
