@@ -26,7 +26,7 @@ export function FooterSite() {
 								className="flex items-center space-x-2 transition-transform hover:scale-105">
 								<div className="w-12 h-12 rounded-full overflow-hidden border">
 									<Image
-										src="/images/logo.png"
+										src="/images/logo_bmarket.png"
 										alt="B Market Logo"
 										width={48}
 										height={48}
