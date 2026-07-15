@@ -58,7 +58,7 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
 							</Badge>
 						)}
 						{recipe.forEvents && (
-							<Badge variant="outline" className="text-xs gap-1">
+							<Badge variant="info" className="text-xs gap-1">
 								<PartyPopper className="h-3 w-3" aria-hidden="true" />
 								Événement
 							</Badge>

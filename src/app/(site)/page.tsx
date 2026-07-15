@@ -39,7 +39,7 @@ export default async function Home() {
 		alternateName: [BUSINESS_INFO.alternateName, 'Boucherie B Market'],
 		url: SITE_URL,
 		image: `${SITE_URL}/images/devanture-bmarket-hero.webp`,
-		logo: `${SITE_URL}/images/logo.png`,
+		logo: `${SITE_URL}/images/logo_bmarket`,
 		description:
 			'Boucherie halal artisanale près de Grenoble proposant viandes fraîches, découpes sur mesure, préparations maison, traiteur halal et click-and-collect.',
 		telephone: BUSINESS_INFO.phone,
